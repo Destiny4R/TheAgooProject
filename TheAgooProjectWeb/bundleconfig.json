@@ -1,0 +1,50 @@
+[
+  {
+    "outputFileName": "wwwroot/js/termresult.min.js",
+    "inputFiles": [
+      "wwwroot/js/termresult.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/computeresult.min.js",
+    "inputFiles": [
+      "wwwroot/js/computeresult.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/class.min.js",
+    "inputFiles": [
+      "wwwroot/js/class.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/resultcalculator.min.js",
+    "inputFiles": [
+      "wwwroot/js/resultcalculator.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/simplifyCalculator.min.js",
+    "inputFiles": [
+      "wwwroot/js/simplifyCalculator.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/generaltabledata.min.js",
+    "inputFiles": [
+      "wwwroot/js/generaltabledata.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/systemuserdata.min.js",
+    "inputFiles": [
+      "wwwroot/js/systemuserdata.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/settings.min.js",
+    "inputFiles": [
+      "wwwroot/js/settings.js"
+    ]
+  }
+]

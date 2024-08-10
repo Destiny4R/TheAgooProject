@@ -1,0 +1,182 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Compute_Result.Detail_ResultModel
+@{
+    ViewData["Title"] = "Detail Result";
+    var termregdata = Model.results.FirstOrDefault().Termregistration;
+    int sn = 0;
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge  badge-info bg-info text-uppercase"><strong class="h5">@ViewData["Title"]</strong></div>
+                <a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+            </div>
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"].
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+                </div>
+            }
+            <div class="row ">
+                <div class="col-sm-6">
+                    <div class="mt-2 mr-sm-2">
+                        <label class="sr-onlyg" >Student Fullname</label>
+                        <input type="text" readonly disabled class="form-control" value="@termregdata.StudentsData.SurName @termregdata.StudentsData.OtherName @termregdata.StudentsData.FirstName" />
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="mt-2 mr-sm-2">
+                        <label class="sr-onlyg">Student Reg. Number</label>
+                        <input type="text" readonly disabled class="form-control" value="@termregdata.StudentsData.StudentRegNo" />
+                    </div>
+                </div>
+            </div>
+            <div class="input-group mt-2">
+                <input type="text" class="form-control form-control-sm" readonly value="@termregdata.Term" disabled />
+                <input type="text" class="form-control form-control-sm" readonly value="@termregdata.SessionYear.Name" />
+                <input type="text" class="form-control form-control-sm" readonly value="@termregdata.Schoolclasses.Name" />
+                <input type="text" class="form-control form-control-sm" readonly value="@termregdata.SubClasses.Name" />
+            </div>
+        </div>
+        <div class="card-body">
+            <table id="" class="table table-striped  table-bordered table-hover table-responsive" width="">
+                <caption>Results Sheet</caption>
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Subject</th>
+                        <th>Assignment</th>
+                        <th>Test</th>
+                        <th>Project</th>
+                        <th>Exam</th>
+                        <th>Total</th>
+                        <th>Position</th>
+                        <th>Grade</th>
+                        <th>Remark</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.results)
+                    {
+                        sn++;
+                        <tr>
+                            <td>@sn</td>
+                            <td>@item.Subjects.Name</td>
+                            <td>@{
+                                    string ass = "";
+                                    if (item.Assignment == 0.0)
+                                    {
+                                        ass = "-";
+                                    }
+                                    else if (item.Assignment == null)
+                                    {
+                                        ass = "0";
+                                    }
+                                    else
+                                    {
+                                        ass = item.Assignment.ToString();
+                                    }    
+                            }@ass
+                            </td>
+                            <td>
+                                @{
+                                    string tst = "";
+                                    if (item.Test == 0.0)
+                                    {
+                                        tst = "-";
+                                    }
+                                    else if (item.Test == null)
+                                    {
+                                        tst = "0";
+                                    }
+                                    else
+                                    {
+                                        tst = item.Test.ToString();
+                                    }
+                                }@tst
+                            </td>
+                            <td>
+                                @{
+                                    string proj = "";
+                                    if (item.Project == 0.0)
+                                    {
+                                        proj = "-";
+                                    }
+                                    else if (item.Project == null)
+                                    {
+                                        proj = "0";
+                                    }
+                                    else
+                                    {
+                                        proj = item.Project.ToString();
+                                    }
+                                }@proj
+                            </td>
+                            <td>
+                                @{
+                                    string exam = "";
+                                    if (item.Examination == 0.0)
+                                    {
+                                        exam = "-";
+                                    }
+                                    else if (item.Examination == null)
+                                    {
+                                        exam = "0";
+                                    }
+                                    else
+                                    {
+                                        exam = item.Examination.ToString();
+                                    }
+                                }@exam
+                            </td>
+                            <td>
+                                @{
+                                    string total = "";
+                                    if (item.Total == 0.0)
+                                    {
+                                        total = "-";
+                                    }
+                                    else if (item.Total == null)
+                                    {
+                                        total = "0";
+                                    }
+                                    else
+                                    {
+                                        total = item.Total.ToString();
+                                    }
+                                }@total
+                            </td>
+                            <td>@item.Position</td>
+                            <td>@item.Grade</td>
+                            <td>@item.Remark</td>
+                            <td>
+                                <div class="d-flex justify-content-between">
+                                    <a class="btn btn-info btn-sm" title="Edit this result" href="/Compute-Result/Edit-Result?id=@item.Id" style="cursor:pointer">
+                                        <i class="fa fa-edit"></i>
+                                    </a>&nbsp;
+                                    <a class="btn btn-danger btn-sm" href="/Account/" style="cursor:pointer" title="Delete this result">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

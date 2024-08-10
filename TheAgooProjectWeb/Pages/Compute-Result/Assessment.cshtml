@@ -1,0 +1,214 @@
+﻿@page
+@using System.Data
+@model TheAgooProjectWeb.Pages.Compute_Result.AssessmentModel
+@{
+    ViewData["Title"] = "Download Assessment Sheet";
+    int sn = 0, ass = 0, cwrk = 0, examx = 0;
+    if (Model.results.Count() > 0)
+    {
+        if (Model.results.FirstOrDefault().Termregistration.Schoolclasses.Elective)
+        {
+            ass = 5;
+            cwrk = 5;
+            examx = 70;
+        }
+        else
+        {
+            ass = 10;
+            cwrk = 10;
+            examx = 60;
+        }
+    }
+}
+<link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<div class="page-content">
+    <div class="card">
+        <div class="card-header-pill">
+            <div class="d-flex justify-content-between p-1">
+                <div class="badge  badge-info bg-info text-uppercase"><strong class="h5">Assessment Sheet</strong></div>
+                <a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+            </div>
+            <div class="mt-1">
+                <form method="post">
+                    <div class="input-group mt-2 col-12">
+                        <div>
+                            <select asp-for="CTSSClass.Term" class="form-control form-control-sm">
+                                <option value="" disabled selected>---Select Term---</option>
+                                <option value="First">First</option>
+                                <option value="Second">Second</option>
+                                <option value="Third">Third</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Term" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div>
+                            <select class="form-control form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                                <option value="" disabled selected>---Select Session/Year---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.SessionYear" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div>
+                            <select class="form-control form-control-sm " asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class">
+                                <option value="" disabled selected>---Select Class---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Classes" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div>
+                            <select asp-for="CTSSClass.Subclass" class="form-control form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
+                                <option value="" disabled selected>---Select Sub-Class---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Subclass" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div>
+                            <button class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"].
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+                </div>
+            }
+        </div>
+        @if(Model.results.Any()){
+            <div class="card-body">
+                <div class="d-flex justify-content-end mb-2">
+                    <div class="btn-group btn-group" role="group" aria-label="makeup">
+                        <button class="btn btn-outline-dark btn-sm" type="button" onclick="exportToCSV()">Download CSV</button>
+                        <button id="exportToExcel" class="btn btn-outline-dark btn-sm" type="button">Download Excel</button>
+                    </div>
+                </div>
+                <table id="sheetresulttable" class="text-dark  table-bordered table-responsive">
+                    <caption class="text-success">Class Result File</caption>
+                    <thead class="">
+                        <tr>
+                            <td>#</td>
+                            <td>Fullname</td>
+                            <td>Student Reg</td>
+                            <td>Term</td>
+                            <td>Session/Year</td>
+                            <td>Class</td>
+                            <td>Sub-Class</td>
+                            <td>Subject Code</td>
+                            <td>Subject Name</td>
+                            <td>Assignment(@ass)</td>
+                            <td>Class work(@cwrk)</td>
+                            <td>Test(10)</td>
+                            <td>Project(10)</td>
+                            <td>Exams(@examx)</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in Model.results.OrderByDescending(k=>k.SubjectId)){
+                            sn++;
+                            <tr>
+                                <td>@sn</td>
+                                <td>@item.Termregistration.StudentsData.SurName @item.Termregistration.StudentsData.OtherName @item.Termregistration.StudentsData.FirstName</td>
+                                <td>@item.Termregistration.StudentsData.StudentRegNo</td>
+                                <td>@item.Termregistration.Term</td>
+                                <td>@item.Termregistration.SessionYear.Name</td>
+                                <td>@item.Termregistration.Schoolclasses.Name</td>
+                                <td>@item.Termregistration.SubClasses.Name</td>
+                                <td>@item.SubjectId</td>
+                                <td>@item.Subjects.Name</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/js/jquery.table2excel.min.js"></script>
+    <script>
+        $(function () {
+            $("#exportToExcel").click(function (e) {
+                $("#sheetresulttable").table2excel({
+                    name: "Worksheet Name",
+                    filename: "@Model.namesheet"+"_Sheet",
+                    fileext: ".xlsx",
+                    preserveColors: true
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            $('#sheetresulttable').DataTable({
+                dom: 'Bfrtip',
+                filter: false,
+                pageLength: 1000,
+                lengthChange: !1,
+                buttons: [
+                    {
+                        extend: 'excel',
+                        title: '' // Set an empty title
+                    },
+                    'csv', 'pdf', 'print' // Other buttons
+                ]
+            }).buttons().container().appendTo("#sheetresulttable_wrapper .col-md-6:eq(0)")
+        });
+        function exportToCSV() {
+            // Get the DataTable object
+            var table = $('#sheetresulttable').DataTable();
+
+            // Get the table data and header rows
+            var data = table.data().toArray();
+            var headerRow = [];
+            table.columns().every(function () {
+                var col = this;
+                headerRow.push(col.header().innerText);
+            });
+
+            // Combine header and data into a single array
+            var csvData = [headerRow].concat(data);
+
+            // Convert data to CSV format
+            var csvContent = "";
+            csvData.forEach(function (row, index) {
+                var rowString = row.join(",");
+                if (index < csvData.length - 1) {
+                    rowString += "\n"; // Add newline for all rows except the last
+                }
+                csvContent += rowString;
+            });
+
+            // Create a Blob object with the CSV data
+            var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+
+            // Create a downloadable link
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "@Model.namesheet" + "_Sheet.csv"; // Set desired filename
+            link.click();
+
+            // Clean up the temporary link
+            URL.revokeObjectURL(link.href);
+        }
+
+    </script>
+    
+}

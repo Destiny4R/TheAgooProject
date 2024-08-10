@@ -1,0 +1,98 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Portal.IndexModel
+@{
+    ViewData["Title"] = "Portal Page";
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge  badge-info bg-info text-uppercase"><strong class="h5">Print Result</strong></div>
+                <a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+            </div>
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"].
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+                </div>
+            }
+        </div>
+        <div class="card-body">
+            <div class="row p-2">
+                <div class="col-sm-3">
+                    <form asp-page-handler="AnnualResult" method="post">
+                        <div class="input-group">
+                            <select class="form-control" required name="thesession" asp-items="Model.ViewSelectModel.SessionYearz">
+                                <option value="" disabled selected>---Select Session/Year---</option>
+                            </select>
+                            <span class="input-group-append">
+                                <button class="btn btn-success" type="submit"><i class="fa fa-line-chart"></i> Annual Report</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-3">
+                    <a class="btn btn-success" asp-page="Annual-Master">Annual Master Sheet</a>
+                </div>
+                <div class="col-sm-6">
+                    <form method="post" asp-page-handler="PrintResult">
+                        <div class="form-group mb-2">
+                            <label for="username">Term</label>
+                            <select asp-for="CTSSClass.Term" class="form-control form-control-sm">
+                                <option value="" disabled selected>---Select Term---</option>
+                                <option value="First">First</option>
+                                <option value="Second">Second</option>
+                                <option value="Third">Third</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Term" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="useremail">Session/Year</label>
+                            <select class="form-control form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                                <option value="" disabled selected>---Select Session/Year---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.SessionYear" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Class</label>
+                            <select class="form-control form-control-sm " asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class">
+                                <option value="" disabled selected>---Select Class---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Classes" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Sub-Class</label>
+                            <select asp-for="CTSSClass.Subclass" class="form-control form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
+                                <option value="" disabled selected>---Select Sub-Class---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Subclass" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label>Student Reg. Number</label>
+                            <input type="text" class="form-control" asp-for="StudentRegNo" />
+                            <span asp-validation-for="CTSSClass.Subclass" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-success btn-block" type="submit">Print Result</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

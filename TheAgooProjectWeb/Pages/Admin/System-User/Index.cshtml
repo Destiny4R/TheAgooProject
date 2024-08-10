@@ -1,0 +1,49 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Admin.System_User.IndexModel
+@{
+    ViewData["Title"] = "List of System Users";
+}
+<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+<link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge  badge-info bg-info text-uppercase"><strong class="h5">@ViewData["Title"]</strong></div>
+                <a class="btn btn-dark btn-sm" asp-page="Upsert"><i class="fa fa-user"></i>&ensp; Add User</a>
+            </div>
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success mt-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    <strong><i class="fas fa-check-double text-success"></i></strong> &emsp; @TempData["success"].
+                </div>
+            }
+        </div>
+        <div class="card-body">
+            <table id="tablesystemusers" class="table table-bordered table-stripe">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Full Name</th>
+                        <th>UserName</th>
+                        <th>User Status</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    <script src="~/js/systemuserdata.js" asp-append-version="true" ></script>
+}

@@ -1,0 +1,140 @@
+﻿@page
+@using TheAgooProjectDataAccess
+@model TheAgooProjectWeb.Pages.Compute_Result.Remark_CommentModel
+@{
+    ViewData["title"] = "Add/Update Student Remarks";
+}
+<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+<link href="/assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+<div class="page-content">
+    <div class="card">
+        <div class="card-header-pill">
+            <div class="d-flex justify-content-between p-2">
+                <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">General Clasl Info List</strong></div>
+                <div><a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
+            </div>
+        </div>
+        <div class="card-body">               
+            <form method="post"  id="form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Full Name</label>
+                        <input type="text" class="form-control" readonly value="@Model.position.Termregistration.StudentsData.SurName  @Model.position.Termregistration.StudentsData.OtherName  @Model.position.Termregistration.StudentsData.FirstName" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="position.Position_In_Class">Position In Class</label>
+                        <input type="text" class="form-control" readonly value="@Model.position.Termregistration.StudentsData.StudentRegNo" required />
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-3">
+                        <label asp-for="position.Total_Marks_Obtain">Total Marks Obtain</label>
+                        <input asp-for="position.Total_Marks_Obtain" class="form-control" value="@Model.TotalScores" readonly required />
+                        <span asp-validation-for="position.Total_Marks_Obtain" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="position.Position_In_Class">Position In Class</label>
+                        <input type="text" class="form-control" asp-for="position.Position_In_Class" readonly required />
+                        <span asp-validation-for="position.Position_In_Class" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="position.Student_Attendance">Student Attendance(@Model.TermTotalAtten)</label>
+                        <input type="text" class="form-control" onkeyup="absent();" asp-for="position.Student_Attendance" required />
+                        <span asp-validation-for="position.Student_Attendance" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="position.Absent"></label>
+                        <input asp-for="position.Absent" readonly class="form-control" required />
+                        <span asp-validation-for="position.Absent" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group mb-0">
+                    <label>Date Range</label>
+                    <div>
+                        <div class=" input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">Minimum Rating(2 - 5)  </div>
+                            </div>
+                            <input type="text range" class="form-control" asp-for="smallvalue" id="smallvalue" max="4" min="2" />
+                            <input type="text range" class="form-control" asp-for="bigvalue" id="bigvalue" max="5" min="2" />
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">Maximum Rating(2 - 5)  </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="position.Principal_Remark">Principal Remark</label>
+                        <input type="text" class="form-control" asp-for="position.Principal_Remark" list="principal" required />
+                        <datalist class="" id="principal">
+                            <option value="An excellent performance, keep it up.">An excellent performance, keep it up.</option>
+                            <option value="A brilliant result, you should improve for the best.">A brilliant result, you should improve for the best.</option>
+                            <option value="A good performance, work harder for a better performance.">A good performance, work harder for a better performance.</option>
+                            <option value="Below expectation, put in more effort.">Below expectation, put in more effort.</option>
+                            <option value="An outstanding performance, keep going higher.">An outstanding performance, keep going higher.</option>
+                            <option value="An average performance, put in more effort for a better result.">An average performance, put in more effort for a better result.</option>
+                        </datalist>
+                        <span asp-validation-for="position.Principal_Remark" class="text-dnager"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="position.General_Remark">General Remark</label>
+                        <input type="text" class="form-control" asp-for="position.General_Remark" list="teacher" required />
+                        <datalist class="" id="teacher">
+                            <option value="An excellent performance, keep it up.">An excellent performance, keep it up.</option>
+                            <option value="A brilliant result, you should improve for the best.">A brilliant result, you should improve for the best.</option>
+                            <option value="A good performance, work harder for a better performance!.">A good performance, work harder for a better performance!.</option>
+                            <option value="Below expectation, put in more effort.">Below expectation, put in more effort.</option>
+                            <option value="An outstanding performance, keep going higher.">An outstanding performance, keep going higher.</option>
+                            <option value="An average performance, put in more effort for a better result.">An average performance, put in more effort for a better result.</option>
+                        </datalist>
+                        <span asp-validation-for="position.General_Remark" class="text-danger"></span>
+                    </div>
+                </div>
+                <input asp-for="position.Id" type="hidden" />
+                <input asp-for="TermTotalAtten" type="hidden" />
+                <div class="p-2">
+                    <button class="btn btn-primary" type="submit">Update remark</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <script src="/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/assets/libs/parsleyjs/parsley.min.js"></script>
+    <script>
+        function absent() {
+            var termtotalatt = $('#TermTotalAtten').val(); //document.getElementById('TermTotalAtten').value;
+            var studentatten = $('#position_Student_Attendance').val(); //document.getElementById('remark_Student_Attendance').value;
+            let absent = document.getElementById('position_Absent').value;
+            absent = Number(termtotalatt) - Number(studentatten);
+            $('#position_Absent').val(absent);
+            if (Number(studentatten) > Number(termtotalatt) || absent < 0) {
+                swal.fire(
+                    'Wrong input values',
+                    'Student term attendance cannot be greater than over total class attendance! \n check and try again',
+                    'error'
+                );
+                document.getElementById('position_Absent').value = "";
+                document.getElementById('position_Student_Attendance').value = "";
+            }
+        }
+
+        $(document).ready(function () {
+            $('#form').parsley();
+        });
+
+        !function () { "use strict"; window.addEventListener("load", function () 
+        { var t = document.getElementsByClassName("needs-validation"); 
+        Array.prototype.filter.call(t, function (e) { e.addEventListener("submit", 
+        function (t) { !1 === e.checkValidity() && (t.preventDefault(), 
+            t.stopPropagation()), 
+            e.classList.add("was-validated") }, !1) }) }, !1) }(), 
+        $(document).ready(function () { $(".custom-validation").parsley() });
+
+    </script>
+    }

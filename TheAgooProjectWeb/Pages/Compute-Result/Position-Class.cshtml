@@ -1,0 +1,103 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Compute_Result.Position_ClassModel
+@{
+
+    ViewData["Title"] = "Compute Postion in Class";
+    int sn = 0;
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header-pill">
+            <div class="d-flex justify-content-between p-2">
+                <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">Posion in Class</strong></div>
+                <div><a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
+            </div>
+            <div class="row p-2">
+                <form method="post">
+                    <div class="input-group col-12">
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Term" disabled />
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Sessionyear" />
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Classes" />
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Subclass" />
+                    </div>
+                </form>
+            </div>
+            @if (Model.DataTrue > 0)
+            {
+                <div class="row p-2">
+                    <div class="col-sm-7">
+                        <form method="post">
+                            <button class="btn btn-success btn-sm" type="submit">
+                                <i class="ti-upload"></i>&nbsp; Update Positions
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"].
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+                </div>
+            }
+
+        </div>
+        @if (Model.DataTrue > 0)
+        {
+            <table class="table table-sm table-responsive table-bordered table-striped table-hover" width="100%">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Full Name</th>
+                        <th>Student Reg. No.</th>
+                        <th>Term</th>
+                        <th>Session/Year</th>
+                        <th>Class</th>
+                        <th>Sub-Class</th>
+                        <th>Total Scores</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ResultTables.GroupBy(k=>k.TermRegId))
+                    {
+                        @(sn++)
+                        <tr>
+                            <td>@(sn)</td>
+                            <td>@item.FirstOrDefault().Termregistration.StudentsData.SurName  @item.FirstOrDefault().Termregistration.StudentsData.OtherName  @item.FirstOrDefault().Termregistration.StudentsData.FirstName</td>
+                            <td>@item.FirstOrDefault().Termregistration.StudentsData.StudentRegNo</td>
+                            <td>@item.FirstOrDefault().Termregistration.Term</td>
+                            <td>@item.FirstOrDefault().Termregistration.StudentsData.SessionYear.Name</td>
+                            <td>@item.FirstOrDefault().Termregistration.Schoolclasses.Name</td>
+                            <td>@item.FirstOrDefault().Termregistration.SubClasses.Name</td>
+                            <td>@{
+                                    var total = 0.0;
+                                    foreach(var item2 in item)
+                                    {
+                                        total += (double)item2.Total;
+                                    }
+
+                                }@total
+                            </td>
+                            <td>@item.FirstOrDefault().Termregistration.RemarkPositions.Position_In_Class</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }else{
+            <div class="h3 text-center text-uppercase"> No result avaliable for the settings </div>
+        }
+    </div>
+</div>

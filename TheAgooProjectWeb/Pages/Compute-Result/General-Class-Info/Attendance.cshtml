@@ -1,0 +1,69 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Compute_Result.General_Class_Info.AttendanceModel
+@{
+    ViewData["Title"] = "Students Attendance";
+    int sn = 0;
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header-pill">
+            <div class="d-flex justify-content-between p-2">
+                <div class=" badge text-white bg-blue bg-success text-uppercase"><strong class="h5">@ViewData["Title"]</strong></div>
+                <div><a class="btn btn-dark btn-sm" asp-page="/Compute-Result/Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
+            </div>
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+                </div>
+            }
+        </div>
+        <div class="card-body">
+            @if (Model.hasSomething > 0)
+            {
+                <form method="post">
+                    <table id="resultcalculatorSm" class="table-bordered table table-responsive">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Full Name</th>
+                            <th>Term</th>
+                            <th>Session/Year</th>
+                            <th>Class</th>
+                            <th>Sub Class</th>
+                            <th>Total Attend.</th>
+                            <th>Student Attend.</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.remarks.Count(); i++)
+                        {
+                            sn++;
+                            <tr>
+                                <td>@(sn)</td>
+                                <td>@(Model.remarks[i].Termregistration.StudentsData.SurName + " " + Model.remarks[i].Termregistration.StudentsData.OtherName + " " + Model.remarks[i].Termregistration.StudentsData.FirstName)</td>
+                                <td>@(Model.remarks[i].Termregistration.Term)</td>
+                                <td>@(Model.remarks[i].Termregistration.SessionYear.Name)</td>
+                                <td>@(Model.remarks[i].Termregistration.Schoolclasses.Name)</td>
+                                <td>@(Model.remarks[i].Termregistration.SubClasses.Name)</td>
+                                <td>@(Model.ClassAttendance)</td>
+                                <td><input class="form-control form-control-sm" type='number' required max="@Model.ClassAttendance" asp-for="@Model.remarks[i].Student_Attendance"/></td>
+                                <td><input type='hidden' asp-for="@Model.remarks[i].TermRegId"/></td>
+                           </tr>     
+                        }
+                        </tbody>
+                </table>
+                <input name="studentattend" value="@(Model.ClassAttendance)" type="hidden" />
+                <div class="row">
+                    <div class="col-sm-8">
+                        <button type="submit" class="btn btn-primary"> Update All</button>
+                    </div>
+                </div>
+            </form>
+            }
+        </div>
+    </div>
+</div>

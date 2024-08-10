@@ -1,0 +1,102 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Compute_Result.General_Class_Info.UpsertModel
+@{
+    ViewData["Title"] = Model.general.Id > 0 ? "Update Class General Information" : "Add Class General Information";
+    var name = Model.general.Id > 0 ? "Update record" : "Submit record";
+}
+<link href="/assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+<div class="page-content">
+    <div class="card">
+        <div class="card-header-pill">
+            <div class="d-flex justify-content-between p-2">
+                <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">@ViewData["Title"]</strong></div>
+                <div><a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
+            </div>
+        </div>
+        <div class="card-body">               
+            <form method="post" class="needs-validation" novalidate>
+                <div class="row">
+                    <div class="col-sm-3 mb-3">
+                        <label for="validationCustom01">Term</label>
+                        <select asp-for="general.Term" class="form-control">
+                            <option value="" disabled selected>---Select Term---</option>
+                            <option value="First">First</option>
+                            <option value="Second">Second</option>
+                            <option value="Third">Third</option>
+                        </select>
+                        <span asp-validation-for="general.Term" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
+                    </div>
+                    <div class="col-sm-3 mb-3">
+                        <label for="validationCustom02">Session/Year</label>
+                        <select class="form-control" asp-for="general.SessionYearId" asp-items="Model.ViewSelectModel.SessionYearz">
+                            <option value="" disabled selected>---Select Session/Year---</option>
+                        </select>
+                        <span asp-validation-for="general.SessionYearId" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
+                    </div>
+                    <div class="col-sm-3 mb-3">
+                        <label asp-for="general.ClassId"></label>
+                        <select class="form-control" asp-for="general.ClassId" asp-items="Model.ViewSelectModel.Class">
+                            <option value="" disabled selected>---Select Class---</option>
+                        </select>
+                        <span asp-validation-for="general.ClassId" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
+                    </div>
+                    <div class="col-sm-3 mb-3">
+                        <label asp-for="general.SubClassId"></label>
+                        <select class="form-control" asp-for="general.SubClassId" asp-items="Model.ViewSelectModel.SubClass">
+                            <option value="" disabled selected>---Select Class---</option>
+                        </select>
+                        <span asp-validation-for="general.SubClassId" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="general.Next_Term_Fees"></label>
+                        <input asp-for="general.Next_Term_Fees" class="form-control" required />
+                        <span asp-validation-for="general.Next_Term_Fees" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="general.NextTermStart"></label>
+                        <input type="text" class="form-control" asp-for="general.NextTermStart" data-provide="datepicker" data-date-autoclose="true" required />
+                        <span asp-validation-for="general.NextTermStart" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="general.TermEnd"></label>
+                        <input type="text" class="form-control" asp-for="general.TermEnd" data-provide="datepicker" data-date-autoclose="true" required />
+                        <span asp-validation-for="general.TermEnd" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="general.TotalAttendance"></label>
+                        <input type="text" class="form-control" asp-for="general.TotalAttendance" required />
+                        <span asp-validation-for="general.TotalAttendance" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="general.ClassTeacher"></label>
+                        <input type="text" class="form-control" asp-for="general.ClassTeacher" required />
+                        <span asp-validation-for="general.ClassTeacher" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
+                    </div>
+                </div>
+                <input asp-for="general.Id" type="hidden" />
+                <div class="p-2">
+                    <button class="btn btn-primary" type="submit"> @(name)</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script>
+        !function () { "use strict"; window.addEventListener("load", function () 
+        { var t = document.getElementsByClassName("needs-validation"); 
+        Array.prototype.filter.call(t, function (e) { e.addEventListener("submit", 
+        function (t) { !1 === e.checkValidity() && (t.preventDefault(), 
+            t.stopPropagation()), 
+            e.classList.add("was-validated") }, !1) }) }, !1) }(), 
+        $(document).ready(function () { $(".custom-validation").parsley() });
+
+    </script>
+}

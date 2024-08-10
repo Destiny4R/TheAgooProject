@@ -1,0 +1,122 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Admin.TermRegistration.RegisterModel
+@{
+    ViewData["Title"] = "Register Student";
+}
+<link href="~/lib/multipleselect/multiselect.css" rel="stylesheet" />
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">@ViewData["Title"]</strong></div>
+                <div><a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
+            </div>
+            <div class="mt-2">
+                <div class="col-auto">
+                    <div class="mt-3 row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                            <form method="post" asp-page-handler="Search">
+                                <div class="input-group mb-2">
+                                    <input class="form-control" type="search" name="regnumber" required placeholder="Enter Registration Number" />
+                                    <span class="input-group-prepend">
+                                        <button class="btn btn-success"><i class="fas fa-search"></i></button>
+                                    </span>
+                                </div>
+                            </form>
+                            @if (TempData["success"] != null)
+                            {
+                                <div class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <strong><i class="fas fa-info-circle"></i>  </strong> @TempData["success"].
+                                </div>
+                            }
+                            @if (TempData["error"] != null)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (Model.verify > 0)
+        {
+            <div class="card-body">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5">
+                        <div class="p-2">
+                            <div class="alert alert-primary"><h5 class="text-center">Complete the Registration Form</h5></div>
+                            <form class="form-horizontal" method="post" asp-page-handler="Register">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-2">
+                                            <label for="username">Full Name</label>
+                                            <input class="form-control form-control-sm" readonly asp-for="input.Fullname" />
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label for="username">Student Registration Number</label>
+                                            <input class="form-control form-control-sm" readonly asp-for="input.StudentReg" />
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label for="username">Term</label>
+                                            <select asp-for="CTSSClass.Term" class="form-control form-control-sm">
+                                                <option value="" disabled selected>---Select Term---</option>
+                                                <option value="First">First</option>
+                                                <option value="Second">Second</option>
+                                                <option value="Third">Third</option>
+                                            </select>
+                                            <span asp-validation-for="CTSSClass.Term" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label for="useremail">Session/Year</label>
+                                            <select class="form-control form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                                                <option value="" disabled selected>---Select Session/Year---</option>
+                                            </select>
+                                            <span asp-validation-for="CTSSClass.SessionYear" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label>Class</label>
+                                            <select class="form-control form-control-sm " asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class">
+                                                <option value="" disabled selected>---Select Class---</option>
+                                            </select>
+                                            <span asp-validation-for="CTSSClass.Classes" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label>Sub-Class</label>
+                                            <select asp-for="CTSSClass.Subclass" class="form-control form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
+                                                <option value="" disabled selected>---Select Sub-Class---</option>
+                                            </select>
+                                            <span asp-validation-for="CTSSClass.Subclass" class="text-danger"></span>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label>Register Subjects</label>
+                                            <select required class="custom-select form-control-sm 2col active" multiple data-multi-select name="subjects[]" asp-items="Model.ViewSelectModel.Subjects">
+                                            </select>
+                                        </div>
+                                        <div class="mt-4">
+                                            <button class="btn btn-primary btn-block waves-effect waves-light" type="submit">Register</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" asp-for="input.StudentId"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/multipleselect/multiselect.js"></script>
+
+}

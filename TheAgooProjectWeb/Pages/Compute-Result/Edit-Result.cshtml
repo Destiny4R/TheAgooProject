@@ -1,0 +1,298 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Compute_Result.Edit_ResultModel
+@{
+    ViewData["Title"] = "Edit Result";
+}
+<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge  badge-info bg-info text-uppercase"><strong class="h5">@ViewData["Title"]</strong></div>
+                <a class="btn btn-dark btn-sm" asp-page="Detail-Result"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+            </div>
+        </div>
+        <div class="card-body bg-dark text-white">
+            <form method="post" class="needs-validation" novalidate>
+                <div class="row ">
+                    <div class="col-sm-4">
+                        <div class="mt-2 mr-sm-2">
+                            <label class="sr-onlyg">Student Fullname</label>
+                            <input type="text" readonly disabled class="form-control" value="@Model.result.Termregistration.StudentsData.SurName @Model.result.Termregistration.StudentsData.OtherName @Model.result.Termregistration.StudentsData.FirstName" />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="mt-2 mr-sm-2">
+                            <label class="sr-onlyg">Student Reg. Number</label>
+                            <input type="text" readonly disabled class="form-control" value="@Model.result.Termregistration.StudentsData.StudentRegNo" />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="mt-2 mr-sm-2">
+                            <label class="sr-onlyg">Subject</label>
+                            <select class="form-control  form-control-sm" asp-for="result.SubjectsCode" asp-items="Model.ViewSelectModel.Subjects">
+                                <option disabled selected>Subject</option>
+                            </select>
+                            @* <input type="text" readonly disabled class="form-control" value="@Model.result.Subjects.Name" /> *@
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-3">
+                        <div class="mt-2 mr-sm-2">
+                            <label class="sr-onlyg">Assignment</label>
+                            <input onkeyup="sum();" class="form-control" required asp-for="result.Assignment" />
+                            <span asp-validation-for="result.Assignment" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="mt-2 mr-sm-2">
+                            <label class="sr-onlyg">Test</label>
+                            <input onkeyup="sum();" class="form-control" required asp-for="result.Test" />
+                            <span asp-validation-for="result.Test" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="mt-2 mr-sm-2">
+                            <label class="sr-onlyg">Project</label>
+                            <input onkeyup="sum();" class="form-control" required asp-for="result.Project" />
+                            <span asp-validation-for="result.Project" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="mt-2 mr-sm-2">
+                            <label class="sr-onlyg">Class Work</label>
+                            <input class="form-control" onkeyup="sum();" required asp-for="result.ClassWork" />
+                            <span asp-validation-for="result.ClassWork" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-3">
+                        <div class="mt-2 mr-sm-2">
+                            <label class="sr-onlyg">Examination</label>
+                            <input onkeyup="sum();" class="form-control" required asp-for="result.Examination" />
+                            <span asp-validation-for="result.Examination" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="mt-2 mr-sm-2">
+                            <label class="sr-onlyg">Total</label>
+                            <input type="text" readonly class="form-control" required asp-for="result.Total" />
+                            <span asp-validation-for="result.Total" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="mt-2 mr-sm-2">
+                            <label class="sr-onlyg">Grade</label>
+                            <input type="text" readonly class="form-control" required asp-for="result.Grade" />
+                            <span asp-validation-for="result.Grade" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="mt-2 mr-sm-2">
+                            <label class="sr-onlyg">Remark</label>
+                            <input type="text" readonly class="form-control" required asp-for="result.Remark" />
+                            <span asp-validation-for="result.Remark" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="mt-2 col-12">
+                        <button class="btn btn-primary" type="submit">Update</button>
+                    </div>
+                </div>
+                <input asp-for="result.Id" type="hidden"/>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    @if (true)
+    {
+        //FOR JENIOR CLASSES
+        <script>
+            function sum() {
+            var ass = document.getElementById("result_Assignment").value;
+            var test = document.getElementById("result_Test").value;
+            var proj = document.getElementById("result_Project").value;
+            var cwrk = document.getElementById("result_ClassWork").value;
+            var Exams = document.getElementById("result_Examination").value;
+
+            var sum = Number(ass) + Number(test) + Number(proj) + Number(cwrk) + Number(Exams);
+            document.getElementById("result_Total").value = sum;
+            if (sum < 40) {
+                document.getElementById("result_Grade").value = 'E';
+                document.getElementById("result_Remark").value = "Poor";
+            }
+            else if (sum < 55) {
+                document.getElementById("result_Grade").value = 'D';
+                document.getElementById("result_Remark").value = "Fair";
+            }
+            else if (sum < 65) {
+                document.getElementById("result_Grade").value = 'C';
+                document.getElementById("result_Remark").value = "Good";
+            }
+            else if (sum < 75) {
+                document.getElementById("result_Grade").value = 'B';
+                document.getElementById("result_Remark").value = "Very Good";
+            }
+            else {
+                document.getElementById("result_Grade").value = 'A';
+                document.getElementById("result_Remark").value = "Distinction";
+            }
+
+            if (ass > 10) {
+                document.getElementById("result_Assignment").value = '';
+                document.getElementById("result_Total").value = '';
+                return Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Assignment work should not be greater than 10, check and try again',
+                footer: 'Over assigned scores'
+                });
+            }
+            if (test > 10) {
+                document.getElementById("result_Total").value = '';
+                document.getElementById("result_Test").value = '';
+                return Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Test scores should not be greater than 10, check and try again',
+                footer: 'Over assigned scores'
+                });
+            }
+            if (proj > 10) {
+                document.getElementById("result_Total").value = '';
+                document.getElementById("result_Project").value = '';
+                return Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Project scores should not be greater than 10, check and try again',
+                footer: 'Over assigned scores'
+                });
+            }
+            if (cwrk > 10) {
+                document.getElementById("result_Total").value = '';
+                document.getElementById("result_ClassWork").value = '';
+                return Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Class work scores should not be greater than 10, check and try again',
+                footer: 'Over assigned scores'
+                });
+            }
+
+            if (Exams > 60) {
+                document.getElementById("result_Total").value = '';
+                document.getElementById("result_Examination").value = '';
+                return Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Examination scores should not be greater than 60, check and try again',
+                footer: 'Over assigned scores'
+                });
+            }
+            if (sum > 100) {
+                document.getElementById("total").value = '';
+                document.getElementById("exams").value = '';
+                return alert('Total scores can not be morethan 100, check and try again');
+            }
+        </script>
+        }
+        else
+        {
+            //FOR SENIOR CLASSES
+            <script>
+                function sum() {
+                    var ass = document.getElementById("result_Assignment").value;
+                    var test = document.getElementById("result_Test").value;
+                    var proj = document.getElementById("result_Project").value;
+                    var cwrk = document.getElementById("result_ClassWork").value;
+                    var Exams = document.getElementById("result_Examination").value;
+
+                    var sum = Number(ass) + Number(test) + Number(proj) + Number(cwrk) + Number(Exams);
+                    document.getElementById("result_Total").value = sum;
+                    if (sum < 40) {
+                        document.getElementById("result_Grade").value = 'E';
+                        document.getElementById("result_Remark").value = "Poor";
+                    }
+                    else if (sum < 55) {
+                        document.getElementById("result_Grade").value = 'D';
+                        document.getElementById("result_Remark").value = "Fair";
+                    }
+                    else if (sum < 65) {
+                        document.getElementById("result_Grade").value = 'C';
+                        document.getElementById("result_Remark").value = "Good";
+                    }
+                    else if (sum < 75) {
+                        document.getElementById("result_Grade").value = 'B';
+                        document.getElementById("result_Remark").value = "Very Good";
+                    }
+                    else {
+                        document.getElementById("result_Grade").value = 'A';
+                        document.getElementById("result_Remark").value = "Distinction";
+                    }
+
+                    if (ass > 5) {
+                        document.getElementById("result_Assignment").value = '';
+                        document.getElementById("result_Total").value = '';
+                        return Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Assignment work should not be greater than 10, check and try again',
+                            footer: 'Over assigned scores'
+                        });
+                    }
+                    if (test > 10) {
+                        document.getElementById("result_Total").value = '';
+                        document.getElementById("result_Test").value = '';
+                        return Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Test scores should not be greater than 10, check and try again',
+                            footer: 'Over assigned scores'
+                        });
+                    }
+                    if (proj > 10) {
+                        document.getElementById("result_Total").value = '';
+                        document.getElementById("result_Project").value = '';
+                        return Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Project scores should not be greater than 10, check and try again',
+                            footer: 'Over assigned scores'
+                        });
+                    }
+                    if (cwrk > 5) {
+                        document.getElementById("result_Total").value = '';
+                        document.getElementById("result_ClassWork").value = '';
+                        return Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Class work scores should not be greater than 10, check and try again',
+                            footer: 'Over assigned scores'
+                        });
+                    }
+
+                    if (Exams > 70) {
+                        document.getElementById("result_Total").value = '';
+                        document.getElementById("result_Examination").value = '';
+                        return Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Examination scores should not be greater than 60, check and try again',
+                            footer: 'Over assigned scores'
+                        });
+                    }
+                    if (sum > 100) {
+                        document.getElementById("total").value = '';
+                        document.getElementById("exams").value = '';
+                        return alert('Total scores can not be morethan 100, check and try again');
+                    }
+                }
+            </script>
+        }
+}

@@ -1,0 +1,174 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Compute_Result.Add_ResultModel
+@{
+    ViewData["Title"] = "Add Result";
+    string Fullname = "";
+    int ass = 0, cwrk = 0, examx = 0;
+    if (Model.hasSomething>0)
+    {
+    if (!Model.termreg.Schoolclasses.Elective)
+    {
+        ass = 10;
+        cwrk = 10;
+        examx = 60;
+    }
+    else
+    {
+        ass = 5;
+        cwrk = 5;
+        examx = 70;
+    }
+        Fullname = Model.termreg.StudentsData.SurName + " " + Model.termreg.StudentsData.OtherName + " " + Model.termreg.StudentsData.FirstName;
+    }
+}
+<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+
+<div class="page-content">
+    <div class="card">
+        <div class="card-header-pill">
+            <div class="d-flex justify-content-between p-1">
+                <div class="badge  badge-info bg-info text-uppercase"><strong class="h5">@ViewData["Title"]</strong></div>
+                <a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+            </div>
+            <div class="mt-3 row">
+                <div class="col-md-6">
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Term" disabled />
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Sessionyear" />
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Classes" />
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Subclass" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <form method="post">
+                        <div class="input-group input-group-sm mb-2">
+                            <input class="form-control" type="search" name="regnumber" required placeholder="Enter Registration Number" />
+                            <span class="input-group-prepend">
+                                <button class="btn btn-success" type="submit"><i class="fas fa-search"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-1 p-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-info-circle"></i>  </strong> @TempData["success"].
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mt-1 p-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+                </div>
+            }
+            @if (Model.hasSomething > 0)
+            {
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="row p-3">
+                            <label class="col-md-4">Full Name</label>
+                            <div class="col-md-8">
+                                <input value="@Fullname" readonly class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row p-3">
+                            <label class="col-md-4">Student Reg No.</label>
+                            <div class="col-md-8">
+                                <input asp-for="termreg.StudentsData.StudentRegNo" readonly class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (Model.hasSomething > 0)
+        {
+            <div class="card-body">
+                <table id="resultcalculatortb" class="table-bordered table-sm table table-responsive">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Subject</th>
+                            <th>Asgmt(@ass)</th>
+                            <th>C-Work(@cwrk)</th>
+                            <th>Test(10)</th>
+                            <th>Project(10)</th>
+                            <th>Exam(@examx)</th>
+                            <th>Total</th>
+                            <th>Grade</th>
+                            <th>Remark</th>
+                            <th>SubCode</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <select class="form-control  form-control-sm" id="subject" asp-items="Model.ViewSelectModel.Subjects">
+                                    <option disabled selected>Subject</option>
+                                </select>
+                            </td>
+                            @if (!Model.termreg.Schoolclasses.Elective)
+                            {
+                                <td><input class="form-control form-control-sm" required max="10" onkeyup="sum();" type="number" id="assign" /></td>
+                                <td><input class="form-control form-control-sm" required max="10" onkeyup="sum();" type="number" id="cwork" /></td>
+                            }
+                            else{
+
+                                <td><input class="form-control form-control-sm" required max="5" onkeyup="sum();" type="number" id="assign" /></td>
+                                <td><input class="form-control form-control-sm" required max="5" onkeyup="sum();" type="number" id="cwork" /></td>
+                                }
+                            <td><input class="form-control form-control-sm" required max="10" onkeyup="sum();" type="number" id="proj" /></td>
+                            <td><input class="form-control form-control-sm" required max="10" onkeyup="sum();" type="number" id="test" /></td>
+                            @if (!Model.termreg.Schoolclasses.Elective)
+                            {
+                                <td><input class="form-control form-control-sm" required max="60" onkeyup="sum();" type="number" id="exams" /></td>
+                            }
+                            else
+                            {
+                                <td><input class="form-control form-control-sm" required max="70" onkeyup="sum();" type="number" id="exams" /></td>
+                            }
+                            <td><input class="form-control form-control-sm" max="100" readonly type="text" id="total" /></td>
+                            <td><input class="form-control form-control-sm" readonly type="text" id="grade" /></td>
+                            <td><input class="form-control form-control-sm" readonly type="text" id="remark" /></td>
+                            <td></td>
+                            <td><button type="button" class="btn btn-info btn-sm" id="btnAdd"><i class="fa fa-plus-square"></i></button> </td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <input asp-for="termreg.Id" type="hidden" />
+            </div>
+            <div class="p-2">
+                <button class="btn btn-primary btn-sm" type="button" id="btnSave">
+                    <i class="dripicons-cloud-upload"></i> &nbsp; Save all
+                </button>
+            </div>
+            if (!Model.termreg.Schoolclasses.Elective)
+            {
+                <input type="hidden" id="noelective" value="noelective" />
+            }
+            else
+            {
+                <input type="hidden" id="noelective" value="elective" />
+            }
+        }
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/lib/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    <script src="~/js/resultcalculator.min.js"></script>
+}
+

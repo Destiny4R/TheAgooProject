@@ -1,0 +1,53 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Admin.Admission.IndexModel
+@{
+    ViewData["Title"] = "Student Admission List";
+}
+<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+<link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">List</strong></div>
+                <div><a asp-page="Upsert" class="btn btn-dark btn-sm"><i class="fas fa-user"></i>&nbsp; Add Student</a></div>
+            </div>
+            @if(TempData["success"] != null){
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-check-double text-success"></i>&emsp; </strong> @TempData["success"].
+                </div>
+            }
+        </div>
+        <div class="card-body">
+            <table id="subjectTablez" class="table table-responsive table-bordered" width="100%">
+                <thead>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Full Name</th>
+                        <th>Student Reg. No.</th>
+                        <th>Gender</th>
+                        <th>DOB</th>
+                        <th>State</th>
+                        <th>Local Govt</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    <script src="~/js/studentregdata.js" asp-append-version="true"></script>
+}

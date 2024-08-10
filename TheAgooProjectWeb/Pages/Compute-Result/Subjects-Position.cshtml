@@ -1,0 +1,105 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Compute_Result.Subjects_PositionModel
+@{
+    ViewData["Title"] = "Compute Postion in Subjects";
+    int sn = 0;
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header-pill">
+            <div class="d-flex justify-content-between p-2">
+                <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">Posion in Subject</strong></div>
+                <div><a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
+            </div>
+            <div class="row p-2">
+                <form method="post">
+                    <div class="input-group col-12">
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Term" disabled />
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Sessionyear" />
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Classes" />
+                        <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Subclass" />
+                    </div>
+                </form>
+            </div>
+            <div class="row p-2">
+                <div class="col-sm-7 mb-2">
+                    <form method="post" asp-page-handler="Position">
+                        <button class="btn btn-primary btn-sm" >
+                            <i class="ti-upload"></i>&nbsp; Update Positions
+                        </button>
+                    </form>
+                </div>
+                <div class="col-sm-5">
+                    <form method="post" asp-page-handler="Search">
+                        <div class="input-group mb-2">
+                            <select class="form-control form-control-sm" name="subjectId" required asp-items="Model.Subjects">
+                                <option selected disabled>select subject</option>
+                            </select>
+                            <span class="input-group-prepend">
+                                <button class="btn btn-success btn-sm"><i class="fas fa-search"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"].
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+                </div>
+            }
+
+        </div>
+        @if(Model.DataTrue>0)
+        {
+            <table class="table table-sm table-responsive table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Full Name</th>
+                        <th>Student Reg. No.</th>
+                        <th>Term</th>
+                        <th>Session/Year</th>
+                        <th>Class</th>
+                        <th>Sub-Class</th>
+                        <th>Subject</th>
+                        <th>Total</th>
+                        <th>Position</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.ResultTables.OrderByDescending(m=>m.Total))
+                    {
+                        sn++;
+                        <tr>
+                            <td>@sn</td>
+                            <td>@item.Termregistration.StudentsData.SurName @item.Termregistration.StudentsData.OtherName @item.Termregistration.StudentsData.FirstName</td>
+                            <td>@item.Termregistration.StudentsData.StudentRegNo</td>
+                            <td>@item.Termregistration.Term</td>
+                            <td>@item.Termregistration.SessionYear.Name</td>
+                            <td>@item.Termregistration.Schoolclasses.Name</td>
+                            <td>@item.Termregistration.SubClasses.Name</td>
+                            <td>@item.Subjects.Name</td>
+                            <td>@item.Total</td>
+                            <td>@item.Position</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+@* public IEnumerable<SelectListItem>? SessionYearz { get; set; } *@

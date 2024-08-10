@@ -1,0 +1,142 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Appsettings.IndexModel
+@{
+    ViewData["Title"] = "Settings Class";
+    var _checked = "";
+    if (User.IsInRole(SD.Role_Admin))
+    {
+        if (Model.SettingsClass != null)
+        {
+            if (Model.SettingsClass.CanPrintResult)
+            {
+                _checked = "checked";
+            }
+        }
+    }
+}
+<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+<link href="~/assets/libs/switchery/switchery.min.css" rel="stylesheet" />
+<div class="page-content">
+    <div class="d-flex justify-content-between">
+        <div class="badge bg-dark"><h4 class="text-white">Make Class Settings</h4></div>
+        <div>
+            <a class="btn btn-info btn-sm" asp-page="/Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+        </div>
+    </div>
+    <div class="card mt-3">
+        <div class="card-body">
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success mt-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"].
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger mt-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"].
+                </div>
+            }
+            <form method="post">
+                <div class="row mt-3">
+                    <div class="col-md-6 row mb-3">
+                        <strong class="col-md-4">Term</strong>
+                        <div class="col-md-8">
+                            <select asp-for="CTSSClass.Term" class="form-control form-control-sm">
+                                <option value="" disabled selected>---Select Term---</option>
+                                <option value="First">First</option>
+                                <option value="Second">Second</option>
+                                <option value="Third">Third</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Term" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 row mb-3">
+                        <strong class="col-md-4" for="useremail">Year/Session</strong>
+                        <div class="col-md-8">
+                            <select class="form-control form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                                <option value="" disabled selected>---Select Session/Year---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.SessionYear" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 row mb-3">
+                        <strong class="col-md-4" for="subject">Class</strong>
+                        <div class="col-md-8">
+                            <select class="form-control form-control-sm " asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class">
+                                <option value="" disabled selected>---Select Class---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Classes" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 row mb-3">
+                        <strong class="col-md-4">Sub Class</strong>
+                        <div class="col-md-8">
+                            <select asp-for="CTSSClass.Subclass" class="form-control form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
+                                <option value="" disabled selected>---Select Sub-Class---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Subclass" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success"> <l class="fas fa-tools"></l> &nbsp; Save Settings</button>
+                            <input type="hidden" id="idz" value="@Model.idz" />
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="dropdown-divider"></div>
+                    @if (User.IsInRole(SD.Role_Admin))
+                    {
+                        <div class="row mt-3">
+                            <div class="col-md-4 row mt-lg-4">
+                                <strong class="col-9">Print result without pay</strong>
+                                <div class="col-2" title="@Model.Message">
+                                    <input type="checkbox" id="notifyOnCompletion" name="notifyOnCompletion" data-plugin="switchery" data-color="rgba(137, 219, 81, 0.95)" data-size="small"
+                                           data-jack-color="rgba(7, 158, 28, 0.95)" data-jack-secondary-color="rgba(247, 28, 8, 0.95)" data-secondary-color="rgba(226, 235, 18, 0.95)" title="@Model.Message" @_checked />
+                                </div>
+                            </div>
+                            <div class="col-md-4 row mb-3">
+                                <div class="col-md-12">
+                                    <strong class="col-md-4">Principal's Signature</strong>
+                                    <input type="file" id="fileInputHead" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-md-4 row mb-3">
+                                <div class="col-md-12">
+                                    <strong class="col-md-4">Cashier/Accountant Signature</strong>
+                                    <input type="file" id="fileInputAccount" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        @* <div class="form-group col-md-6 row">
+                            <label for="example-text-input" class="col-md-4 col-form-label">Principal's Name</label>
+                            <div class="col-md-8">
+                                <input class="form-control" type="text" id="example-text-input">
+                            </div>
+                        </div> *@
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/assets/libs/switchery/switchery.min.js"></script>
+    <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    <script src="~/js/settings.min.js"></script>
+    <script>
+        jQuery(document).ready(function () {
+
+            // Switchery
+            var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
+            $('[data-plugin="switchery"]').each(function (idx, obj) {
+                new Switchery($(this)[0], $(this).data());
+            });
+        });
+    </script>
+}

@@ -1,0 +1,209 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Compute_Result.IndexModel
+@{
+    ViewData["Title"] = "Result Computation Page";
+}
+<link href="/assets/libs/RWD-Table-Patterns/css/rwd-table.min.css" rel="stylesheet" type="text/css" />
+<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+
+<link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6 mt-1  d-flex justify-content-center">
+                    <div class="btn-group btn-group" role="group" aria-label="result">
+                        <a asp-page="Add-Result" class="btn btn-outline-info">
+                            <i class="fas fa-plus"></i>&nbsp;
+                            Add Result</a>
+                        <button type="button" class="btn btn-outline-primary btn-sm waves-effect waves-light" data-toggle="modal" data-target=".uploadexcelfile">
+                            <i class="fas fa-file-upload"></i>&nbsp; Upload Excel File
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm waves-effect waves-light" data-toggle="modal" data-target=".publishresultnow">
+                            <i class="fas fa-broadcast-tower"></i>&nbsp; Publish Result
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex justify-content-center mt-1">
+                    <div class="btn-group btn-group" role="group" aria-label="makeup">
+                        <a asp-page="Position-Class" class="btn btn-outline-success @Model.Disabled">Position in Class</a>
+                        <a asp-page="Subjects-Position" class="btn btn-outline-warning @Model.Disabled">Position in Subject</a>
+                        <a asp-page="General-Class-Info/Index" class="btn btn-outline-dark">General Info</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row p-2">
+                <div class="input-group col-sm-8">
+                    <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Term" disabled />
+                    <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Sessionyear" />
+                    <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Classes" />
+                    <input type="text" class="form-control form-control-sm" readonly asp-for="settingNames.Subclass" />
+                </div>
+                <div class="col-sm-4">
+                    <div class="row">
+                        @if(Model._generalIn)
+                        {
+                            <div class="badge text-white bg-success ml-auto p-2 col-8"><span><i class="ti-check-box"></i> Class General Information Added</span></div> 
+                        }
+                        else{
+                            <div class="badge text-white bg-danger ml-auto p-2"><span><i class="fas fa-exclamation-triangle"></i> Class General Information Not Added</span></div>
+                        }
+                        <a asp-page="General-Class-Info/Attendance" class="btn btn-info btn-sm col-4">Student Attend.</a>
+                    </div>
+                </div>
+            </div>
+            
+            
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"].
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+                </div>
+            }
+        </div>
+        <div class="card-body">
+            <table id="tech-companies-1" class="table table-striped table-sm table-hover">
+                <caption>Class Computation List</caption>
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Fullname</th>
+                        <th>Student Reg.</th>
+                        <th>Term</th>
+                        <th>Session/Year</th>
+                        <th>Class</th>
+                        <th>Sub-Class</th>
+                        <th>Result</th>
+                        <th>Attend.</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade uploadexcelfile" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0" id="mySmallModalLabel">UPLOAD EXCEL RESULT FILE</h5>
+            </div>
+            <form method="post" asp-page-handler="Search" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="form-group mb-2">
+                        <label for="username">Term</label>
+                        <select asp-for="CTSSClass.Term" class="form-control form-control-sm">
+                            <option value="" disabled selected>---Select Term---</option>
+                            <option value="First">First</option>
+                            <option value="Second">Second</option>
+                            <option value="Third">Third</option>
+                        </select>
+                        <span asp-validation-for="CTSSClass.Term" class="text-white field-validation-valid badge badge-danger"></span>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="useremail">Session/Year</label>
+                        <select class="form-control form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                            <option value="" disabled selected>---Select Session/Year---</option>
+                        </select>
+                        <span asp-validation-for="CTSSClass.SessionYear" class="text-white field-validation-valid badge badge-danger"></span>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Class</label>
+                        <select class="form-control form-control-sm " asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class">
+                            <option value="" disabled selected>---Select Class---</option>
+                        </select>
+                        <span asp-validation-for="CTSSClass.Classes" class="text-white field-validation-valid badge badge-danger"></span>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Sub-Class</label>
+                        <select asp-for="CTSSClass.Subclass" class="form-control form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
+                            <option value="" disabled selected>---Select Sub-Class---</option>
+                        </select>
+                        <span asp-validation-for="CTSSClass.Subclass" class="text-white field-validation-valid badge badge-danger"></span>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>Select Excel File</label>
+                        <input type="file" name="excelfile" data-val="true" data-val-required="Select class excel file." required class="form-control form-control-sm" placeholder="Excel File" />
+                        <span class="text-white field-validation-valid badge badge-danger" data-valmsg-for="excelfile" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger  btn-sm" data-dismiss="modal" aria-label="Close">
+                        <i aria-hidden="true" class="">&times;</i>&nbsp; Close
+                    </button>
+                    <button type="submit" class="btn btn-success btn-sm"><i class="mdi mdi-file-upload-outline">
+                    </i>&nbsp;Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade publishresultnow" tabindex="-1" role="dialog" aria-labelledby="publishresult" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title mt-0" id="publishresult">PUBLISH RESULT TERM RESULT</h5>
+            </div>
+            <form >
+                <div class="modal-body">
+                    <div class="form-group mb-2">
+                        <label for="term">Term</label>
+                        <select id="theterm" required class="form-control form-control-sm">
+                            <option value="" disabled selected>---Select Term---</option>
+                            <option value="First">First</option>
+                            <option value="Second">Second</option>
+                            <option value="Third">Third</option>
+                        </select>
+                        <span for="term" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="thesession">Session/Year</label>
+                        <select class="form-control form-control-sm" required id="thesession" asp-items="Model.ViewSelectModel.SessionYearz">
+                            <option value="" disabled selected>---Select Session/Year---</option>
+                        </select>
+                        <span for="thesession" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger  btn-sm" data-dismiss="modal" aria-label="Close">
+                        <i aria-hidden="true" class="">&times;</i>&nbsp;Close
+                    </button>
+                    <button type="button" id="btnpublish" class="btn btn-success  btn-sm">
+                        <i class="mdi mdi-file-upload-outline">
+                        </i>&nbsp; Publish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="/assets/libs/RWD-Table-Patterns/js/rwd-table.min.js"></script>
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    <script src="~/js/computeresult.js" asp-append-version="true"></script>
+    <script>
+        $(function () { $(".table-responsive").responsiveTable({ addDisplayAllBtn: "btn btn-secondary btn-sm" }) });
+    </script>
+}
