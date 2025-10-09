@@ -10,7 +10,7 @@ using TheAgooProjectModel.ViewModels;
 
 namespace TheAgooProjectWeb.Pages.Portal
 {
-    [Authorize]
+    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer}")]
     public class Annual_MasterModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
@@ -35,82 +35,89 @@ namespace TheAgooProjectWeb.Pages.Portal
         }
         public IActionResult OnPost()
         {
-            getViewSelect();
-            if (CTSSClass.Classes>0 && CTSSClass.SessionYear>0 && CTSSClass.Subclass>0)
+            try
             {
-                Results = dbContext.ResultTable.Include(k => k.Subjects).Include(k => k.Termregistration.StudentsData).Include(k => k.Termregistration.SessionYear).Include(k => k.Termregistration.SubClasses).Include(k => k.Termregistration.Schoolclasses).Where(s => s.Termregistration.SessionYearId == CTSSClass.SessionYear && s.Termregistration.ClassesInSchoolId == CTSSClass.Classes && s.Termregistration.SubClassId == CTSSClass.Subclass).ToList();
-
-                if (Results.Count()<1)
+                getViewSelect();
+                if (CTSSClass.Classes > 0 && CTSSClass.SessionYear > 0 && CTSSClass.Subclass > 0)
                 {
-                    TempData["error"] = "Result might not be ready for the select information or wrong combinations, check and try again";
+                    Results = dbContext.ResultTable.Include(k => k.Subjects).Include(k => k.Termregistration.StudentsData).Include(k => k.Termregistration.SessionYear).Include(k => k.Termregistration.SubClasses).Include(k => k.Termregistration.Schoolclasses).Where(s => s.Termregistration.SessionYearId == CTSSClass.SessionYear && s.Termregistration.ClassesInSchoolId == CTSSClass.Classes && s.Termregistration.SubClassId == CTSSClass.Subclass).ToList();
+
+                    if (Results.Count() < 1)
+                    {
+                        TempData["error"] = "Result might not be ready for the select information or wrong combinations, check and try again";
+                        _subjects = new List<Subectx>();
+                        return Page();
+                    }
                     _subjects = new List<Subectx>();
-                    return Page();
-                }
-                _subjects = new List<Subectx>();
-                foreach (var item in Results.GroupBy(j=>j.SubjectId))
-                {
-                    var subject = new Subectx
+                    foreach (var item in Results.GroupBy(j => j.SubjectId))
                     {
-                        Subid = item.FirstOrDefault().SubjectId,
-                        SubjectName = item.FirstOrDefault().Subjects.Name,
-                        First = "First",
-                        Second = "Second",
-                        Third = "Third"
-                    };
-                    _subjects.Add(subject);
-                }
-                //GET ANNUAL POSTION BY CALCULATING ALL THE STUDENTS TOTAL SCORES AND RANKING
-                _studentscore = new List<StudentScore>();
-                foreach (var item in Results.GroupBy(j => j.Termregistration.StudentId))
-                {
-                    var student = new StudentScore
-                    {
-                        StudId = item.FirstOrDefault().Termregistration.StudentId
-                    };
-                    int allsubject = item.GroupBy(j => j.SubjectId).Count();
-                    
-                    foreach (var item1 in item)
-                    {
-						student.TotalScore += (double)(item1?.Total ?? 0);
-					}
-                    student.Average = Math.Round((student.TotalScore/item.Count()), 2);
-                    _studentscore.Add(student);
-                }
-                _studentscore = _studentscore.Rank(p => p.Average, (p, rank) => new StudentScore {Average = p.Average, TotalScore = p.TotalScore, StudId = p.StudId, Rank = rank }).ToList();
-                //GET EACH SUBJECT TERMLY SCORES
-                _resultSummary = new List<ResultSummary>();
-                foreach (var item in Results.GroupBy(j => j.Termregistration.Term))
-                {
-                    foreach (var item1 in item.GroupBy(k=>k.SubjectId))
-                    {
-                        var result = new ResultSummary();
-                        foreach (var item2 in item1)
+                        var subject = new Subectx
                         {
-							result.TotalScore += (double)(item2?.Total ?? 0);
-                        }
-                        result.Term = item1.FirstOrDefault().Termregistration.Term;
-                        result.SubId = item1.FirstOrDefault().SubjectId;
-                        _resultSummary.Add(result);
+                            Subid = item.FirstOrDefault().SubjectId,
+                            SubjectName = item.FirstOrDefault().Subjects.Name,
+                            First = "First",
+                            Second = "Second",
+                            Third = "Third"
+                        };
+                        _subjects.Add(subject);
                     }
-                }
+                    //GET ANNUAL POSTION BY CALCULATING ALL THE STUDENTS TOTAL SCORES AND RANKING
+                    _studentscore = new List<StudentScore>();
+                    foreach (var item in Results.GroupBy(j => j.Termregistration.StudentId))
+                    {
+                        var student = new StudentScore
+                        {
+                            StudId = item.FirstOrDefault().Termregistration.StudentId
+                        };
+                        int allsubject = item.GroupBy(j => j.SubjectId).Count();
 
-                //ANNUAL STUDENT HIHEST & LOWEST
-                _resultSummary2 = new List<ResultSummary>();
-                foreach (var item in Results.GroupBy(j => j.SubjectId))
-                {
-                    foreach (var item1 in item.GroupBy(k => k.Termregistration.StudentId))
-                    {
-                        var result = new ResultSummary();
-                        foreach (var item2 in item1)
+                        foreach (var item1 in item)
                         {
-							result.TotalScore += (double)(item2?.Total ?? 0);
-							//result.TotalScore += (double)item2.Total;
+                            student.TotalScore += (double)(item1?.Total ?? 0);
                         }
-                        result.Term = item1.FirstOrDefault().Termregistration.Term;
-                        result.SubId = item1.FirstOrDefault().SubjectId;
-                        _resultSummary2.Add(result);
+                        student.Average = Math.Round((student.TotalScore / item.Count()), 2);
+                        _studentscore.Add(student);
+                    }
+                    _studentscore = _studentscore.Rank(p => p.Average, (p, rank) => new StudentScore { Average = p.Average, TotalScore = p.TotalScore, StudId = p.StudId, Rank = rank }).ToList();
+                    //GET EACH SUBJECT TERMLY SCORES
+                    _resultSummary = new List<ResultSummary>();
+                    foreach (var item in Results.GroupBy(j => j.Termregistration.Term))
+                    {
+                        foreach (var item1 in item.GroupBy(k => k.SubjectId))
+                        {
+                            var result = new ResultSummary();
+                            foreach (var item2 in item1)
+                            {
+                                result.TotalScore += (double)(item2?.Total ?? 0);
+                            }
+                            result.Term = item1.FirstOrDefault().Termregistration.Term;
+                            result.SubId = item1.FirstOrDefault().SubjectId;
+                            _resultSummary.Add(result);
+                        }
+                    }
+
+                    //ANNUAL STUDENT HIHEST & LOWEST
+                    _resultSummary2 = new List<ResultSummary>();
+                    foreach (var item in Results.GroupBy(j => j.SubjectId))
+                    {
+                        foreach (var item1 in item.GroupBy(k => k.Termregistration.StudentId))
+                        {
+                            var result = new ResultSummary();
+                            foreach (var item2 in item1)
+                            {
+                                result.TotalScore += (double)(item2?.Total ?? 0);
+                                //result.TotalScore += (double)item2.Total;
+                            }
+                            result.Term = item1.FirstOrDefault().Termregistration.Term;
+                            result.SubId = item1.FirstOrDefault().SubjectId;
+                            _resultSummary2.Add(result);
+                        }
                     }
                 }
+            }
+            catch(Exception ex)
+            {
+                TempData["error"] = "Sorry, we couldn’t complete this request at this time. Please try again later.";
             }
             return Page();
         }

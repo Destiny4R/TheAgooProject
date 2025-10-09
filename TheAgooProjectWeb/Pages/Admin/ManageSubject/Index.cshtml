@@ -3,16 +3,26 @@
 @{
     ViewData["Title"] = "Subject List";
 }
-<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-<link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+@section AddToHead{
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/lib/jquery-multiselect/jquery.multiselect.css" rel="stylesheet" />
+}
+
 <div class="page-content">
     <div class="card">
         <div class="card-header">
             <div class="d-flex justify-content-between">
                 <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">List</strong></div>
-                <div><a asp-page="Upsert" class="btn btn-dark"><i class="fas fa-plus"></i>&nbsp; Add subject</a></div>
+                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                    <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#subjectsModal">
+                        Register Subjects
+                    </button>
+                    <a asp-page="Upsert" class="btn btn-outline-dark"><i class="fas fa-plus"></i>&nbsp; Add subject</a>
+                </div>
+                @* <div><a asp-page="Upsert" class="btn btn-dark"><i class="fas fa-plus"></i>&nbsp; Add subject</a></div> *@
             </div>
             @if (TempData["success"] != null)
             {
@@ -25,7 +35,7 @@
             }
         </div>
         <div class="card-body">
-            <table id="classtable" class="table table-sm table-boredered table-hover table-stripped">
+            <table id="classtable" class="table table-sm table-boredered table-hover table-stripped" width="100%">
                 <thead>
                     <tr>
                         <th>S/N</th>
@@ -38,6 +48,33 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="subjectsModal" tabindex="-1" aria-labelledby="subjectsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title fs-5 h2" id="subjectsModalLabel">Subject Registration</div>
+                <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">Close</button>
+            </div>
+            <form method="post">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="validationCustom04" class="form-label">Select Subjects</label>
+                            <select class="form-select active 2col" required multiple name="subjects[]" asp-items="Model.ViewSelectModel.Subjects">
+                                @* <option selected disabled value="">Choose...</option> *@
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
     <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
@@ -45,5 +82,20 @@
     <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
     <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
     <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    <script src="~/lib/jquery-multiselect/jquery.multiselect.js"></script>
     <script src="~/js/subjects.js"></script>
+    <script>
+        $(function () {
+            $('select[multiple].active.2col').multiselect({
+                columns: 2,
+                placeholder: 'Select Subjects',
+                search: true,
+                searchOptions: {
+                    'default': 'Search Subject'
+                },
+                selectAll: true
+            });
+
+        });
+    </script>
 }

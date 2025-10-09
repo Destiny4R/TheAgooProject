@@ -1,0 +1,72 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.WebsiteManager.WebGallery.UpsertModel
+@{
+    ViewData["Title"] = Model.GalleryTable?.Id > 0 ? "Update Website Galleries" : "Add New Website Photos";
+    var btnname = Model.GalleryTable?.Id > 0 ? "Update" : "Add Photos";
+    string manage = Model.GalleryTable?.Id > 0 ? "" : "required";
+}
+@section AddToHead
+{
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge bg-dark"><h4 class="text-white">@ViewData["Title"]</h4></div>
+
+                <div class="">
+                    <a class="btn btn-info btn-sm" asp-page="Index"><i class="fas fa-arrow-left"></i>&ensp; Back</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form class="row g-3 mb-3" id="formgallery">
+                <div class="col-md-12 mt-3">
+                    <label asp-for="GalleryTable.Message" class="form-label">Caption</label>
+                    <input asp-for="GalleryTable.Message" class="form-control " required />
+                    <span asp-validation-for="GalleryTable.Message" class="text-white bg-danger"></span>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label asp-for="GalleryTable.PostedBy" class="form-label">Posted By</label>
+                    <input asp-for="GalleryTable.PostedBy" class="form-control " required />
+                    <span asp-validation-for="GalleryTable.PostedBy" class="text-white bg-danger"></span>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label class="form-label">Pictures</label>
+                    <input type="file" multiple name="files" class="form-control" @(manage) />
+                </div>
+                <div class="col-12 mt-3">
+                    <input type="hidden" asp-for="GalleryTable.Id" />
+                    <button id="senddata" class="btn btn-primary" type="submit">@(btnname)</button>
+                </div>
+            </form>
+            @if (Model.GalleryTable?.Imagestable.Count>0)
+            {
+                 <div class="row">
+                    @foreach (var image in Model.GalleryTable.Imagestable)
+                    {
+                        <div class="col-sm-4" id="gallery_@(image.Id)">
+                            <div class="card">
+                                <div class="card-header">
+                                    <button data-id="@(image.Id)" title="Delete image" class="btn btn-sm btn-danger" onclick="photoGalleryRemover(this)"><i class="far fa-trash-alt"></i></button>
+                                </div>
+                                <div class="card-body">
+                                    <img src="https://localhost:44327/@(image.Name)" width="100%" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                 </div>
+
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    <script src="~/js/photogallerypost.js"></script>
+}

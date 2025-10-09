@@ -1,0 +1,115 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Admin.Fees_Manager.other_pay.add_payModel
+@{
+    ViewData["Title"] = "Make Other Payment";
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge bg-dark"><h4 class="text-white">Make Other Payment</h4></div>
+
+                <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                    <a class="btn btn-outline-primary" asp-page="Index"><i class="fas fa-arrow-left h4"></i>&ensp; Back</a>
+                </div>
+            </div>
+            <div class="mt-3">
+                <form method="post" asp-page-handler="Search">
+                    <div class="row mt-2">
+                        <div class="input-group col-sm-3">
+                            <select asp-for="CTSSClass.Term" class="form-control" required>
+                                <option value="" disabled selected>---Select Term---</option>
+                                <option value="First">First</option>
+                                <option value="Second">Second</option>
+                                <option value="Third">Third</option>
+                            </select>
+                            <select class="form-control" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz" required>
+                                <option value="" disabled selected>---Select Session/Year---</option>
+                            </select>
+                        </div>
+                        <div class="input-group col-sm-3">
+                            <select class="form-control" asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class">
+                                <option value="" disabled selected>---Select Class---</option>
+                            </select>
+                            <select asp-for="CTSSClass.Subclass" class="form-control" asp-items="Model.ViewSelectModel.SubClass">
+                                <option value="" disabled selected>---Select Sub-Class---</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="OtherPayId" asp-items="Model.OtherPay" required>
+                                <option value="" disabled selected>---Select payment for---</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="input-group mb-3">
+                                <input type="search" name="search" required maxlength="30" class="form-control" placeholder="Registration Number" >
+                                <button class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success mt-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"]
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger mt-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"]
+                </div>
+            }
+        </div>
+        <div class="card-body">
+            @if (Model.IsSearch>0)
+            {
+                <form class="g-3" method="post" asp-page-handler="Payment">
+                    <div class=" row">
+                        <div class="input-group mb-3 col-sm-6">
+                            <span class="input-group-text form-control" id="basic-addon3">Full Name:</span>
+                            <span class="input-group-text form-control" id="basic-addon3">@Model.modelData.FullName</span>
+                        </div>
+                        <div class="input-group mb-3 col-sm-6">
+                            <span class="input-group-text form-control" id="basic-addon3">Student Reg. No.:</span>
+                            <span class="input-group-text form-control" id="basic-addon3">@Model.modelData.StudentReg</span>
+                        </div>
+                    </div>
+                    <div class=" row">
+                        <div class="input-group mb-3 col-sm-12">
+                            <span class="input-group-text form-control">@Model.modelData.SessionYear</span>
+                            <span class="input-group-text form-control">@Model.modelData.Term</span>
+                            <span class="input-group-text form-control">@Model.modelData.Classes</span>
+                            <span class="input-group-text form-control">@Model.modelData.Subclass</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-3">
+                            <label class="form-label">Other Type</label>
+                            <input class="form-control" asp-for="modelData.OtherPayType" readonly />
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label for="inputPassword4" class="form-label">Other Amount To Pay</label>
+                            <input readonly class="form-control" value="@Model.modelData.Amount" />
+                        </div>
+                        <div class="col-sm-6 mt-3">
+                            <label for="inputAddress" class="form-label">Anount Paying</label>
+                            <input class="form-control" asp-for="modelData.Amount" readonly />
+                        </div>
+                        <div class="">
+                            <input type="hidden" asp-for="modelData.TermRegId">
+                            <input type="hidden" asp-for="modelData.SpecialpayId">
+                        </div>
+                        <div class="col-12 mt-3">
+                            <button type="submit" class="btn btn-primary">Confirm Payment</button>
+                        </div>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+</div>

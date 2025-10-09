@@ -1,0 +1,107 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.ultilities.Fees_Payment_InvoiceModel
+@{
+    Layout = null;
+    ViewData["Title"] = Model.invoice.Termregistrations.StudentsData.SurName + " " + Model.invoice.Termregistrations.StudentsData.OtherName;
+}
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>@ViewData["Title"] - Aggo College Makurdi Invoice</title>
+
+
+    <link href="~/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-5">
+                        <div class="receipt-right">
+                            <h4>Aggo Collge Makurdi</h4>
+                            <div><i class="fa fa-phone"></i> 08066720317 </div>
+                            <div><i class="fa fa-envelope"></i> info@aggocollegemkd.com.ng</div>
+                            <div><i class="fa fa-location-arrow"></i> Abu King Shuruwa Road, Makurdi, Benue State Nigeria </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <img class="img-responsive" alt="iamgurdeeposahan" src="/appicons/logo-one.jpg" width="100">
+                    </div>
+                    <div class="col-4">
+                        <div class="">
+                            <h5><strong>@(Model.invoice.Termregistrations.StudentsData.SurName + " " + Model.invoice.Termregistrations.StudentsData.OtherName + " " + Model.invoice.Termregistrations.StudentsData.FirstName)</strong> </h5>
+                            <div><b>Reg. No:</b> @(Model.invoice.Termregistrations.StudentsData.StudentRegNo)</div>
+                            <div><b>Term:</b> @(Model.invoice.Termregistrations.Term)</div>
+                            <div><b>Class:</b> @(Model.invoice.Termregistrations.Schoolclasses.Name + " - " + Model.invoice.Termregistrations.SubClasses.Name)</div>
+                            <div><b>Session/Year:</b> @(Model.invoice.Termregistrations.SessionYear.Name)</div>
+                        </div>
+                    </div>
+                </div>
+                <hr style="border:solid, 10px; border-color:black;" />
+                <div class="text-center text-uppercase mb-3 d-flex justify-content-between">
+                    <h3>Invoice #@(Model.invoice.ReceiptNo)</h3>
+                    <div>@(Model.invoice.CreateDate)</div>
+                </div>
+                <div class="above">
+                    <div class="form-inline row">
+                        <h4 class="col-12 text-center text-uppercase"><strong>School Fees Payment</strong></h4>
+                        <hr />
+                    </div>
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>
+                                <strong>Amount in Figure:</strong>
+                                <div>
+                                    @(SD.ToNaira(Model.invoice.Paid))
+                                </div>
+                            </td>
+                            <td colspan="2">
+                                <strong>Amount in Words:</strong>
+                                <div>
+                                    @(SD.MoneyToWords(Model.invoice.Paid))
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Balance:</strong>
+                                <div>
+                                    @(SD.ToNaira(Model.invoice.Balance))
+                                </div>
+                            </td>
+                            <td colspan="2">
+                                <strong>Fee:</strong>
+                                <div>
+                                    @(SD.ToNaira(Model.invoice.TermlyFees.Amount))
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Cashier:</strong>
+                                <div>
+                                    @(Model.Cashier)
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <img src="@(Model.signature)" width="60" />
+                                </div>
+                            </td>
+                            <td>
+                                <strong>Date:</strong>
+                                <div>@(DateTime.Now)</div>                                
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

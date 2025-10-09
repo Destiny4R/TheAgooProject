@@ -2,6 +2,20 @@
 var datatable;
 var classbtn = ""; var classfa = "";
 $(document).ready(function () {
+    $('#checkAll').on('change', function () {
+        $('.check-class').prop('checked', this.checked);
+        if (!this.checked) {
+            var el = $('#checkAll').get(0);
+            if (el && el.checked && ('indeterminate' in el)) {
+                // Set visual state of "Select all" control
+                // as 'indeterminate'
+                el.indeterminate = true;
+            }
+        }
+    });
+    let no = 0;
+
+
     datatable = $("#termregtable1").DataTable({
         "processing": true, "serverSide": true,
         "filter": true,
@@ -17,6 +31,14 @@ $(document).ready(function () {
             {
                 "data": "id", render: function (data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            },
+            {
+                "data": null, "render": function (data, type, full) {
+                    //<input type="checkbox" class="check-class" name="datas[${no}].ischeck" id="checkAll_${no}" value="false" />
+                    return `
+                        <input type="checkbox" class="check-class" name="datas[${no}].ischeck" id="checkAll_${no}" value="true">
+                    `;
                 }
             },
             {
@@ -39,11 +61,13 @@ $(document).ready(function () {
             },
             {
                 "data": null, "render": function (data, type, full) {
+                    no++;
                     return `
                             <div class="d-flex justify-content-center">
                              <a class=" btn-secondary btn-sm" href="/Admin/TermRegistration/Edit?id=${data.id}" style="cursor:pointer" title="Edit">
                                     <i class="fa fa-edit"></i>
                                 </a> &nbsp;
+                                <input type="hidden" name="datas[${no - 1}].id"  value="${data.id}" hidden />
                                 <a onclick=removeStudent("/api/ManageTermReg?id=${data.id}") class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
                                        <i class="fa fa-trash"></i>
                                    </a>
@@ -184,6 +208,52 @@ function manage(url) {
         }
     });
 }
+
+document.getElementById('thecheckhouse').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the default form submission
+    var checkedCheckboxes = document.querySelectorAll('#termregtable1 tbody input[type="checkbox"]:checked');
+
+    if (checkedCheckboxes.length === 0) {
+        return Swal.fire({
+            icon: 'error',
+            //title: 'Oops...',
+            text: 'Please check one or more rows',
+            footer: 'NO DATA CHECKED'
+        });
+    }
+
+    var rc = checkedCheckboxes.length > 1 ? "recocrds" : "recocrd";
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+
+    swalWithBootstrapButtons.fire({
+        title: `Are you sure want to delete ${checkedCheckboxes.length} ${rc}?`,
+        text: "You won't be able to recover this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            blockcallback();
+            // If the user confirms, submit the form
+            this.submit();
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire(
+                'Cancelled',
+                'Student(s) NOT Deleted',
+                'error'
+            );
+        }
+    });
+});
+
 
 function blockcallback() {
     $.blockUI({

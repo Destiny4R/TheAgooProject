@@ -10,11 +10,12 @@ using TheAgooProjectModel.ViewModels;
 
 namespace TheAgooProjectWeb.Pages.Compute_Result
 {
-    [Authorize]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer}")]
     public class Edit_ResultModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
 
+        public bool classtype { get; set; }
         public ViewSelectModel ViewSelectModel { get; set; }
         [BindProperty]
         public ResultHolderVM result { get; set; }
@@ -28,7 +29,7 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
             if (id > 0)
             {
                 //result = dbContext.ResultTable.Include(k => k.Termregistration.SessionYear).Include(k => k.Termregistration.SubClasses).Include(k => k.Termregistration.Schoolclasses).Include(k => k.Termregistration.StudentsData).Include(k => k.Subjects).FirstOrDefault(i => i.Id == id);
-                result = dbContext.ResultTable.Include(k=>k.Termregistration.StudentsData).Where(k=>k.Id==id).Select(k => new ResultHolderVM { 
+                result = dbContext.ResultTable.Include(k=>k.Termregistration.StudentsData).Include(k => k.Termregistration.Schoolclasses).Where(k=>k.Id==id).Select(k => new ResultHolderVM { 
                     Assignment = k.Assignment,
                     TermRegId = k.TermRegId,
                     Test = k.Test,
@@ -43,6 +44,8 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
                     Status = k.Status,
                     Termregistration = k.Termregistration
                 }).FirstOrDefault();
+
+                
                 if (result!=null)
                 {
                     if (!result.Status)
@@ -50,6 +53,7 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
                         TempData["error"] = "Result must be uploaded or added through excel file or via the adding page before editting";
                         return RedirectToPage("Detail-Result", (new { id = result.TermRegId }));
                     }
+                    classtype = result.Termregistration.Schoolclasses.Elective;
                     return Page();
                 }
             }

@@ -7,9 +7,11 @@ using TheAgooProjectModel;
 using TheAgooProjectModel.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TheAgooProjectWeb.Pages.Appsettings
 {
+    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer},{SD.Role_Accountant}")]
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
@@ -119,7 +121,7 @@ namespace TheAgooProjectWeb.Pages.Appsettings
                     Text = k.Name,
                     Value = k.Id.ToString()
                 }),
-                SessionYearz = dbContext.SessionYears.Select(k => new SelectListItem
+                SessionYearz = dbContext.SessionYears.OrderByDescending (k => k.Name).Select(k => new SelectListItem
                 {
                     Text = k.Name,
                     Value = k.Id.ToString()

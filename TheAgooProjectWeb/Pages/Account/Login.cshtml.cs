@@ -58,6 +58,11 @@ namespace TheAgooProjectWeb.Pages.Account
                 var user = await userManager.FindByNameAsync(Input.Username);
                 if (user != null)
                 {
+                    if (!user.Active)
+                    {
+                        ModelState.AddModelError(string.Empty, "User account has been disabled from accessing the system. Please contact your system administrator.");
+                        return Page();
+                    }
                     var result = await signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, false);
                     if (result.Succeeded)
                     {

@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
 using TheAgooProjectModel;
 using static TheAgooProjectWeb.Pages.Compute_Result.IndexModel;
 
 namespace TheAgooProjectWeb.Pages.Compute_Result
 {
-    [Authorize]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer}")]
     public class Subjects_PositionModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;

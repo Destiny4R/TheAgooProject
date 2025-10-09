@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
+using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
 using TheAgooProjectModel;
 using TheAgooProjectModel.ViewModels;
@@ -10,6 +12,7 @@ using static TheAgooProjectWeb.Pages.Admin.TermRegistration.RegisterModel;
 
 namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
 {
+    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer}")]
     public class EditModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
@@ -106,7 +109,7 @@ namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
                     Text = k.Name,
                     Value = k.Id.ToString()
                 }),
-                SessionYearz = dbContext.SessionYears.Select(k => new SelectListItem
+                SessionYearz = dbContext.SessionYears.OrderByDescending (k => k.Name).Select(k => new SelectListItem
                 {
                     Text = k.Name,
                     Value = k.Id.ToString()

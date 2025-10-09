@@ -13,6 +13,7 @@ using System.Reflection;
 
 namespace TheAgooProjectWeb.Controllers
 {
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer},{SD.Role_Accountant}")]
     public class apiController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
@@ -81,7 +82,7 @@ namespace TheAgooProjectWeb.Controllers
             var termreg = dbContext.TermRegistrations.Include(k=>k.StudentsData.ApplicationUser).Where(k => k.StudentsData.ApplicationUserId == id).Count();
             if (termreg > 0)
             {
-                return Json(new { success = false, message = "This is student is registered for various terms, remove such before proceeding" });
+                return Json(new { success = false, message = "This is student is registered for various terms, remove such records before proceeding" });
             }
             var obj = await userManager.FindByIdAsync(id);
             if (obj == null)
@@ -120,23 +121,23 @@ namespace TheAgooProjectWeb.Controllers
             var getinfo2 = dbContext.StudentTable.Where(j => j.SessionYearId == id);
             if (getinfo2.Any())
             {
-                return Json(new { success = false, message = "Admission is given under this session/year therefore it can't be deleted" });
+                return Json(new { success = false, message = "Admission is given under this session/year, remove all records before proceeding" });
             }
             var getinfo1 = dbContext.TermRegistrations.Where(j => j.SessionYearId == id);
             if (getinfo1.Any())
             {
-                return Json(new { success = false, message = "Students are registered in the term under this session/year, therefore it can't be deleted" });
+                return Json(new { success = false, message = "Students are registered in the term under this session/year, remove all records before proceeding" });
             }
-            //var getinfo4 = dbContext.TermlyFees.Where(j => j.SessionYearId == id);
-            //if (getinfo4.Any())
-            //{
-            //    return Json(new { success = false, message = "Termly Fees is asigned to this session/year therefore it can't be deleted" });
-            //}
-            //var getinfo3 = dbContext.PTAFees.Where(j => j.SessionYearId == id);
-            //if (getinfo3.Any())
-            //{
-            //    return Json(new { success = false, message = "PTA Fees is asigned to this session/year therefore it can't be deleted" });
-            //}
+            var getinfo4 = dbContext.TermLyFeesPays.Where(j => j.SessionYearId == id);
+            if (getinfo4.Any())
+            {
+                return Json(new { success = false, message = "Termly Fees is asigned to this session/year, remove all records before proceeding" });
+            }
+            var getinfo3 = dbContext.PTAfees.Where(j => j.SessionYearId == id);
+            if (getinfo3.Any())
+            {
+                return Json(new { success = false, message = "PTA Fees is asigned to this session/year, remove all records before proceeding" });
+            }
             var session = dbContext.SessionYears.FirstOrDefault(k => k.Id == id);
             if (session == null)
             {
@@ -154,16 +155,11 @@ namespace TheAgooProjectWeb.Controllers
             {
                 return Json(new { success = false, message = "Students are registered in the term under this Class, therefore it can't be deleted" });
             }
-            //var getinfo4 = dbContext.TermlyFees.Where(j => j.SessionYearId == id);
-            //if (getinfo4.Any())
-            //{
-            //    return Json(new { success = false, message = "Termly Fees is asigned to this session/year therefore it can't be deleted" });
-            //}
-            //var getinfo3 = dbContext.PTAFees.Where(j => j.SessionYearId == id);
-            //if (getinfo3.Any())
-            //{
-            //    return Json(new { success = false, message = "PTA Fees is asigned to this session/year therefore it can't be deleted" });
-            //}
+            var getinfo4 = dbContext.TermLyFeesPays.Where(j => j.ClassesInSchoolId == id);
+            if (getinfo4.Any())
+            {
+                return Json(new { success = false, message = "Termly Fees is asigned to this Class, remove all payments before proceeding" });
+            }
             var _class = dbContext.SchoolClasses.FirstOrDefault(k => k.Id == id);
             if (_class == null)
             {
@@ -179,18 +175,9 @@ namespace TheAgooProjectWeb.Controllers
             var getinfo1 = dbContext.TermRegistrations.Where(j => j.SubClassId == id);
             if (getinfo1.Any())
             {
-                return Json(new { success = false, message = "Students are registered in the term under this Sub-Class, therefore it can't be deleted" });
+                return Json(new { success = false, message = "Students are registered in the term under this Sub-Class, remove all students before proceeding" });
             }
-            //var getinfo4 = dbContext.TermlyFees.Where(j => j.SessionYearId == id);
-            //if (getinfo4.Any())
-            //{
-            //    return Json(new { success = false, message = "Termly Fees is asigned to this session/year therefore it can't be deleted" });
-            //}
-            //var getinfo3 = dbContext.PTAFees.Where(j => j.SessionYearId == id);
-            //if (getinfo3.Any())
-            //{
-            //    return Json(new { success = false, message = "PTA Fees is asigned to this session/year therefore it can't be deleted" });
-            //}
+            
             var _class = dbContext.SubClasses.FirstOrDefault(k => k.Id == id);
             if (_class == null)
             {
@@ -207,18 +194,8 @@ namespace TheAgooProjectWeb.Controllers
             var getinfo1 = dbContext.ResultTable.Where(j => j.SubjectId == id);
             if (getinfo1.Any())
             {
-                return Json(new { success = false, message = "Students are registered in the term under this Subject, therefore it can't be deleted" });
+                return Json(new { success = false, message = "Students are registered in the term under this Subject, remove all students before proceeding" });
             }
-            //var getinfo4 = dbContext.TermlyFees.Where(j => j.SessionYearId == id);
-            //if (getinfo4.Any())
-            //{
-            //    return Json(new { success = false, message = "Termly Fees is asigned to this session/year therefore it can't be deleted" });
-            //}
-            //var getinfo3 = dbContext.PTAFees.Where(j => j.SessionYearId == id);
-            //if (getinfo3.Any())
-            //{
-            //    return Json(new { success = false, message = "PTA Fees is asigned to this session/year therefore it can't be deleted" });
-            //}
             var _class = dbContext.Subjects.FirstOrDefault(k => k.Id == id);
             if (_class == null)
             {
@@ -232,18 +209,23 @@ namespace TheAgooProjectWeb.Controllers
         [HttpDelete]
         public JsonResult ManageTermReg(int id)
         {
+            var additional = dbContext.AdditionalPayments.FirstOrDefault(k => k.TermRegId == id);
+            if (additional != null)
+            {
+                return Json(new { success = false, message = "This student cannot be removed due to having paid some Additional payment for this term." });
+            }
             //CHECK IF HE OR SHE HAS PAID FOR PTA FEES
-            //var studentPTA = dbContext.PTATables.FirstOrDefault(k => k.TermRegId == id);
-            //if (studentPTA != null)
-            //{
-            //    return Json(new { success = false, message = "This student cannot be removed due to having paid PTA fees for this term." });
-            //}
+            var studentPTA = dbContext.PTATables.FirstOrDefault(k => k.TermRegId == id);
+            if (studentPTA != null)
+            {
+                return Json(new { success = false, message = "This student cannot be removed due to having paid PTA fees for this term." });
+            }
             //CHECK IF HE OR SHE HAS PAID TERM SCHOOL FEES
-            //var studentFees = dbContext.Payments.FirstOrDefault(k => k.TermRegId == id);
-            //if (studentFees != null)
-            //{
-            //    return Json(new { success = false, message = "This student cannot be removed due to having paid school fees for this term." });
-            //}
+            var studentFees = dbContext.Payments.FirstOrDefault(k => k.TermRegId == id);
+            if (studentFees != null)
+            {
+                return Json(new { success = false, message = "This student cannot be removed due to having paid school fees for this term." });
+            }
             //CHECK IF HE OR HAS EXAMS RECORD
             var studentResult = dbContext.ResultTable.Where(k => k.TermRegId == id).ToList();
             if (studentResult.Count() > 0)
@@ -258,7 +240,7 @@ namespace TheAgooProjectWeb.Controllers
                 }
                 if (ready > 0)
                 {
-                    return Json(new { success = false, message = "This student cannot be removed due to having term result record and computed." });
+                    return Json(new { success = false, message = "This student cannot be removed due to having term result record computed." });
                 }
                 dbContext.RemoveRange(studentResult);
             }
@@ -278,7 +260,7 @@ namespace TheAgooProjectWeb.Controllers
             dbContext.Remove(student);
             dbContext.SaveChanges();
 
-            return Json(new { success = true, message = "Student Successfully Removed From the Term" });
+            return Json(new { success = true, message = "Student Successfully Removed from the Term" });
         }
         //DeleteSubject
         [HttpDelete]
@@ -294,7 +276,7 @@ namespace TheAgooProjectWeb.Controllers
                 dbContext.Remove(studentResult);
                 dbContext.SaveChanges();
 
-                return Json(new { success = true, message = "Student subject successfully removed from the Term" });
+                return Json(new { success = true, message = "Subject successfully removed from the Term" });
             }
             return Json(new { success = false, message = "We could not identify this record!" });
         }
@@ -524,9 +506,9 @@ namespace TheAgooProjectWeb.Controllers
 
             string extension = Path.GetExtension(dataFileName);
 
-            string[] allowedExtsnions = new string[] { ".jpg", ".png", ".jpeg" };
+            string[] allowedExtensions = new string[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".tiff"};
 
-            if (!allowedExtsnions.Contains(extension.ToLower()))
+            if (!allowedExtensions.Contains(extension.ToLower()))
             {
                 TempData["error"] = "Sorry! This file is not allowed. Please make sure the file has one of these extensions: .jpg or .png.";
                 return Json(new { success = false, message = TempData["error"] });
@@ -601,6 +583,258 @@ namespace TheAgooProjectWeb.Controllers
             {
                 return "";
             }
+        }
+        //Delete TEMLY FEES
+        [HttpDelete]
+        public JsonResult TermlyFeesManager(int id)
+        {
+            //FIRST CHECK IF THE FEES IS IN USE
+            if (id > 0)
+            {
+                var getfeespaid = dbContext.Payments.Where(k => k.TermlyFeesId == id).ToList();
+                if (getfeespaid.Count() > 0)
+                {
+                    return Json(new { success = false, message = "Fees have been recorded under this amount. This is not appropriate. Please remove all fees recorded under it before proceeding." });
+                }
+                var termlyfees = dbContext.TermLyFeesPays.FirstOrDefault(k => k.Id == id);
+                if (termlyfees != null)
+                {
+                    dbContext.Remove(termlyfees);
+                    dbContext.SaveChanges();
+
+                    return Json(new { success = true, message = "Class Termly Fees successfully removed!" });
+                }
+            }
+                return Json(new { success = false, message = "We could not identify this record!" });
+        }
+        //Delete TEMLY FEES
+        [HttpDelete]
+        public JsonResult FeesPaymentManager(int id)
+        {
+            if (id > 0)
+            {
+                var feepay = dbContext.Payments.FirstOrDefault(k => k.Id == id);
+                if (feepay != null)
+                {
+                    var getreport = dbContext.PaymentReports.FirstOrDefault(k => k.TermRegId == feepay.TermRegId);
+                    if (getreport != null)
+                    {
+                        getreport.AccummulatedPay -= feepay.Paid;
+                        if (getreport.AccummulatedPay == 0)
+                        {
+                            dbContext.Remove(getreport);
+                        }
+                        else
+                        {
+                            dbContext.Update(getreport);
+                        }
+                    }
+                    dbContext.Remove(feepay);
+                    dbContext.SaveChanges();
+
+                    return Json(new { success = true, message = "Fees payment successfully deleted!" });
+                }
+            }
+            return Json(new { success = false, message = "We could not identify this record!" });
+        }
+
+        //Delete TEMLY FEES
+        [HttpDelete]
+        public JsonResult ExpendiTypemanager(int id)
+        {
+            //FIRST CHECK IF THE FEES IS IN USE
+            if (id > 0)
+            {
+                var expentype = dbContext.ExpenditureTables.Where(k => k.ExpendId == id).ToList();
+                if (expentype.Any())
+                {
+                    return Json(new { success = false, message = "This expenditure is in use by expenditure table, removing it is not possible" });
+                }
+
+                //var ptaexpen = dbContext.ExpenditureTables.Where(k => k.ExpendId == id).ToList();
+                //if (expentype.Any())
+                //{
+                //    return Json(new { success = false, message = "This expenditure is in use by expenditure table, removing it is not possible" });
+                //}
+                var expendiT = dbContext.ExpenditureType.FirstOrDefault(k => k.Id == id);
+                if (expendiT != null)
+                {
+                    dbContext.Remove(expendiT);
+                    dbContext.SaveChanges();
+
+                    return Json(new { success = true, message = "Expenditure successfully removed!" });
+                }
+            }
+            return Json(new { success = false, message = "We couldn't identify this record." });
+        }
+
+        //Delete TEMLY FEES
+        [HttpDelete]
+        public JsonResult ParentManager(int id)
+        {
+            //FIRST CHECK IF THE FEES IS IN USE
+            if (id > 0)
+            {
+                var studentp = dbContext.ParentStudents.Include(b => b.ParentTable).FirstOrDefault(k => k.Id == id);
+                if (studentp == null)
+                {
+                    return Json(new { success = false, message = "We couldn't identify the data send for processing" });
+                }
+                var parent = studentp.ParentTable;
+                if (parent != null)
+                {
+                    dbContext.Remove(parent);
+                    dbContext.Remove(studentp);
+                    dbContext.SaveChanges();
+                    return Json(new { success = true, message = "Parent successfully deleted" });
+                }
+            }
+            return Json(new { success = false, message = "We couldn't identify this record!" });
+        }
+        [HttpDelete]
+        public JsonResult ManagerPTAFees(int id)
+        {
+            if (id > 0)
+            {
+                var studentp = dbContext.PTATables.Where(k => k.PTAFeesId == id).ToList();
+                if (studentp.Any())
+                {
+                    return Json(new { success = false, message = "Payment has been made under this PTA Fees, therefore it cannot be removed." });
+                }
+                var ptafees = dbContext.PTAfees.FirstOrDefault(k => k.Id == id);
+                if (ptafees != null)
+                {
+                    dbContext.Remove(ptafees);
+                    dbContext.SaveChanges();
+                    return Json(new { success = true, message = "PTA Fees successfully deleted" });
+                }
+            }
+            return Json(new { success = false, message = "We couldn't identify this record!" });
+        }
+
+        [HttpDelete]
+        public JsonResult PTAFeesPaymentManager(int id)
+        {
+            if (id > 0)
+            {
+                var ptafees = dbContext.PTATables.FirstOrDefault(k => k.Id == id);
+                if (ptafees != null)
+                {
+                    var getreport = dbContext.PTAFeesReports.FirstOrDefault(k => k.TermRegId == ptafees.TermRegId);
+                    if (getreport != null)
+                    {
+                        getreport.CulmulativePay -= ptafees.Amount;
+                        if (getreport.CulmulativePay == 0)
+                        {
+                            dbContext.Remove(getreport);
+                        }
+                        else
+                        {
+                            dbContext.Update(getreport);
+                        }
+                    }
+                    dbContext.Remove(ptafees);
+                    dbContext.SaveChanges();
+                    return Json(new { success = true, message = "PTA Fees Payment successfully deleted" });
+                }
+            }
+            return Json(new { success = false, message = "We couldn't identify this record!" });
+        }
+
+        [HttpDelete]
+        public JsonResult PTAExpenditureManager(int id)
+        {
+            if (id > 0)
+            {
+                var expentype = dbContext.PTAExpenditureTables.FirstOrDefault(k => k.Id == id);
+                if (expentype != null)
+                {
+                    dbContext.Remove(expentype);
+                    dbContext.SaveChanges();
+
+                    return Json(new { success = true, message = "PTA Expenditure successfully deleted!" });
+                }
+            }
+            return Json(new { success = false, message = "We couldn't identify this record." });
+        }
+        [HttpDelete]
+        public JsonResult ExpenditureManager(int id)
+        {
+            if (id > 0)
+            {
+                var expentype = dbContext.ExpenditureTables.FirstOrDefault(k => k.Id == id);
+                if (expentype != null)
+                {
+                    dbContext.Remove(expentype);
+                    dbContext.SaveChanges();
+
+                    return Json(new { success = true, message = "Expenditure successfully deleted!" });
+                }
+            }
+            return Json(new { success = false, message = "We couldn't identify this record." });
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteFeedback(int id)
+        {
+            var getinfo = dbContext.FeedBacks.FirstOrDefault(j => j.Id == id);
+            if (getinfo == null)
+            {
+                return Json(new { success = false, message = "An error occurred while deleting the data" });
+            }
+            dbContext.Remove(getinfo);
+            dbContext.SaveChanges();
+            return Json(new { success = true, message = "Feed back Successfully Removed!!" });
+        }
+        //othertypemanager
+        [HttpDelete]
+        public IActionResult othertypemanager(int id)
+        {
+            var getinfo2 = dbContext.SpecialPaySetUps.Where(j => j.OtherPayId == id);
+            if (getinfo2.Any())
+            {
+                return Json(new { success = false, message = "Some crucial information is dependent on this data. Removing it will distort some information" });
+            }
+            var otherpayz = dbContext.OtherPayTables.FirstOrDefault(k => k.Id == id);
+            if (otherpayz == null)
+            {
+                return Json(new { success = false, message = "Error while deleting data" });
+            }
+            dbContext.Remove(otherpayz);
+            dbContext.SaveChanges();
+            return Json(new { success = true, message = "Data Successfully Removed!" });
+        }
+        //DELETE SPECIAL PAYMENT
+        [HttpDelete]
+        public IActionResult OtherPayManager(int id)
+        {
+            var getinfo1 = dbContext.AdditionalPayments.Where(j => j.Id == id);
+            if (getinfo1.Any())
+            {
+                return Json(new { success = false, message = "Payments have been made under this amount. Deleting it would affect the accuracy of the information. Please remove all payments associated with this amount before continuing." });
+            }
+            var specialPay = dbContext.SpecialPaySetUps.FirstOrDefault(k => k.Id == id);
+            if (specialPay == null)
+            {
+                return Json(new { success = false, message = "Error while deleting data" });
+            }
+            dbContext.Remove(specialPay);
+            dbContext.SaveChanges();
+            return Json(new { success = true, message = "Special Payment Successfully Removed!" });
+        }
+
+        //AdditionaPayMnanager
+        [HttpDelete]
+        public IActionResult AdditionaPayMnanager(int id)
+        {
+            var specialPay = dbContext.AdditionalPayments.FirstOrDefault(k => k.Id == id);
+            if (specialPay == null)
+            {
+                return Json(new { success = false, message = "Error while deleting data" });
+            }
+            dbContext.Remove(specialPay);
+            dbContext.SaveChanges();
+            return Json(new { success = true, message = "Additional Payment Successfully Removed!" });
         }
     }
 }

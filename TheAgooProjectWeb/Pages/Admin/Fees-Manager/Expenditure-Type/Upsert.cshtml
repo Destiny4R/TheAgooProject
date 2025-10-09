@@ -1,0 +1,44 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Admin.Fees_Manager.Expenditure_Type.UpsertModel
+@{
+    ViewData["Title"] = Model.expenditure?.Id > 0 ? "Update Expenditure Title" : "Add Expenditure Title";
+    var btnname = Model.expenditure?.Id > 0 ? "Update" : "Record";
+}
+
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge bg-dark"><h4 class="text-white">@(ViewData["Title"])</h4></div>
+                <div>
+                    <a class="btn btn-info btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <form method="post">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row">
+                            <label class="pl-3">Expenditure Type</label>
+                            <div class="col-md-8">
+                                <input class="form-control" asp-for="expenditure.Name" />
+                                <span asp-validation-for="expenditure.Name" class="text-white field-validation-valid badge badge-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8 mt-2">
+                        <div class="">
+                            <button type="submit" class="btn btn-primary">@(btnname)</button>
+                            <input asp-for="expenditure.Id" type="hidden" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

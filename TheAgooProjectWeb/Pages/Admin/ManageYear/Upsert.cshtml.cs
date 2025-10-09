@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
 using TheAgooProjectModel;
 
 namespace TheAgooProjectWeb.Pages.Admin.ManageYear
 {
+    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer},{SD.Role_Accountant}")]
     public class UpsertModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;

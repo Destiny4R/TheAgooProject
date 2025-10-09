@@ -4,8 +4,11 @@
     ViewData["Title"] = "Update Student Registration";
     int sn = 0;
 }
-<link href="~/lib/multipleselect/multiselect.css" rel="stylesheet" />
-<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+@section AddToHead {
+    <link href="~/lib/jquery-multiselect/jquery.multiselect.css" rel="stylesheet" />
+    <link href="~/lib/multipleselect/multiselect.css" rel="stylesheet" />
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+}
 <div class="page-content">
     <div class="card">
         <div class="card-header">
@@ -52,9 +55,7 @@
                                             <label for="username">Term</label>
                                             <select asp-for="input.Term" class="form-control form-control-sm">
                                                 <option value="" disabled selected>---Select Term---</option>
-                                                <option value="First">First</option>
-                                                <option value="Second">Second</option>
-                                                <option value="Third">Third</option>
+                                            <option value="First">First</option><option value="Second">Second</option><option value="Third">Third</option>
                                             </select>
                                         <span asp-validation-for="input.Term" class="text-danger"></span>
                                         </div>
@@ -81,11 +82,11 @@
                                         </div>
                                         <div class="form-group mb-2">
                                             <label>Register Subjects</label>
-                                            <select class="custom-select form-control-sm 2col active" multiple data-multi-select name="subjects[]" asp-items="Model.ViewSelectModel.Subjects">
+                                            <select class="custom-select form-control-sm 2col active" multiple name="subjects[]" asp-items="Model.ViewSelectModel.Subjects">
                                             </select>
                                         </div>
                                         <div class="form-group mb-2">
-                                        <table class="table table-sm table-bordered table-hover table-striped">
+                                            <table class="table table-sm table-bordered table-hover table-striped">
                                                 <thead>
                                                     <tr>
                                                         <th>#</th>
@@ -126,7 +127,7 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
-    <script src="~/lib/multipleselect/multiselect.js"></script>
     <script src="~/lib/blockui/jquery.blockui.min.js"></script>
-    <script src="~/js/termresult.js"></script>
+    <script src="~/lib/jquery-multiselect/jquery.multiselect.js"></script>
+    <script src="~/js/termresult.min.js"></script>
 }

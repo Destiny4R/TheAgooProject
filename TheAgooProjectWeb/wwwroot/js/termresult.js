@@ -64,7 +64,18 @@
     });
 }
 
+$(function () {
+    $('select[multiple].active.2col').multiselect({
+        columns: 2,
+        placeholder: 'Select Subjects',
+        search: true,
+        searchOptions: {
+            'default': 'Search Subject'
+        },
+        selectAll: true
+    });
 
+});
 
 function blockcallback() {
     $.blockUI({

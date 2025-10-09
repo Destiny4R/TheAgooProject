@@ -73,7 +73,7 @@
                 <tbody>
                     @foreach (var item in Model.ResultTables.GroupBy(k=>k.TermRegId))
                     {
-                        @(sn++)
+                        sn++;
                         <tr>
                             <td>@(sn)</td>
                             <td>@item.FirstOrDefault().Termregistration.StudentsData.SurName  @item.FirstOrDefault().Termregistration.StudentsData.OtherName  @item.FirstOrDefault().Termregistration.StudentsData.FirstName</td>

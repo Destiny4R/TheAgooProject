@@ -12,15 +12,13 @@
                 <div class=" badge text-white bg-blue text-uppercase bg-info"><strong class="h5">Duplicate Previous Term Registeration</strong></div>
                 <div><a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
             </div>
-            <div class="mt-1">
+            <div class="mt-2">
                 <form method="post" asp-page-handler="Search">
                     <div class="input-group mt-2 col-12">
                         <div>
                             <select asp-for="CTSSClass.Term" class="form-control form-control-sm">
                                 <option value="" disabled selected>---Select Term---</option>
-                                <option value="First">First</option>
-                                <option value="Second">Second</option>
-                                <option value="Third">Third</option>
+                                <option value="First">First</option><option value="Second">Second</option><option value="Third">Third</option>
                             </select>
                             <span asp-validation-for="CTSSClass.Term" class="text-white field-validation-valid badge badge-danger"></span>
                         </div>
@@ -101,7 +99,7 @@
                             <span asp-validation-for="RegCtssClass.Subclass" class="text-white field-validation-valid badge badge-danger"></span>
                         </div>
                     </div>
-                    <table id="termregTable" class="table table-boredered table-responsive table-striped">
+                    <table id="termregTable" class="table table-boredered table-responsive table-striped table-sm mt-2">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -121,7 +119,7 @@
                                 <tr>
                                     <td>@(sn)</td>
                                     <td>@(Model.TermReg[i].StudentsData.SurName+" "+Model.TermReg[i].StudentsData.OtherName+" "+Model.TermReg[i].StudentsData.FirstName)</td>
-                                    <td><input class="form-control" asp-for="@Model.TermReg[i].StudentsData.StudentRegNo" readonly/></td>
+                                    <td><input class="form-control form-control-sm" asp-for="@Model.TermReg[i].StudentsData.StudentRegNo" readonly/></td>
                                     <td>@(Model.TermReg[i].Term)</td>
                                     <td>@(Model.TermReg[i].SessionYear.Name)</td>
                                     <td>@(Model.TermReg[i].Schoolclasses.Name)</td>

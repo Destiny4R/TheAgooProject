@@ -6,6 +6,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Remove="bundleconfig.json" />
   </ItemGroup>
@@ -26,6 +34,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="MySqlConnector" Version="2.3.7" />
+    <PackageReference Include="Nancy" Version="2.0.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
   </ItemGroup>
@@ -40,6 +49,7 @@
     </ItemGroup>
 		
   <ItemGroup>
+    <Folder Include="Pages\Messaging\Send-Email\" />
     <Folder Include="wwwroot\appicons\" />
     <Folder Include="wwwroot\image\signature\" />
     <Folder Include="wwwroot\image\Passports\" />
@@ -50,6 +60,21 @@
     <None Include="wwwroot\lib\jQuery-MultiSelect\.github\FUNDING.yml" />
     <None Include="wwwroot\lib\jQuery-MultiSelect\.github\ISSUE_TEMPLATE\bug_report.md" />
     <None Include="wwwroot\lib\jQuery-MultiSelect\.github\ISSUE_TEMPLATE\feature_request.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Pages\Admin\manageOtherPay\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Pages\Admin\manageOtherPay\Upsert.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\js\parentStudent.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,105 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.ultilities.Pta_Payment_InvoiceModel
+@{
+    Layout = null;
+    ViewData["Title"] = Model.invoice.Termregistration.StudentsData.SurName + " " + Model.invoice.Termregistration.StudentsData.OtherName;
+}
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+    <title>@ViewData["Title"] - Aggo College Makurdi Invoice</title>
+    
+
+    <link href="~/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" />
+	</head>
+    <body>
+	<div class="container-fluid">
+		<div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-5">
+                        <div class="receipt-right">
+                            <h4>Aggo Collge Makurdi</h4>
+                            <div><i class="fa fa-phone"></i> 08066720317 </div>
+                            <div><i class="fa fa-envelope"></i> info@aggocollegemkd.com.ng</div>
+                            <div><i class="fa fa-location-arrow"></i> Abu King Shuruwa Road, Makurdi, Benue State Nigeria </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <img class="img-responsive" alt="iamgurdeeposahan" src="/appicons/logo-one.jpg" width="100">
+                    </div>
+                    <div class="col-4">
+                        <div class="">
+                            <h5><strong>@(Model.invoice.Termregistration.StudentsData.SurName + " " + Model.invoice.Termregistration.StudentsData.OtherName + " "+Model.invoice.Termregistration.StudentsData.FirstName)</strong> </h5>
+                            <div><b>Reg. No:</b> @(Model.invoice.Termregistration.StudentsData.StudentRegNo)</div>
+                            <div><b>Term:</b> @(Model.invoice.Termregistration.Term)</div>
+                            <div><b>Class:</b> @(Model.invoice.Termregistration.Schoolclasses.Name + " - " +Model.invoice.Termregistration.SubClasses.Name)</div>
+                            <div><b>Session/Year:</b> @(Model.invoice.Termregistration.SessionYear.Name)</div>
+                        </div>
+                    </div>
+                </div>
+                <hr style="border:solid, 10px; border-color:black;" />
+                <div class="text-center text-uppercase mb-3 d-flex justify-content-between">
+                    <h3>Invoice #@(Model.invoice.ReceiptNo)</h3>
+                    <div>@(Model.invoice.CreatedDate)</div>
+                </div>
+                <div class="above">
+                    <div class="form-inline row">
+                        <h5 class="col-12 text-center text-uppercase">PTA Fees Payment</h5>
+                        <hr />
+                    </div>
+                    <table class="table table-bordered" width="100%">
+                        <tr>
+                            <td>
+                                <div class="form-group row">
+                                    <strong class="">Amount Paid:</strong>
+                                    <div class="">
+                                        @(SD.ToNaira(Model.invoice.Amount))
+                                    </div>
+                                    <hr />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group row">
+                                    <strong class="">Amount in Words:</strong>
+                                    <div class="">
+                                        @(SD.MoneyToWords(Model.invoice.Amount))
+                                    </div>
+                                    <hr />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td >
+                                <div class="form-group row">
+                                    <strong class="">Balance:</strong>
+                                    <div class="">
+                                        @(SD.ToNaira(Model.invoice.Balance))
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group row">
+                                    <strong class="">Fees:</strong>
+                                    <div class="">
+                                        @(SD.ToNaira(Model.invoice.PTAFee.Fees))
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Cashier: @(Model.invoice.ApplicationUser.Fullname)</td>
+                            <td><img src="@(Model.signature)" width="60" /></td>
+                            <td>@(DateTime.Now)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+	</div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    </body>
+</html>

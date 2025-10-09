@@ -9,7 +9,7 @@ using TheAgooProjectModel;
 
 namespace TheAgooProjectWeb.Pages.Admin.System_User
 {
-    [Authorize]
+    [Authorize(Roles = (SD.Role_Admin))]
     public class UpsertModel : PageModel
     {
         private readonly UserManager<ApplicationUser> userManager;

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
 using TheAgooProjectModel;
 
@@ -33,11 +34,15 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
     //Email confirmation configuration
     //Options.SignIn.RequireConfirmedEmail = true;
 }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.AddScoped<ISmsSender, SmsSender>();
+builder.Services.AddScoped<IMailSender, EmailSender>();
 builder.Services.ConfigureApplicationCookie(a =>
 {
     a.LoginPath = $"/Account/Login";
     a.LogoutPath = $"/Account/Logout";
     a.AccessDeniedPath = $"/Account/AccessDenied";
+    a.ExpireTimeSpan = TimeSpan.FromDays(1);
+    a.SlidingExpiration = true;
 });
 builder.Services.AddEndpointsApiExplorer();
 

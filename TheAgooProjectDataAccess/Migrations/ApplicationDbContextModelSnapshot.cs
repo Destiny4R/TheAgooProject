@@ -227,6 +227,162 @@ namespace TheAgooProjectDataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TheAgooProjectModel.AdditionalPayment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("double");
+
+                    b.Property<string>("CasheirId")
+                        .HasMaxLength(450)
+                        .HasColumnType("varchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("SpecialpayId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TermRegId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CasheirId");
+
+                    b.HasIndex("SpecialpayId");
+
+                    b.HasIndex("TermRegId");
+
+                    b.ToTable("AdditionalPayments");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ExpenditureFiles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AccountClose")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("ExpenditureId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(250)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<string>("filePath")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("varchar(250)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpenditureId");
+
+                    b.ToTable("ExpenditureFiles");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ExpenditureTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("AccountClose")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("double");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("ExpendId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SessionYearId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Term")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("ExpendId");
+
+                    b.HasIndex("SessionYearId");
+
+                    b.ToTable("ExpenditureTables");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ExpenditureTypes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExpenditureType");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.GalleryTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("PostedBy")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GalleryTables");
+                });
+
             modelBuilder.Entity("TheAgooProjectModel.GeneralClassTable", b =>
                 {
                     b.Property<int>("Id")
@@ -255,6 +411,10 @@ namespace TheAgooProjectDataAccess.Migrations
                     b.Property<double>("Next_Term_Fees")
                         .HasColumnType("double");
 
+                    b.Property<string>("PrincipalName")
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
+
                     b.Property<int>("SessionYearId")
                         .HasColumnType("int");
 
@@ -280,6 +440,456 @@ namespace TheAgooProjectDataAccess.Migrations
                     b.HasIndex("SubClassId");
 
                     b.ToTable("GeneralClassTables");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ImagesTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GalleryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(700)
+                        .HasColumnType("varchar(700)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GalleryId");
+
+                    b.ToTable("ImagesTables");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.Models.FeedBack", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(550)
+                        .HasColumnType("varchar(550)");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FeedBacks");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.NewsTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Headline")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(1500)
+                        .HasColumnType("varchar(1500)");
+
+                    b.Property<string>("NewBody")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Read")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reporter")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NewsTables");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.OtherPayTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OtherPayTables");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.PTAExpenditureTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("double");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("ExpedId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SessionYearId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Term")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("ExpedId");
+
+                    b.HasIndex("SessionYearId");
+
+                    b.ToTable("PTAExpenditureTables");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.PTAFees", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<double>("Fees")
+                        .HasColumnType("double");
+
+                    b.Property<int>("SessionYearId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Term")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("SessionYearId");
+
+                    b.ToTable("PTAfees");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.PTAFeesReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<double>("CulmulativePay")
+                        .HasColumnType("double");
+
+                    b.Property<int>("PTAfeesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("TermRegId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PTAfeesId");
+
+                    b.HasIndex("TermRegId");
+
+                    b.ToTable("PTAFeesReports");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.PTATable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("double");
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<double>("Balance")
+                        .HasColumnType("double");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<int>("PTAFeesId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PaymentDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ReceiptNo")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("TermRegId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("PTAFeesId");
+
+                    b.HasIndex("TermRegId");
+
+                    b.ToTable("PTATables");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ParentStudent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ParentTableId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentsdataId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentTableId")
+                        .IsUnique();
+
+                    b.HasIndex("StudentsdataId");
+
+                    b.ToTable("ParentStudents");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ParentTable", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Occupation")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("varchar(11)");
+
+                    b.Property<string>("Relationship")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<string>("StaffId")
+                        .HasMaxLength(250)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<string>("StudentRegNo")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique();
+
+                    b.ToTable("ParentTables");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Balance")
+                        .HasColumnType("double");
+
+                    b.Property<string>("Cashier")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<double>("Paid")
+                        .HasColumnType("double");
+
+                    b.Property<string>("ReceiptNo")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<int>("TermRegId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TermlyFeesId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TermRegId");
+
+                    b.HasIndex("TermlyFeesId");
+
+                    b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.PaymentReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("AccummulatedPay")
+                        .HasColumnType("double");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("TermRegId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TermlyFeesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TermRegId");
+
+                    b.HasIndex("TermlyFeesId");
+
+                    b.ToTable("PaymentReports");
                 });
 
             modelBuilder.Entity("TheAgooProjectModel.RemarkPosition", b =>
@@ -483,6 +1093,89 @@ namespace TheAgooProjectDataAccess.Migrations
                     b.ToTable("Settings");
                 });
 
+            modelBuilder.Entity("TheAgooProjectModel.SmsTables", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("double");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("Sender")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("varchar(12)");
+
+                    b.Property<int>("SmsCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("varchar(250)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("SmsTable");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.SpecialPaySetUp", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("double");
+
+                    b.Property<int>("ClassesInSchoolId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("OtherPayId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SessionYearId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Term")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassesInSchoolId");
+
+                    b.HasIndex("OtherPayId");
+
+                    b.HasIndex("SessionYearId");
+
+                    b.ToTable("SpecialPaySetUps");
+                });
+
             modelBuilder.Entity("TheAgooProjectModel.StudentRating", b =>
                 {
                     b.Property<int>("Id")
@@ -635,7 +1328,6 @@ namespace TheAgooProjectDataAccess.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<string>("Passport")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int?>("SessionYearId")
@@ -702,11 +1394,63 @@ namespace TheAgooProjectDataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<bool>("Register_State")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Subjects");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.TeamManagement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Fullname")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("Hierarchy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("varchar(11)");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TeamManagements");
                 });
 
             modelBuilder.Entity("TheAgooProjectModel.TermRegistration", b =>
@@ -730,7 +1474,6 @@ namespace TheAgooProjectDataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("StudentId")
-                        .HasMaxLength(250)
                         .HasColumnType("int");
 
                     b.Property<int>("SubClassId")
@@ -752,6 +1495,59 @@ namespace TheAgooProjectDataAccess.Migrations
                     b.HasIndex("SubClassId");
 
                     b.ToTable("TermRegistrations");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.TermlyFeesPay", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("double");
+
+                    b.Property<int>("ClassesInSchoolId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("SessionYearId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Term")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassesInSchoolId");
+
+                    b.HasIndex("SessionYearId");
+
+                    b.ToTable("TermLyFeesPays");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.Visit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Portal")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Website")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Visitors");
                 });
 
             modelBuilder.Entity("TheAgooProjectModel.ApplicationUser", b =>
@@ -825,6 +1621,69 @@ namespace TheAgooProjectDataAccess.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TheAgooProjectModel.AdditionalPayment", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("CasheirId");
+
+                    b.HasOne("TheAgooProjectModel.SpecialPaySetUp", "SpecialPay")
+                        .WithMany()
+                        .HasForeignKey("SpecialpayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.TermRegistration", "Termregistration")
+                        .WithMany()
+                        .HasForeignKey("TermRegId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("SpecialPay");
+
+                    b.Navigation("Termregistration");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ExpenditureFiles", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.ExpenditureTable", "ExpenditureTable")
+                        .WithMany("ExpenditureFiles")
+                        .HasForeignKey("ExpenditureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExpenditureTable");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ExpenditureTable", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.ExpenditureTypes", "expenditureTypex")
+                        .WithMany()
+                        .HasForeignKey("ExpendId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.SessionYear", "SessionYear")
+                        .WithMany()
+                        .HasForeignKey("SessionYearId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("SessionYear");
+
+                    b.Navigation("expenditureTypex");
+                });
+
             modelBuilder.Entity("TheAgooProjectModel.GeneralClassTable", b =>
                 {
                     b.HasOne("TheAgooProjectModel.SchoolClasses", "Classcchool")
@@ -850,6 +1709,164 @@ namespace TheAgooProjectDataAccess.Migrations
                     b.Navigation("SessionYear");
 
                     b.Navigation("SubClasses");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ImagesTable", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.GalleryTable", "Gallery")
+                        .WithMany("Imagestable")
+                        .HasForeignKey("GalleryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gallery");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.PTAExpenditureTable", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.ExpenditureTypes", "ExpenditureType")
+                        .WithMany()
+                        .HasForeignKey("ExpedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.SessionYear", "SessionYear")
+                        .WithMany()
+                        .HasForeignKey("SessionYearId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("ExpenditureType");
+
+                    b.Navigation("SessionYear");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.PTAFees", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("TheAgooProjectModel.SessionYear", "SessionYear")
+                        .WithMany()
+                        .HasForeignKey("SessionYearId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("SessionYear");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.PTAFeesReport", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.PTAFees", "PTAFees")
+                        .WithMany()
+                        .HasForeignKey("PTAfeesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.TermRegistration", "Termregistration")
+                        .WithMany()
+                        .HasForeignKey("TermRegId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PTAFees");
+
+                    b.Navigation("Termregistration");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.PTATable", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.PTAFees", "PTAFee")
+                        .WithMany()
+                        .HasForeignKey("PTAFeesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.TermRegistration", "Termregistration")
+                        .WithMany()
+                        .HasForeignKey("TermRegId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("PTAFee");
+
+                    b.Navigation("Termregistration");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ParentStudent", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.ParentTable", "ParentTable")
+                        .WithOne("ParentStudent")
+                        .HasForeignKey("TheAgooProjectModel.ParentStudent", "ParentTableId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.StudentsData", "Studentsdata")
+                        .WithMany()
+                        .HasForeignKey("StudentsdataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ParentTable");
+
+                    b.Navigation("Studentsdata");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.Payment", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.TermRegistration", "Termregistrations")
+                        .WithMany()
+                        .HasForeignKey("TermRegId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.TermlyFeesPay", "TermlyFees")
+                        .WithMany()
+                        .HasForeignKey("TermlyFeesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TermlyFees");
+
+                    b.Navigation("Termregistrations");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.PaymentReport", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.TermRegistration", "Termregistration")
+                        .WithMany()
+                        .HasForeignKey("TermRegId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.TermlyFeesPay", "TermlyFees")
+                        .WithMany()
+                        .HasForeignKey("TermlyFeesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TermlyFees");
+
+                    b.Navigation("Termregistration");
                 });
 
             modelBuilder.Entity("TheAgooProjectModel.RemarkPosition", b =>
@@ -889,6 +1906,44 @@ namespace TheAgooProjectDataAccess.Migrations
                         .HasForeignKey("ApplicationUserId");
 
                     b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.SmsTables", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.SpecialPaySetUp", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.SchoolClasses", "Schoolclasses")
+                        .WithMany()
+                        .HasForeignKey("ClassesInSchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.OtherPayTable", "OtherPayTables")
+                        .WithMany()
+                        .HasForeignKey("OtherPayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.SessionYear", "SessionYear")
+                        .WithMany()
+                        .HasForeignKey("SessionYearId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OtherPayTables");
+
+                    b.Navigation("Schoolclasses");
+
+                    b.Navigation("SessionYear");
                 });
 
             modelBuilder.Entity("TheAgooProjectModel.StudentRating", b =>
@@ -952,6 +2007,41 @@ namespace TheAgooProjectDataAccess.Migrations
                     b.Navigation("StudentsData");
 
                     b.Navigation("SubClasses");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.TermlyFeesPay", b =>
+                {
+                    b.HasOne("TheAgooProjectModel.SchoolClasses", "Schoolclasses")
+                        .WithMany()
+                        .HasForeignKey("ClassesInSchoolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TheAgooProjectModel.SessionYear", "SessionYear")
+                        .WithMany()
+                        .HasForeignKey("SessionYearId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Schoolclasses");
+
+                    b.Navigation("SessionYear");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ExpenditureTable", b =>
+                {
+                    b.Navigation("ExpenditureFiles");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.GalleryTable", b =>
+                {
+                    b.Navigation("Imagestable");
+                });
+
+            modelBuilder.Entity("TheAgooProjectModel.ParentTable", b =>
+                {
+                    b.Navigation("ParentStudent")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TheAgooProjectModel.TermRegistration", b =>

@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TheAgooProjectWeb.Pages.Compute_Result
 {
-    [Authorize]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer}")]
     public class Add_Result_SimplyfyModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;

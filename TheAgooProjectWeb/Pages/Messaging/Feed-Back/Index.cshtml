@@ -1,0 +1,63 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Messaging.Feed_Back.IndexModel
+@{
+    ViewData["Title"] = "Feed Back Messages";
+}
+@section AddToHead{
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+}
+<div class="page-content">
+    <div class="d-flex justify-content-between mt-3">
+        <div class="badge bg-facebook"><code class="h4">@ViewData["Title"]</code></div>
+        <div>
+            <a class="btn btn-info" asp-page="Compose-Message">
+                <i class="fa fa-send-o"></i>
+                Compose email
+            </a>
+        </div>
+    </div>
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger mt-2" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+            <strong><i class="fa fa-warning"></i></strong> @TempData["error"].
+        </div>
+    }
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success mt-2" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+            <strong><i class="fa fa-info"></i></strong> @TempData["success"].
+        </div>
+    }
+    <div class="card mt-3">
+        <div class="card-body">
+            <table id="tablenews" width="100%" class="table-bordered table-responsive table-striped">
+                <thead>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Date Send</th>
+                        <th>Read/Unread</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    <script src="~/lib/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="~/js/feedback.js" asp-append-version="true"></script>
+}

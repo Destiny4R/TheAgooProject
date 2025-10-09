@@ -1,11 +1,15 @@
-﻿namespace TheAgooProjectDataAccess
+﻿using System;
+using static System.Formats.Asn1.AsnWriter;
+
+namespace TheAgooProjectDataAccess
 {
-    public static class  SD
+    public static class SD
     {
         //public static string privileges
         public const string Role_Admin = "Admin";
         public const string Role_ExamOfficer = "Exam Officer";
         public const string Role_Accountant = "Accountant";
+        public const string IsStudent = "IsStudent";
 
         //FEES PAYMENT STATUS
         public static string Fees_Status_Completed = "Completed";
@@ -15,12 +19,14 @@
         public static string Status_Active = "Active";
         public static string Status_InActive = "InActive";
 
-        public static string IsStudent = "IsStudent";
+        
 
         //Teachers status
         public static string First = "First";
         public static string Second = "Second";
         public static string Third = "Third";
+        public static string[] Terms = { "First", "Second", "Third" };
+        public static string CookiesKey = "Doom-Faith-Love";
 
         //Remark Calculator
         public static double GetAverageScore(params double[] scores)
@@ -60,21 +66,21 @@
                 return "E";
             }
         }
-        public static string Remark(double totalScores)
+        public static string Remark(double score)
         {
-            if (totalScores >= 75)
+            if(score >= 75)
             {
-                return "Distinction";
+                return "Excellent";
             }
-            else if (totalScores >= 65)
+            else if (score >= 65 && score <= 74)
             {
                 return "Very Good";
             }
-            else if (totalScores >= 55)
+            else if (score >= 55 && score <= 64)
             {
                 return "Good";
             }
-            else if (totalScores >= 40)
+            else if (score >= 40 && score <= 54)
             {
                 return "Fair";
             }
@@ -83,51 +89,51 @@
                 return "Poor";
             }
         }
-        public static string GetGrade(double? sum)
+        public static string GetGrade(double? score)
         {
-            if (sum < 40)
-            {
-                return "E";
-            }
-            else if (sum < 55)
-            {
-                return "D";
-            }
-            else if (sum < 65)
-            {
-                return "C";
-            }
-            else if (sum < 75)
-            {
-                return "B";
-            }
-            else
+            if (score >= 75)
             {
                 return "A";
             }
-        }
-        //ANNUAL Remark Calculator
-        public static string GetRemark(double? sum)
-        {
-            if (sum < 40)
+            else if (score >= 65 && score <= 74)
             {
-                return "Poor";
+                return "B";
             }
-            else if (sum < 55)
+            else if (score >= 55 && score <= 64)
             {
-                return "Fair";
+                return "C";
             }
-            else if (sum < 65)
+            else if (score >= 40 && score <= 54)
             {
-                return "Good";
-            }
-            else if (sum < 75)
-            {
-                return "Very Good";
+                return "D";
             }
             else
             {
-                return "Distintction";
+                return "E";
+            }
+        }
+        //ANNUAL Remark Calculator
+        public static string GetRemark(double? score)
+        {
+            if (score >= 75)
+            {
+                return "Excellent";
+            }
+            else if (score >= 65 && score <= 74)
+            {
+                return "Very Good";
+            }
+            else if (score >= 55 && score <= 64)
+            {
+                return "Good";
+            }
+            else if (score >= 40 && score <= 54)
+            {
+                return "Fair";
+            }
+            else
+            {
+                return "Poor";
             }
         }
         public static byte Rating(byte low, byte high)
@@ -241,132 +247,130 @@
 
         public static string Annual_Calculate_Remark(double totalscore, int terms)
         {
-            double sum = (totalscore / (terms * 100)) * 100;
-            if (sum < 50)
+            if (terms <= 0)
             {
-                return "Poor";
+                return "Invalid terms count"; // or throw an ArgumentException
             }
-            else if (sum < 60)
-            {
-                return "Fair";
-            }
-            else if (sum < 70)
-            {
-                return "Good";
-            }
-            else if (sum < 80)
-            {
+
+            double score = Math.Round(totalscore); // Simplified calculation
+            if (score >= 75)
+                return "Excellent";
+            if (score >= 65)
                 return "Very Good";
-            }
-            else
-            {
-                return "Distintction";
-            }
+            if (score >= 55)
+                return "Good";
+            if (score >= 40)
+                return "Fair";
+
+            return "Poor";
         }
         //Grades Calculator
-        public static string CalculateGrade(double sum)
+        public static string CalculateGrade(double score)
         {
-            if (sum < 50)
+            if (score >= 75)
             {
-                return "E";
+                return "A";
             }
-            else if (sum < 60)
-            {
-                return "D";
-            }
-            else if (sum < 70)
-            {
-                return "C";
-            }
-            else if (sum < 80)
+            else if (score >= 65 && score <= 74)
             {
                 return "B";
             }
+            else if (score >= 55 && score <= 64)
+            {
+                return "C";
+            }
+            else if (score >= 40 && score <= 54)
+            {
+                return "D";
+            }
             else
             {
-                return "A";
+                return "E";
             }
         }
         //Annual Grades Calculator
         public static string Annual_Calculate_Grade(double totalscore, int terms)
         {
-            double sum = (totalscore / (terms * 100)) * 100;
-            if (sum < 50)
+            double score = (totalscore / (terms * 100)) * 100;
+            if (score >= 75)
             {
-                return "E";
+                return "A";
             }
-            else if (sum < 60)
-            {
-                return "D";
-            }
-            else if (sum < 70)
-            {
-                return "C";
-            }
-            else if (sum < 80)
+            else if (score >= 65 && score <= 74)
             {
                 return "B";
             }
+            else if (score >= 55 && score <= 64)
+            {
+                return "C";
+            }
+            else if (score >= 40 && score <= 54)
+            {
+                return "D";
+            }
             else
             {
-                return "A";
+                return "E";
             }
         }
         public static string Annual_Calculate_Remark2(double totalscore, int terms)
         {
-            double sum = (totalscore / (terms * 100)) * 100;
-            if (sum < 50)
+            double score = (totalscore / (terms * 100)) * 100;
+
+            if (score >= 75)
             {
-                return "Poor";
+                return "Excellent";
             }
-            else if (sum < 60)
-            {
-                return "Fair";
-            }
-            else if (sum < 70)
-            {
-                return "Good";
-            }
-            else if (sum < 80)
+            else if (score >= 65 && score <= 74)
             {
                 return "Very Good";
             }
+            else if (score >= 55 && score <= 64)
+            {
+                return "Good";
+            }
+            else if (score >= 40 && score <= 54)
+            {
+                return "Fair";
+            }
             else
             {
-                return "Distintction";
+                return "Poor";
             }
         }
         //Annual Grades Calculator
+        
+
         public static string Annual_Calculate_Grade2(double totalscore, int terms)
         {
-            double sum = (totalscore / (terms * 100)) * 100;
-            if (sum < 50)
+            double score = (totalscore / (terms * 100)) * 100;
+            if (score >= 75)
             {
-                return "E";
+                return "A";
             }
-            else if (sum < 60)
-            {
-                return "D";
-            }
-            else if (sum < 70)
-            {
-                return "C";
-            }
-            else if (sum < 80)
+            else if (score >= 65 && score <= 74)
             {
                 return "B";
             }
+            else if (score >= 55 && score <= 64)
+            {
+                return "C";
+            }
+            else if (score >= 40 && score <= 54)
+            {
+                return "D";
+            }
             else
             {
-                return "A";
+                return "E";
             }
         }
         public static string GetComment(double average)
         {
             if (average >= 75)
-                return "Exceptional performance. Strong grasp of subject matter. Maintain excellent work.";
+                return "Exceptional performance. Maintain excellent work.";
             else if (average >= 65)
-                return "Good performance. Solid understanding. Improve with focused practice.";
+                return "Very Good performance. Solid understanding. Improve with focused practice.";
             else if (average >= 55)
                 return "Satisfactory performance. Significant improvement needed. But you can do better.";
             else if (average >= 40)
@@ -375,6 +379,29 @@
                 return "Unsatisfactory performance. Requires significant improvement. Seek immediate help.";
         }
 
+        public static string GetPerformanceComment(double averageScore)
+        {
+            if (averageScore >= 75)
+            {
+                return "Excellent! Truly outstanding work. You've mastered the material. Keep shining!";
+            }
+            else if (averageScore >= 65)
+            {
+                return "Very Good! Solid progress and a strong understanding. Keep building and you'll reach excellence!";
+            }
+            else if (averageScore >= 55)
+            {
+                return "Satisfactory! Good effort, you're on track. Focus on improvement for even better results.";
+            }
+            else if (averageScore >= 40)
+            {
+                return "Passed! A step forward. Let's focus on growth and understanding to improve further.";
+            }
+            else
+            {
+                return "Starting Point! Don't worry, it's a chance to learn and grow. We can turn this around with effort!";
+            }
+        }
         public static string colorful(int v)
         {
             string color = "";
@@ -604,11 +631,180 @@
                 case 73:
                     sup = "rd";
                     break;
+                case 81:
+                    sup = "st";
+                    break;
+                case 82:
+                    sup = "nd";
+                    break;
+                case 83:
+                    sup = "rd";
+                    break;
+                case 91:
+                    sup = "st";
+                    break;
+                case 92:
+                    sup = "nd";
+                    break;
+                case 93:
+                    sup = "rd";
+                    break;
                 default:
                     sup = "th";
                     break;
             }
             return sup;
         }
+
+        public static string GenerateUniqueNumber()
+        {
+            string dateTimeString = DateTime.Now.ToString("yyyyMMddHHmmss");
+            Random random = new Random();
+            string randomAlphabets = new string(Enumerable.Range(0, 4).Select(_ => (char)random.Next('A', 'Z' + 1)).ToArray());
+            return dateTimeString + randomAlphabets;
+        }
+
+		private static string[] strings = { "First", "Second", "Third" };
+
+		public static string GenerateHtmlOptions()
+		{
+			var options = new System.Text.StringBuilder();
+			foreach (var str in strings)
+			{
+				options.AppendLine($"<option value=\"{str}\">{str}</option>");
+			}
+			return options.ToString();
+		}
+        public static string GetValueAtIndex(string[] array, int index)
+        {
+            try
+            {
+                if (array == null || array.Length == 0)
+                {
+                    return "0";
+                }
+                if (index >= 0 || index < array.Length)
+                {
+                    return array[index];
+                }
+                else
+                    return "0";
+            }
+            catch (Exception ex)
+            {
+                return "0";
+            }
+        }
+        public static string TimeAgo(this DateTime dateTime)
+        {
+            string result = string.Empty;
+            var timeSpan = DateTime.Now.Subtract(dateTime);
+
+            if (timeSpan <= TimeSpan.FromSeconds(60))
+            {
+                result = string.Format("{0} seconds ago", timeSpan.Seconds);
+            }
+            else if (timeSpan <= TimeSpan.FromMinutes(60))
+            {
+                result = timeSpan.Minutes > 1 ?
+                    String.Format("{0} minutes ago", timeSpan.Minutes) :
+                    "a minute ago";
+            }
+            else if (timeSpan <= TimeSpan.FromHours(24))
+            {
+                result = timeSpan.Hours > 1 ?
+                    String.Format("{0} hours ago", timeSpan.Hours) :
+                    "an hour ago";
+            }
+            else if (timeSpan <= TimeSpan.FromDays(30))
+            {
+                result = timeSpan.Days > 1 ?
+                    String.Format("{0} days ago", timeSpan.Days) :
+                    "yesterday";
+            }
+            else if (timeSpan <= TimeSpan.FromDays(365))
+            {
+                result = timeSpan.Days > 30 ?
+                    String.Format("{0} months ago", timeSpan.Days / 30) :
+                    "a month ago";
+            }
+            else
+            {
+                result = timeSpan.Days > 365 ?
+                    String.Format("{0} years ago", timeSpan.Days / 365) :
+                    "a year ago";
+            }
+
+            return result;
+        }
+
+        public static string MoneyToWords(double value)
+        {
+            decimal money = Math.Round((decimal)value, 2);
+            int number = (int)money;
+            int decimalValue = 0;
+            string doller = string.Empty;
+            string cents = string.Empty;
+            doller = NumberToWords(number);
+            if (money.ToString().Contains("."))
+            {
+                decimalValue = int.Parse(money.ToString().Split('.')[1]);
+                cents = NumberToWords(decimalValue);
+            }
+            string result = !string.IsNullOrEmpty(cents) ? (decimalValue == 1 ? string.Format("{0} Naira and {1} kobo Only.", doller, cents) : string.Format("{0} Naira and {1} kobo Only.", doller, cents)) : string.Format("{0} Naira Only.", doller);
+            return result;
+        }
+
+        private static string NumberToWords(int number)
+        {
+            if (number == 0)
+                return "zero";
+
+            if (number < 0)
+                return "minus " + NumberToWords(Math.Abs(number));
+
+            string words = "";
+
+            if ((number / 1000000) > 0)
+            {
+                words += NumberToWords(number / 1000000) + " Million ";
+                number %= 1000000;
+            }
+
+            if ((number / 1000) > 0)
+            {
+                words += NumberToWords(number / 1000) + " Thousand ";
+                number %= 1000;
+            }
+
+            if ((number / 100) > 0)
+            {
+                words += NumberToWords(number / 100) + " Hundred ";
+                number %= 100;
+            }
+
+            if (number > 0)
+            {
+                var unitsMap = new[] { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+                var tensMap = new[] { "Zero", "Ten", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+
+                if (number < 20)
+                    words += unitsMap[number];
+                else
+                {
+                    words += tensMap[(number) / 10];
+                    if ((number % 10) > 0)
+                        words += " " + unitsMap[(number) % 10];
+                }
+            }
+            return words;
+        }
+
+        //public static string GenerateUniqueNumber()
+        //{
+        //    var guid = Guid.NewGuid().ToString("N"); // Remove hyphens
+        //    var numberPart = guid.Substring(0, 10);
+        //    return numberPart.ToUpper();
+        //}
     }
 }

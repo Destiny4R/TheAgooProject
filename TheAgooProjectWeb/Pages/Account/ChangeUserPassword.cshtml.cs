@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
 using TheAgooProjectModel;
 
 namespace TheAgooProjectWeb.Pages.Account
 {
+    [Authorize( Roles =$"{SD.Role_Admin},{SD.Role_ExamOfficer},{SD.Role_Accountant}")]
     public class ChangeUserPasswordModel : PageModel
     {
         private readonly UserManager<ApplicationUser> userManager;

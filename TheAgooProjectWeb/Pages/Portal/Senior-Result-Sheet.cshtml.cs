@@ -4,28 +4,67 @@ using TheAgooProjectDataAccess.Data;
 using TheAgooProjectDataAccess;
 using TheAgooProjectModel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace TheAgooProjectWeb.Pages.Portal
 {
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer}")]
     public class Senior_Result_SheetModel : PageModel
     {
 		private readonly ApplicationDbContext dbContext;
-
-		public int NoInClass = 0, Position = 0;
+        private readonly UserManager<ApplicationUser> userManager;
+        public int NoInClass = 0, Position = 0;
 		public double ToTalScore = 0;
 		public StudentsData Studentsdata { get; set; }
 		public TermRegistration termReg { get; set; }
 		public GeneralClassTable _generalClass { get; set; }
-        public RemarkPosition _remarkPosition { get; set; }
-        public Senior_Result_SheetModel(ApplicationDbContext dbContext)
+		public string signature { get; set; }
+		public RemarkPosition _remarkPosition { get; set; }
+        public Senior_Result_SheetModel(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
 		{
 			this.dbContext = dbContext;
-		}
-		public IActionResult OnGet(int session, int classes, int subclass, int studentid, string term)
-		{
-			if (ModelState.IsValid)
+            this.userManager = userManager;
+        }
+		public async Task<IActionResult> OnGet(int session, int classes, int subclass, int studentid, string term)
+        {
+            if (ModelState.IsValid)
 			{
-				var Results = dbContext.ResultTable.Include(k => k.Subjects).Include(k => k.Termregistration.StudentsData).Include(k => k.Termregistration.SessionYear).Include(k => k.Termregistration.SubClasses).Include(k => k.Termregistration.RemarkPositions).Include(k => k.Termregistration.StudentRatings).Include(k => k.Termregistration.Schoolclasses).Where(s => s.Termregistration.SessionYearId == session && s.Termregistration.ClassesInSchoolId == classes && s.Termregistration.SubClassId == subclass && s.Termregistration.Term == term).ToList();
+                var admin = await userManager.GetUsersInRoleAsync(SD.Role_Admin);
+                if (admin.Any())
+                {
+                    var newAdmin = admin.FirstOrDefault();
+                    var settings = dbContext.Settings.FirstOrDefault(k => k.ApplicationUserId == newAdmin.Id);
+					if (settings == null)
+					{
+						TempData["error"] = "Admin is yet to make proper settings. Please contact your system administrator.";
+                        return RedirectToPage("Index");
+                    }
+					signature = settings.PrincipalSignature;
+
+					if (!settings.CanPrintResult)
+                    {
+                        var fees = dbContext.PaymentReports.Include(l => l.Termregistration.StudentsData).FirstOrDefault(k => k.Termregistration.StudentsData.Id == studentid && k.Termregistration.Term == term && k.Termregistration.SessionYearId == session);
+                        if (fees != null)
+                        {
+                            if (fees.Status != SD.Fees_Status_Completed)
+                            {
+                                TempData["error"] = "Our system has detected an incomplete fee, please visit your fees history for details";
+                                return RedirectToPage("Index");
+                            }
+                        }
+                        else
+                        {
+                            TempData["error"] = "Our system has detected an incomplete fee, please visit your fees history for details";
+                            return RedirectToPage("Index");
+                        }
+                    }
+                }
+
+
+
+                var Results = dbContext.ResultTable.Include(k => k.Subjects).Include(k => k.Termregistration.StudentsData).Include(k => k.Termregistration.SessionYear).Include(k => k.Termregistration.SubClasses).Include(k => k.Termregistration.RemarkPositions).Include(k => k.Termregistration.StudentRatings).Include(k => k.Termregistration.Schoolclasses).Where(s => s.Termregistration.SessionYearId == session && s.Termregistration.ClassesInSchoolId == classes && s.Termregistration.SubClassId == subclass && s.Termregistration.Term == term).ToList();
 				if (Results.Count() < 1)
 				{
 					TempData["error"] = "No result found for the selection, are you missing something?";
@@ -39,13 +78,13 @@ namespace TheAgooProjectWeb.Pages.Portal
 				if (_generalClass == null)
 				{
 					TempData["error"] = "Result still under computation, Check back later";
-					//return RedirectToPage("Index");
+					return RedirectToPage("Index");
 				}
 				_remarkPosition = Results.FirstOrDefault(k => k.Termregistration.StudentId == studentid).Termregistration.RemarkPositions;
                 if (!_remarkPosition.R_Status || !_remarkPosition.P_Status)
                 {
                     TempData["error"] = "Result still under computation, Check back later";
-                    //return RedirectToPage("Index");
+                    return RedirectToPage("Index");
                 }
                 //WHAT IS THE CURRENT POSITION OF THIS STUDENT IN CLASS
                 HighPosition = new List<HighLowScore>();
@@ -55,7 +94,7 @@ namespace TheAgooProjectWeb.Pages.Portal
 					coll.StudentId = score.FirstOrDefault().Termregistration.StudentId;
 					foreach (var item in score)
 					{
-						coll.Score += (double)item.Total;
+						coll.Score += item.Total ?? 0.0;
 					}
 					coll.Average = Math.Round(coll.Score / score.Count(), 2);
 					HighPosition.Add(coll);
@@ -86,7 +125,7 @@ namespace TheAgooProjectWeb.Pages.Portal
 					double gettotal = 0;
 					foreach (var item1 in getsubject)
 					{
-						gettotal += (double)item1.Total;
+						gettotal += item1.Total ?? 0.0;
 					}
 					collect.Average = Math.Round(gettotal / getsubject.Count(), 2); 
 					collect.Grade = SD.Grade((double)item.Total);

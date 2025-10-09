@@ -10,6 +10,7 @@ using System.Data;
 using System.IO.Packaging;
 using System.Net;
 using System.Reflection;
+using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
 using TheAgooProjectModel;
 using TheAgooProjectModel.ViewModels;
@@ -17,7 +18,7 @@ using static TheAgooProjectWeb.Pages.Compute_Result.AssessmentModel;
 
 namespace TheAgooProjectWeb.Pages.Compute_Result
 {
-    [Authorize]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer}")]
     public class AssessmentModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
@@ -73,7 +74,7 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
                     Text = k.Name,
                     Value = k.Id.ToString()
                 }),
-                SessionYearz = dbContext.SessionYears.Select(k => new SelectListItem
+                SessionYearz = dbContext.SessionYears.OrderByDescending (k => k.Name).Select(k => new SelectListItem
                 {
                     Text = k.Name,
                     Value = k.Id.ToString()

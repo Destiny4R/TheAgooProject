@@ -1,0 +1,170 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Admin.Fees_Manager.Fees_Payment.FeesAnalysisModel
+@{
+    ViewData["Title"] = "Fees Analyses Page";
+    string[] Terms = { "First", "Second", "Third" };
+    int tNoClass = 0;
+    double TotalExpect = 0, TotalIncome = 0, Totaldebt = 0;
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge bg-dark"><h4 class="text-white">Fees Analyses</h4></div>
+                <div>
+                    <a class="btn btn-info btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="mt-3 col-sm-4">
+                    <form method="post">
+                        <div class="row mt-2">
+                            <div class="col-12 input-group">
+                                <select class="form-control form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                                    <option value="" disabled selected>---Select Session/Year---</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <button class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+                            <span asp-validation-for="CTSSClass.SessionYear" class="text-white field-validation-valid badge badge-danger col-8"></span>
+                            
+                        </div>
+                    </form>
+                </div>
+                <div class="mt-3 col-sm-8">
+                    <form method="post">
+                        <div class="row mt-2">
+                            <div class="input-group">
+                                <select asp-for="CTSSClass.Classes" class="form-control form-control-sm" required asp-items="Model.ViewSelectModel.Class">
+                                    <option value="" disabled selected>---Select Class---</option>
+                                </select>
+                                <select class="form-control form-control-sm" required asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                                    <option value="" disabled selected>---Select Session/Year---</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <button class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @if (Model.IsSearch>0)
+        {
+        <div class="card-body">
+            <div class="">
+                    <button class="btn btn-success" id="printbtn" style="float:right;" type="button"><i class="far fa-file-excel"></i> Export File</button>
+            </div>
+            <br />
+            <table id="detailTable" class="table table-bordered table-striped mt-3 table-hover">
+                <thead class="table-dark bg-opacity-50">
+                    <tr>
+                        <th>Class</th>
+                        <th>Term</th>
+                        <th>No. in Class</th>
+                        <th>Fees</th>
+                        <th>Expected Fees</th>
+                        <th>Income</th>
+                        <th>Debt</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.TermReg.GroupBy(z=>z.ClassesInSchoolId))
+                    {
+                                int f =1, noinclassT = 0;
+                            double expect = 0, incomeT = 0, debtT = 0;
+                            foreach (var item2 in Terms)
+                        {
+                             var item3 = item.Where(m => m.Term == item2).ToList();
+                            <tr>
+                                @if (f == 1)
+                                {
+                                    <td rowspan="3">@(item3.FirstOrDefault().Schoolclasses.Name)</td>
+                                }
+                                <td>@(item2)</td>
+                                <td>@{
+                                        var noinclass = Model.TermReg?.Where(k => k.Term == item2 && item3.FirstOrDefault()?.ClassesInSchoolId == k.ClassesInSchoolId)?.Count() ?? 0;
+                                        noinclassT += noinclass;
+                                        tNoClass += noinclass;
+                                    } @(noinclass)
+                                </td>
+                                <td class="getfontname">@{
+                                            var fees = Model.PaymentReports?.FirstOrDefault(k => k.Termregistration.Term == item2 && k.Termregistration.ClassesInSchoolId == item3.FirstOrDefault()?.ClassesInSchoolId)?.TermlyFees.Amount ?? 0;
+                                    }@(SD.ToNaira(fees))</td>
+                                <td class="getfontname">
+                                        @{
+                                            var getall = fees * noinclass;
+                                            expect += getall;
+                                            TotalExpect += getall;
+                                        }
+                                        @(SD.ToNaira(getall))
+                                </td>
+                                <td class="getfontname table-success bg-opacity-50">
+                                        @{
+                                            double amount = 0;
+                                            var Paymentx = Model.PaymentReports?.Where(k => k.Termregistration.Term == item2 && k.Termregistration.ClassesInSchoolId == item3.FirstOrDefault()?.ClassesInSchoolId);
+                                            foreach (var cummu in Paymentx)
+                                            {
+                                                amount += cummu.AccummulatedPay;
+                                            }
+                                            TotalIncome += amount;
+                                            incomeT += amount;
+                                    }@(SD.ToNaira(amount))
+                                </td>
+                                <td class="getfontname table-warning">
+                                        @{
+                                            var debtx = (fees * noinclass) - amount;
+                                            debtT += debtx;
+                                            Totaldebt += debtx;
+                                        }
+                                        @(SD.ToNaira(debtx))
+                                </td>
+                            </tr>
+                                f++;
+                        }
+                    <tr class="table-info">
+                        <td colspan="2">Total</td>
+                        <td>@(noinclassT)</td>
+                        <td>==</td>
+                        <td class="lineup">@(SD.ToNaira(expect))</td>
+                        <td class="lineup">@(SD.ToNaira(incomeT))</td>
+                        <td class="lineup">@(SD.ToNaira(debtT))</td>
+                    </tr>
+                    }
+                </tbody>
+                <tfoot class="table-success">
+                    <tr>
+                            <td colspan="2"><strong>Grand Summary Total</strong></td>
+                        <td>@(tNoClass)</td>
+                        <td>==</td>
+                            <td class="lineup"><strong>@(SD.ToNaira(TotalExpect))</strong></td>
+                            <td class="lineup"><strong>@(SD.ToNaira(TotalIncome))</strong></td>
+                            <td class="lineup"><strong>@(SD.ToNaira(Totaldebt))</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        }
+    </div>
+</div>
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/jquery.table2excel.js"></script>
+    <script>
+        $(function () {
+            $("#detailTable").find('#printbtn').on('click', function () {
+                $.print("#detailTable");
+            });
+            $("#printbtn").click(function (e) {
+                $("#detailTable").table2excel({
+                    name: "Worksheet Name",
+                    filename: 'Fees_Report_Sheet',
+                    fileext: ".xlsx",
+                    preserveColors: true
+                });
+            });
+        });
+    </script>
+}

@@ -44,6 +44,9 @@ namespace TheAgooProjectModel
 		[Required]
         [StringLength(60)]
         public string ClassTeacher { get; set; }
+		[Display(Name = "Principal's Name")]
+		[StringLength(60)]
+		public string? PrincipalName { get; set; }
 		[Display(Name = "Total Attendance")]
 		[Required]
 		public double TotalAttendance { get; set; }

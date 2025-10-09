@@ -28,7 +28,7 @@ namespace TheAgooProjectModel
         [Required]
         [MaxLength(50)]
         public string LocalGov { get; set; }
-        public string Passport { get; set; }
+        public string? Passport { get; set; }
         [MaxLength(150)]
         public string UserID { get; set; }
         public string ApplicationUserId { get; set; }

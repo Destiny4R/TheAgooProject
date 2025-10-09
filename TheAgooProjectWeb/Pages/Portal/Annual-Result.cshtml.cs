@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -10,24 +11,41 @@ using TheAgooProjectModel.ViewModels;
 
 namespace TheAgooProjectWeb.Pages.Portal
 {
-    [Authorize]
+    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer}")]
     public class Annual_ResultModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
+		private readonly UserManager<ApplicationUser> userManager;
 
-        public StudentsData Studentsdata { get; set; }
+		public string signature { get; set; }
+		public StudentsData Studentsdata { get; set; }
         public GeneralClassTable _generalClass { get; set; }
         public RemarkPosition _remarkPosition { get; set; }
-        public Annual_ResultModel(ApplicationDbContext dbContext)
+        public Annual_ResultModel(ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
         {
             this.dbContext = dbContext;
-        }
+			this.userManager = userManager;
+		}
         public int termly = 0, NoinClass = 0, PositionInClass = 0, activeTerms = 0;
         public async  Task<IActionResult> OnGet( int session, int studentid)
         {
             if(session>0 && studentid > 0)
             {
-                var termReg = dbContext.TermRegistrations.FirstOrDefault(h=>h.SessionYearId==session && h.StudentId==studentid);
+				var termReg = dbContext.TermRegistrations.FirstOrDefault(h => h.SessionYearId == session && h.StudentId == studentid);
+				var admin = await userManager.GetUsersInRoleAsync(SD.Role_Admin);
+				if (admin.Any())
+				{
+					var newAdmin = admin.FirstOrDefault();
+					var settings = dbContext.Settings.FirstOrDefault(k => k.ApplicationUserId == newAdmin.Id);
+					if (settings == null)
+					{
+						TempData["error"] = "Admin is yet to make proper settings. Please contact your system administrator.";
+						return RedirectToPage("Index");
+					}
+					signature = settings.PrincipalSignature;
+				}
+
+				
                 if (termReg == null)
                 {
                     TempData["error"] = "Sorry! this request cannot be process at this time, some information are missing";
@@ -100,7 +118,7 @@ namespace TheAgooProjectWeb.Pages.Portal
                         highest.StudentId = resultx.FirstOrDefault().Termregistration.StudentId;
                         foreach (var scorez in resultx)
                         {
-                            highest.Score += (double)scorez.Total;
+                            highest.Score += scorez?.Total??0.0;
                         }
                         highestList.Add(highest);
                     }
@@ -128,7 +146,7 @@ namespace TheAgooProjectWeb.Pages.Portal
                     post.StudentId = item.FirstOrDefault().Termregistration.StudentId;
                     foreach (var item2 in item)
                     {
-                        post.Score += (double)item2.Total;
+                        post.Score += item2?.Total ?? 0.0;
                     }
                     post.Average = Math.Round(post.Score / item.Count(),2);
                     HighPosition.Add(post);

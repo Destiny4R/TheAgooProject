@@ -1,0 +1,85 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.WebsiteManager.WebNews.UpsertModel
+@{
+    ViewData["Title"] = Model.newsdata?.Id > 0 ? "Edit News Information" : "Add School News";
+    var btnname = Model.newsdata?.Id > 0 ? "Update" : "Add News";
+    string manage = Model.newsdata?.Id > 0 ? "" : "required";
+}
+@section AddToHead
+{
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge bg-warning"><h4 class="text-white">@ViewData["Title"]</h4></div>
+
+                <div class="">
+                    <a class="btn btn-dark btn-sm" asp-page="Index"><i class="fas fa-arrow-left"></i>&ensp; Back</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form class="row g-3" id="formnewsdata">
+                <div class="col-md-6 mt-3">
+                    <label asp-for="newsdata.Reporter" class="form-label">Reporter</label>
+                    <input asp-for="newsdata.Reporter" class="form-control " required />
+                    <span asp-validation-for="newsdata.Reporter" class="text-white bg-danger"></span>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label asp-for="newsdata.Category" class="form-label">Select Category</label>
+                    <select class="custom-select" asp-for="newsdata.Category">
+                        <option disabled selected>Select category</option>
+                        <option value="Politics">Politics</option>
+                        <option value="Education">Education</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Business">Business</option>
+                        <option value="Sport">Sport</option>
+                        <option value="Health">Health</option>
+                        <option value="Technology">Technology</option>
+                    </select>
+                    <span asp-validation-for="newsdata.Category" class="text-white bg-danger"></span>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label asp-for="newsdata.Headline" class="form-label">News Headline</label>
+                    <input asp-for="newsdata.Headline" class="form-control" required />
+                    <span asp-validation-for="newsdata.Headline" class="text-white bg-danger"></span>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label class="form-label">Imagery file</label>
+                    <input type="file" name="file" class="form-control" @(manage) />
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label asp-for="newsdata.NewBody" class="form-label">News Body</label>
+                    <textarea asp-for="newsdata.NewBody" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="newsdata.NewBody" class="text-white bg-danger"></span>
+                </div>
+                <div class="col-12 mt-3">
+                    <input type="hidden" asp-for="newsdata.Id" />
+                    <button id="senddata" class="btn btn-primary" type="submit">@(btnname)</button>
+                </div>
+            </form>
+            @if (!string.IsNullOrEmpty(Model.newsdata?.ImagePath))
+            {
+                <div class="row mt-3" id="imagediv">
+                    <div class="col-sm-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <img src="https://localhost:44327/@(Model.newsdata.ImagePath)" width="100%" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
+    <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    <script src="~/js/newsupsertfile.js"></script>
+}

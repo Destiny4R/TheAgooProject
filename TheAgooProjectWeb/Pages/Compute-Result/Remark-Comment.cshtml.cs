@@ -10,7 +10,7 @@ using TheAgooProjectModel;
 
 namespace TheAgooProjectWeb.Pages.Compute_Result
 {
-    [Authorize]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer}")]
     public class Remark_CommentModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;

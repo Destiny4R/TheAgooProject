@@ -2,52 +2,52 @@
 var classbtn = ""; var classfa = "";
 var ap = "";
 $(document).ready(function () {
-    loadtable();
-});
-datatable = $("#general").DataTable({
-    "processing": true, "serverSide": true,
-    "filter": true,
-    responsive: true,
-    destroy: true,
-    "ajax": {
-        "url": "/Home/GeneralInfo",
-        "type": "POST",
-        "datatype": "json"
-    },
-    "columnDefs": [{ "visible": true, "searchable": true, }],
-    "columns": [
-        {
-            "data": "id", render: function (data, type, row, meta) { return meta.row + meta.settings._iDisplayStart + 1; }
+    datatable = $("#general").DataTable({
+        "processing": true, "serverSide": true,
+        "filter": true,
+        responsive: true,
+        destroy: true,
+        "ajax": {
+            "url": "/Home/GeneralInfo",
+            "type": "POST",
+            "datatype": "json"
         },
-        { "data": "term", "autoWidth": true },
-        { "data": "sessionYear.name", "autoWidth": true },
-        { "data": "classcchool.name", "autoWidth": true },
-        { "data": "subClasses.name", "autoWidth": true },
-        {
-            "data": "nextTermStart", "autoWidth": true,
-            render: function (data, type, row) {
-                if (data.length > 10) {
-                    return data = data.substring(0, 10);
-                } else {
-                    return data;
+        "columnDefs": [{ "visible": true, "searchable": true, }],
+        "columns": [
+            {
+                "data": "id", render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
                 }
-            }
-        },
-        {
-            "data": "termEnd", "autoWidth": true,
-            render: function (data, type, row) {
-                if (data.length > 10) {
-                    return data = data.substring(0, 10);
-                } else {
-                    return data;
+            },
+            { "data": "term", "autoWidth": true },
+            { "data": "sessionYear.name", "autoWidth": true },
+            { "data": "classcchool.name", "autoWidth": true },
+            { "data": "subClasses.name", "autoWidth": true },
+            {
+                "data": "nextTermStart", "autoWidth": true,
+                render: function (data, type, row) {
+                    if (data.length > 10) {
+                        return data = data.substring(0, 10);
+                    } else {
+                        return data;
+                    }
                 }
-            }
-        },
-        { "data": "classTeacher", "autoWidth": true },
-        {
-            //"data": "id",
-            "data": null, "render": function (data, type, full) {
-                return `
+            },
+            {
+                "data": "termEnd", "autoWidth": true,
+                render: function (data, type, row) {
+                    if (data.length > 10) {
+                        return data = data.substring(0, 10);
+                    } else {
+                        return data;
+                    }
+                }
+            },
+            { "data": "classTeacher", "autoWidth": true },
+            {
+                //"data": "id",
+                "data": null, "render": function (data, type, full) {
+                    return `
                         <div class="d-flex justify-content-center">
                          <a class=" btn-secondary btn-sm" href="/Compute-Result/General-Class-Info/Upsert?id=${data.id}" style="cursor:pointer" title="Edit general class information">
                                 <i class="fa fa-edit"></i>
@@ -57,10 +57,13 @@ datatable = $("#general").DataTable({
                                </a>
                         </div>
                     `;
+                }
             }
-        }
-    ]
+        ]
+    });
+
 });
+
 function DeleteGeneral(url) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {

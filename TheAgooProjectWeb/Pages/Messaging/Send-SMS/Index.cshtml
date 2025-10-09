@@ -1,0 +1,124 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Messaging.Send_SMS.IndexModel
+@{
+    ViewData["Title"] = "Send SMS History";
+}
+@section AddToHead {
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge bg-dark"><h4 class="text-white">Send SMS History</h4></div>
+
+                <div class="">
+                    <a class="btn btn-info btn-sm" asp-page="SMS-Send"><i class="fas fa-sms"></i>&ensp; Send SMS</a>
+                </div>
+            </div>
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success mt-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"]
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger mt-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"]
+                </div>
+            }
+        </div>
+        <div class="card-body">
+            <table class="table-bordered table-striped table" id="subjectTable" width="100%">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Sender Name</th>
+                        <th>Message Sender</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Cost</th>
+                        <th>Send Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal bs-example-modal-center" id="paymentmodal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header alert-secondary">
+                <h5 class="modal-title mt-0">SMS REPORT HISTORY</h5>
+                <button type="button" class="close" data-dismiss="modal" onclick="test();" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body alert-info bg-opacity-50">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group mb-2 row">
+                            <label class="col-md-4">Employer Sender</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control form-control-sm" id="employee1" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group mb-2 row">
+                            <label class="col-md-4">Send Name</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control form-control-sm" id="sender1" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group mb-2 row">
+                            <label class="col-md-4">Subject</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control form-control-sm" id="subject1" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group mb-2 row">
+                            <label class="col-md-4">Cost</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control form-control-sm" id="cash" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group mb-2 row">
+                            <label class="col-md-4">Message Body</label>
+                            <div class="col-md-8">
+                                <textarea class="form-control" id="message1" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group mb-2 row">
+                            <label class="col-md-4">Send Date</label>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control form-control-sm" id="createdate1" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer alert-secondary">
+                <button type="button" class="btn btn-danger btn-sm" onclick="test();" aria-label="Close">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    <script src="~/js/smstableloader.js" asp-append-version="true"></script>
+}

@@ -5,9 +5,12 @@ using TheAgooProjectModel;
 using TheAgooProjectDataAccess.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using TheAgooProjectDataAccess;
 
 namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
 {
+    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer}")]
     public class Batch_RegistrationModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
@@ -136,12 +139,12 @@ namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
                     Text = k.Name,
                     Value = k.Id.ToString()
                 }),
-                SubClass = dbContext.SubClasses.Select(k => new SelectListItem
+                SubClass = dbContext.SubClasses.OrderBy(k=>k.Name).Select(k => new SelectListItem
                 {
                     Text = k.Name,
                     Value = k.Id.ToString()
                 }),
-                SessionYearz = dbContext.SessionYears.Select(k => new SelectListItem
+                SessionYearz = dbContext.SessionYears.OrderByDescending (k => k.Name).Select(k => new SelectListItem
                 {
                     Text = k.Name,
                     Value = k.Id.ToString()

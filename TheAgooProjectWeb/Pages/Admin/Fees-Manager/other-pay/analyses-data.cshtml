@@ -1,0 +1,138 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Admin.Fees_Manager.other_pay.analyses_dataModel
+@{
+    ViewData["Title"] = "Other Payment Analyses";
+    int sn = 2;
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge bg-dark"><h4 class="text-white">Other Payment Analyses</h4></div>
+
+                <div class="">
+                    <a class="btn btn-outline-primary btn-sm" asp-page="Index"><i class="fas fa-arrow-left h4"></i>&ensp; Back</a>
+                </div>
+            </div>
+            <div class="mt-3 card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8 mb-2">
+                            <form method="post" asp-route-path="search">
+                                <div class="input-group">
+                                    <select class="form-control form-control-sm" asp-for="special.otherpayId" asp-items="Model.OtherPay">
+                                        <option value="" disabled selected>---Select payment for---</option>
+                                    </select>
+                                    <select class="form-control form-control-sm" asp-for="special.sessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                                        <option value="" disabled selected>---Select Session/Year---</option>
+                                    </select>
+                                    <select class="form-control form-control-sm " asp-for="special.Classes" asp-items="Model.ViewSelectModel.Class">
+                                        <option value="" disabled selected>---Select Class---</option>
+                                    </select>
+                                    <button class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <form method="post" asp-route-path="all">
+                                <div class="input-group">
+                                    <select class="form-control form-control-sm" asp-for="special.sessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                                        <option value="" disabled selected>---Select Session/Year---</option>
+                                    </select>
+                                    <button class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    @if (TempData["success"] != null)
+                    {
+                        <div class="alert alert-success mt-2" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                            <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"]
+                        </div>
+                    }
+                    @if (TempData["error"] != null)
+                    {
+                        <div class="alert alert-danger mt-2" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                            <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"]
+                        </div>
+                    }
+                </div>
+                @if (Model.hasValue>0)
+                {
+                    <div class="card-body">
+                        @if(Model.Additional.Any())
+                        {
+                            @foreach (var item in Model.Additional.GroupBy(k => k.SpecialPay.OtherPayId))
+                            {
+                                sn++;
+                                double total = 0;
+                                <table class="table table-bordered table-sm table-info table-responsive">
+                                
+                                 <tbody>
+                                        <tr>
+                                            <td rowspan="2">
+                                                <strong>@item?.FirstOrDefault().SpecialPay.OtherPayTables.Name</strong>
+                                            </td>
+                                            <td rowspan="2">
+                                                <strong>@item?.FirstOrDefault().Termregistration.SessionYear.Name</strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <table class="table">
+                                                    @foreach (var item1 in item.GroupBy(o=>o.Termregistration.ClassesInSchoolId))
+                                                    {
+                                                           
+                                                            <tr>
+                                                                <td class="">@item1?.FirstOrDefault().Termregistration.Schoolclasses.Name</td>
+                                                                    <td>
+                                                                @foreach (var item2 in item1.GroupBy(l => l.Termregistration.Term))
+                                                                {
+                                                                    sn++;
+                                                                    double moneny = 0;
+                                                                    foreach (var item4 in item2)
+                                                                    {
+                                                                        moneny += item4?.Amount ?? 0;
+                                                                    }
+                                                                    total += moneny;
+                                                                    <table class="table">
+
+                                                                        <tr>
+                                                                            <td>@(item2.FirstOrDefault().Termregistration.Term)</td>
+                                                                            <td>@(item2?.Count() ?? 0)</td>
+                                                                            <td>@(SD.ToNaira(item2?.FirstOrDefault().SpecialPay.Amount ?? 0.0))</td>
+                                                                            <td>
+                                                                                @(SD.ToNaira(moneny))
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                }
+                                                            </td>
+                                                            </tr>
+                                                    }
+                                                    <tr>
+                                                        <td><strong>TOTAL</strong></td>
+                                                        <td>
+                                                            <table class="table" width="100%">
+                                                                <tr>
+                                                                    <td><h5 class="text-end ">@(SD.ToNaira(total))</h5></td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                            </table>                            
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>

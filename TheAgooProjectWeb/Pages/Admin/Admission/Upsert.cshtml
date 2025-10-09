@@ -1,10 +1,12 @@
 ﻿@page
 @model TheAgooProjectWeb.Pages.Admin.Admission.UpsertModel
 @{
-    ViewData["Title"] = Model.UserVM.Id > 0 ? "Update Student Bio-Data" : "Add New Student";
-    var btnname = Model.UserVM.Id > 0 ? "Update" : "Register";
+    ViewData["Title"] = Model.UserVM?.Id > 0 ? "Update Student Bio-Data" : "Add New Student";
+    var btnname = Model.UserVM?.Id > 0 ? "Update" : "Register";
 }
+@section AddToHead {
 <link href="~/lib/flatpickr/flatpickr.min.css" rel="stylesheet" />
+}
     <div class="page-content">
             <div class="row">
                 <div class="col-lg-12">
@@ -44,11 +46,11 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                            @if (Model.UserVM.Id > 0)
+                            @if (Model.UserVM?.Id > 0)
                             {
                                 <div class="col-md-4 mb-3">
                                     <label asp-for="UserVM.StudentRegNo"></label>
-                                    <input asp-for="UserVM.StudentRegNo" class="form-control form-control-sm" />
+                                    <input asp-for="UserVM.StudentRegNo" readonly class="form-control form-control-sm" />
                                     <span asp-validation-for="UserVM.StudentRegNo" class="text-danger"></span>
                                     <input asp-for="UserVM.Id" type="hidden" />
                                 </div>
@@ -137,11 +139,14 @@
                                         </select>
                                         <span asp-validation-for="UserVM.SessionYearId" class="text-white bg-danger badge"></span>
                                     </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label asp-for="UserVM.Password"></label>
-                                        <input asp-for="UserVM.Password" class="form-control form-control-sm" value="Aggo@2024" />
-                                        <span asp-validation-for="UserVM.Password" class="text-white bg-danger badge"></span>
-                                    </div>
+                                    @if (Model.UserVM?.Id < 1)
+                                    {
+                                        <div class="col-md-4 mb-3">
+                                            <label asp-for="UserVM.Password"></label>
+                                            <input asp-for="UserVM.Password" class="form-control form-control-sm" value="Aggo@2024" />
+                                            <span asp-validation-for="UserVM.Password" class="text-white bg-danger badge"></span>
+                                        </div>
+                                    }
                                 </div>
                                 <button class="btn btn-primary" type="submit">@btnname</button>
                             </form>

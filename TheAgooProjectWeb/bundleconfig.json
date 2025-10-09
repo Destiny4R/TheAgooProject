@@ -46,5 +46,53 @@
     "inputFiles": [
       "wwwroot/js/settings.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/termlyFees.min.js",
+    "inputFiles": [
+      "wwwroot/js/termlyFees.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/feespayments.min.min.js",
+    "inputFiles": [
+      "wwwroot/js/feespayments.min.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/feespayments.min.js",
+    "inputFiles": [
+      "wwwroot/js/feespayments.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/balance.min.js",
+    "inputFiles": [
+      "wwwroot/js/balance.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/smstableLoader.min.js",
+    "inputFiles": [
+      "wwwroot/js/smstableLoader.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/pTAFeesPayment.min.js",
+    "inputFiles": [
+      "wwwroot/js/pTAFeesPayment.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/teammanagement.min.js",
+    "inputFiles": [
+      "wwwroot/js/teammanagement.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/feedback.min.js",
+    "inputFiles": [
+      "wwwroot/js/feedback.js"
+    ]
   }
 ]

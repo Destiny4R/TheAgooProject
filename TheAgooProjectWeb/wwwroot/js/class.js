@@ -30,7 +30,7 @@ $(document).ready(function () {
                     if (data) {
                         return `<span class="badge h4 bg-success">Elective Class</span>`;
                     } else {
-                        return `<label class="badge h3 bg-warning">Not Elective Class</label>`;
+                        return `<label class="badge h3 bg-warning">None Elective Class</label>`;
                     }
                 }
             },

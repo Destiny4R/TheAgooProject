@@ -3,7 +3,10 @@
 @{
     ViewData["Title"] = "Edit Result";
 }
-<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+@section AddToHead{ 
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+}
+
 <div class="page-content">
     <div class="card">
         <div class="card-header">
@@ -12,7 +15,7 @@
                 <a class="btn btn-dark btn-sm" asp-page="Detail-Result"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
             </div>
         </div>
-        <div class="card-body bg-dark text-white">
+        <div class="card-body">
             <form method="post" class="needs-validation" novalidate>
                 <div class="row ">
                     <div class="col-sm-4">
@@ -110,11 +113,11 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
-    @if (true)
+    @if (!Model.classtype)
     {
-        //FOR JENIOR CLASSES
-        <script>
-            function sum() {
+    //FOR JENIOR CLASSES
+    <script>
+        function sum() {
             var ass = document.getElementById("result_Assignment").value;
             var test = document.getElementById("result_Test").value;
             var proj = document.getElementById("result_Project").value;
@@ -200,99 +203,99 @@
                 document.getElementById("exams").value = '';
                 return alert('Total scores can not be morethan 100, check and try again');
             }
-        </script>
-        }
-        else
-        {
-            //FOR SENIOR CLASSES
-            <script>
-                function sum() {
-                    var ass = document.getElementById("result_Assignment").value;
-                    var test = document.getElementById("result_Test").value;
-                    var proj = document.getElementById("result_Project").value;
-                    var cwrk = document.getElementById("result_ClassWork").value;
-                    var Exams = document.getElementById("result_Examination").value;
+    </script>
+    }
+    else
+    {
+        //FOR SENIOR CLASSES
+        <script>
+            function sum() {
+                var ass = document.getElementById("result_Assignment").value;
+                var test = document.getElementById("result_Test").value;
+                var proj = document.getElementById("result_Project").value;
+                var cwrk = document.getElementById("result_ClassWork").value;
+                var Exams = document.getElementById("result_Examination").value;
 
-                    var sum = Number(ass) + Number(test) + Number(proj) + Number(cwrk) + Number(Exams);
-                    document.getElementById("result_Total").value = sum;
-                    if (sum < 40) {
-                        document.getElementById("result_Grade").value = 'E';
-                        document.getElementById("result_Remark").value = "Poor";
-                    }
-                    else if (sum < 55) {
-                        document.getElementById("result_Grade").value = 'D';
-                        document.getElementById("result_Remark").value = "Fair";
-                    }
-                    else if (sum < 65) {
-                        document.getElementById("result_Grade").value = 'C';
-                        document.getElementById("result_Remark").value = "Good";
-                    }
-                    else if (sum < 75) {
-                        document.getElementById("result_Grade").value = 'B';
-                        document.getElementById("result_Remark").value = "Very Good";
-                    }
-                    else {
-                        document.getElementById("result_Grade").value = 'A';
-                        document.getElementById("result_Remark").value = "Distinction";
-                    }
-
-                    if (ass > 5) {
-                        document.getElementById("result_Assignment").value = '';
-                        document.getElementById("result_Total").value = '';
-                        return Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Assignment work should not be greater than 10, check and try again',
-                            footer: 'Over assigned scores'
-                        });
-                    }
-                    if (test > 10) {
-                        document.getElementById("result_Total").value = '';
-                        document.getElementById("result_Test").value = '';
-                        return Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Test scores should not be greater than 10, check and try again',
-                            footer: 'Over assigned scores'
-                        });
-                    }
-                    if (proj > 10) {
-                        document.getElementById("result_Total").value = '';
-                        document.getElementById("result_Project").value = '';
-                        return Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Project scores should not be greater than 10, check and try again',
-                            footer: 'Over assigned scores'
-                        });
-                    }
-                    if (cwrk > 5) {
-                        document.getElementById("result_Total").value = '';
-                        document.getElementById("result_ClassWork").value = '';
-                        return Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Class work scores should not be greater than 10, check and try again',
-                            footer: 'Over assigned scores'
-                        });
-                    }
-
-                    if (Exams > 70) {
-                        document.getElementById("result_Total").value = '';
-                        document.getElementById("result_Examination").value = '';
-                        return Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Examination scores should not be greater than 60, check and try again',
-                            footer: 'Over assigned scores'
-                        });
-                    }
-                    if (sum > 100) {
-                        document.getElementById("total").value = '';
-                        document.getElementById("exams").value = '';
-                        return alert('Total scores can not be morethan 100, check and try again');
-                    }
+                var sum = Number(ass) + Number(test) + Number(proj) + Number(cwrk) + Number(Exams);
+                document.getElementById("result_Total").value = sum;
+                if (sum < 40) {
+                    document.getElementById("result_Grade").value = 'E';
+                    document.getElementById("result_Remark").value = "Poor";
                 }
-            </script>
-        }
+                else if (sum < 55) {
+                    document.getElementById("result_Grade").value = 'D';
+                    document.getElementById("result_Remark").value = "Fair";
+                }
+                else if (sum < 65) {
+                    document.getElementById("result_Grade").value = 'C';
+                    document.getElementById("result_Remark").value = "Good";
+                }
+                else if (sum < 75) {
+                    document.getElementById("result_Grade").value = 'B';
+                    document.getElementById("result_Remark").value = "Very Good";
+                }
+                else {
+                    document.getElementById("result_Grade").value = 'A';
+                    document.getElementById("result_Remark").value = "Distinction";
+                }
+
+                if (ass > 5) {
+                    document.getElementById("result_Assignment").value = '';
+                    document.getElementById("result_Total").value = '';
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Assignment work should not be greater than 5, check and try again',
+                        footer: 'Over assigned scores'
+                    });
+                }
+                if (test > 10) {
+                    document.getElementById("result_Total").value = '';
+                    document.getElementById("result_Test").value = '';
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Test scores should not be greater than 10, check and try again',
+                        footer: 'Over assigned scores'
+                    });
+                }
+                if (proj > 10) {
+                    document.getElementById("result_Total").value = '';
+                    document.getElementById("result_Project").value = '';
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Project scores should not be greater than 10, check and try again',
+                        footer: 'Over assigned scores'
+                    });
+                }
+                if (cwrk > 5) {
+                    document.getElementById("result_Total").value = '';
+                    document.getElementById("result_ClassWork").value = '';
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Class work scores should not be greater than 5, check and try again',
+                        footer: 'Over assigned scores'
+                    });
+                }
+
+                if (Exams > 70) {
+                    document.getElementById("result_Total").value = '';
+                    document.getElementById("result_Examination").value = '';
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Examination scores should not be greater than 70, check and try again',
+                        footer: 'Over assigned scores'
+                    });
+                }
+                if (sum > 100) {
+                    document.getElementById("total").value = '';
+                    document.getElementById("exams").value = '';
+                    return alert('Total scores can not be morethan 100, check and try again');
+                }
+            }
+        </script>
+    }
 }

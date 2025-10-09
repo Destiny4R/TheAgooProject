@@ -10,7 +10,7 @@ using static TheAgooProjectWeb.Pages.Compute_Result.IndexModel;
 
 namespace TheAgooProjectWeb.Pages.Compute_Result
 {
-    [Authorize]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer}")]
     public class Position_ClassModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
@@ -148,14 +148,21 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
                         
                     }
                 }
-                if (remark.Count() > 0 || studentRate.Count() > 0)
+                if (remark.Count() > 0 )
                 {
-                    dbContext.UpdateRange(remark, studentRate);
-                    dbContext.SaveChanges();
-                    DataTrue = 2;
-                    ResultTables = _GetResult2;
-                    TempData["success"] = "Students postions in Class has been successfully computed and updated!";
-                    return RedirectToPage();
+                    try
+                    {
+                        dbContext.UpdateRange(remark);
+                        dbContext.SaveChanges();
+                        DataTrue = 2;
+                        ResultTables = _GetResult2;
+                        TempData["success"] = "Students postions in Class has been successfully computed and updated!";
+                        return RedirectToPage();
+                    }catch(Exception ex)
+                    {
+                        TempData["error"] = $"“Sorry!! {ex.Message}”";
+                        return RedirectToPage();
+                    }
                 }
             }
             TempData["error"] = "“Sorry, we couldn’t compute the position in class at the moment. Please try again later.”";

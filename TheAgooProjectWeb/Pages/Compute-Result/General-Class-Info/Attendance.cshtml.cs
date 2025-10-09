@@ -1,13 +1,16 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
 using TheAgooProjectModel;
 using static TheAgooProjectWeb.Pages.Compute_Result.IndexModel;
 
 namespace TheAgooProjectWeb.Pages.Compute_Result.General_Class_Info
 {
+    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer}")]
     public class AttendanceModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;

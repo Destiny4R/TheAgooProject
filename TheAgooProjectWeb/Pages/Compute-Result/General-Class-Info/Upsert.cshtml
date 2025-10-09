@@ -1,10 +1,13 @@
 ﻿@page
 @model TheAgooProjectWeb.Pages.Compute_Result.General_Class_Info.UpsertModel
 @{
-    ViewData["Title"] = Model.general.Id > 0 ? "Update Class General Information" : "Add Class General Information";
-    var name = Model.general.Id > 0 ? "Update record" : "Submit record";
+    ViewData["Title"] = Model.general?.Id > 0 ? "Update Class General Information" : "Add Class General Information";
+    var name = Model.general?.Id > 0 ? "Update record" : "Submit record";
 }
-<link href="/assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+@section AddToHead {
+    <link href="~/lib/flatpickr/flatpickr.min.css" rel="stylesheet" />
+    <link href="/assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+}
 <div class="page-content">
     <div class="card">
         <div class="card-header-pill">
@@ -20,9 +23,7 @@
                         <label for="validationCustom01">Term</label>
                         <select asp-for="general.Term" class="form-control">
                             <option value="" disabled selected>---Select Term---</option>
-                            <option value="First">First</option>
-                            <option value="Second">Second</option>
-                            <option value="Third">Third</option>
+                            <option value="First">First</option><option value="Second">Second</option><option value="Third">Third</option>
                         </select>
                         <span asp-validation-for="general.Term" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
                     </div>
@@ -56,12 +57,12 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label asp-for="general.NextTermStart"></label>
-                        <input type="text" class="form-control" asp-for="general.NextTermStart" data-provide="datepicker" data-date-autoclose="true" required />
+                        <input type="text" class="form-control getdate" asp-for="general.NextTermStart" required />
                         <span asp-validation-for="general.NextTermStart" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
                     </div>
                     <div class="col-md-4 mb-3">
                         <label asp-for="general.TermEnd"></label>
-                        <input type="text" class="form-control" asp-for="general.TermEnd" data-provide="datepicker" data-date-autoclose="true" required />
+                        <input type="text" class="form-control getdate" asp-for="general.TermEnd" required />
                         <span asp-validation-for="general.TermEnd" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
                     </div>
                 </div>
@@ -76,6 +77,11 @@
                         <input type="text" class="form-control" asp-for="general.ClassTeacher" required />
                         <span asp-validation-for="general.ClassTeacher" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
                     </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="general.PrincipalName"></label>
+                        <input type="text" class="form-control" asp-for="general.PrincipalName" required />
+                        <span asp-validation-for="general.PrincipalName" class="text-white field-validation-valid badge badge-danger valid-feedback"></span>
+                    </div>
                 </div>
                 <input asp-for="general.Id" type="hidden" />
                 <div class="p-2">
@@ -88,15 +94,21 @@
 
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/flatpickr/flatpickr.min.js"></script>
     <script src="/assets/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
     <script>
-        !function () { "use strict"; window.addEventListener("load", function () 
-        { var t = document.getElementsByClassName("needs-validation"); 
-        Array.prototype.filter.call(t, function (e) { e.addEventListener("submit", 
-        function (t) { !1 === e.checkValidity() && (t.preventDefault(), 
-            t.stopPropagation()), 
-            e.classList.add("was-validated") }, !1) }) }, !1) }(), 
-        $(document).ready(function () { $(".custom-validation").parsley() });
-
+        flatpickr(".getdate", {
+            enableTime: false,
+            dateFormat: "Y-m-d",
+        });
+        // !function () { "use strict";
+        //     flatpickr(".getdate", {
+        //         enableTime: false,
+        //         dateFormat: "Y-m-d",
+        //     });
+        //     flatpickr("#general_TermEnd", {
+        //         enableTime: false,
+        //         dateFormat: "Y-m-d",
+        //     });
     </script>
 }

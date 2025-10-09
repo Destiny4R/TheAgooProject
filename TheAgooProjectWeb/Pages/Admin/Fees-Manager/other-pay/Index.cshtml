@@ -1,0 +1,158 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Admin.Fees_Manager.other_pay.IndexModel
+@{
+    ViewData["Title"] = "Other Payments";
+    int sn = 0;
+}
+@section AddToHead {
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge bg-dark"><h4 class="text-white">Other Payment List</h4></div>
+
+                <div class="btn-group btn-group-sm" role="group" aria-label="...">
+                    <a class="btn btn-outline-primary" asp-page="Special-Pay/Index"><i class="fas fa-plus-square h4"></i>&ensp; Set Payment</a>
+                    <a class="btn btn-outline-primary" asp-page="analyses-data"><i class="fas fa-chart-bar h4"></i>&ensp; Fees Analyses</a>
+                    <a class="btn btn-outline-primary" asp-page="add-pay"><i class="fas fa-plus h4"></i>&ensp; Add Payment</a>
+                </div>
+            </div>
+            <div class="mt-3">
+                <form method="post">
+                    <div class="row mt-2">
+                        <div class="col-sm-2">
+                            <select asp-for="CTSSClass.Term" class="form-control form-control-sm">
+                                <option value="" disabled selected>---Select Term---</option>
+                                <option value="First">First</option>
+                                <option value="Second">Second</option>
+                                <option value="Third">Third</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Term" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                                <option value="" disabled selected>---Select Session/Year---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.SessionYear" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control form-control-sm " asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class">
+                                <option value="" disabled selected>---Select Class---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Classes" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div class="col-sm-2">
+                            <select asp-for="CTSSClass.Subclass" class="form-control form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
+                                <option value="" disabled selected>---Select Sub-Class---</option>
+                            </select>
+                            <span asp-validation-for="CTSSClass.Subclass" class="text-white field-validation-valid badge badge-danger"></span>
+                        </div>
+                        <div class="col-sm-1">
+                            <button class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success mt-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"]
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger mt-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"]
+                </div>
+            }
+        </div>
+        <div class="card-body">
+            <table id="specialpayment" class="table table-boredered table-striped table-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Full Name</th>
+                        <th>Student Reg No.</th>
+                        <th>Fees</th>
+                        <th>Paid For</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Session/Year</th>
+                        <th>Term</th>
+                        <th>Class</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                @if (Model.IsSearch > 0)
+                {
+                    //int sn = 0;
+
+                    <tbody>
+                        @foreach (var item in Model.Additionals)
+                        {
+                            sn++;
+
+                            var studentData = item.Termregistration?.StudentsData;
+                            var specialPay = item.SpecialPay;
+                            var otherPayTables = specialPay?.OtherPayTables;
+                            var sessionYear = item.Termregistration?.SessionYear;
+                            var term = item.Termregistration?.Term;
+                            var schoolClasses = item.Termregistration?.Schoolclasses;
+                            var subClasses = item.Termregistration?.SubClasses;
+
+                                <tr>
+                                    <td>@sn</td>
+                                    <td>@($"{studentData?.SurName} {studentData?.OtherName} {studentData?.FirstName}")</td>
+                                    <td>@studentData?.StudentRegNo</td>
+                                    <td>@(SD.ToNaira(specialPay.Amount))</td>
+                                    <td>@otherPayTables?.Name</td>
+                                    <td>@(SD.ToNaira(item.Amount))</td>
+                                    <td>
+                                        @if (specialPay?.Amount == item.Amount)
+                                        {
+                                            <span class="badge h4 bg-success" title="Fees completed">
+                                                <i class="fas fa-check-double"></i> Completed
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span title="Part Payment" class="badge h3 bg-warning">
+                                                <i class="fas fa-times-circle"></i> Part Payment
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>@sessionYear?.Name</td>
+                                    <td>@term</td>
+                                    <td>@($"{schoolClasses?.Name} - {subClasses?.Name}")</td>
+                                    <td>No Action</td>
+                                </tr>
+                            
+                        }
+                    </tbody>
+                }
+
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    @if(Model.IsSearch < 1)
+    {
+
+        <script src="/js/additionalpay.js"></script>
+    }
+
+}

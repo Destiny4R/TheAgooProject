@@ -1,0 +1,94 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.WebsiteManager.TeamManagers.UpsertModel
+@{
+    ViewData["Title"] = Model.Team?.Id > 0 ? "Update Team Member Data" : "Add New Team Member";
+    var btnname = Model.Team?.Id > 0 ? "Update" : "Add Team";
+    string manage = Model.Team?.Id > 0 ? "" : "required";
+}
+@section AddToHead 
+{
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+}
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge bg-dark"><h4 class="text-white">@ViewData["Title"]</h4></div>
+
+                <div class="">
+                    <a class="btn btn-info btn-sm" asp-page="Index"><i class="fas fa-arrow-left"></i>&ensp; Back</a>
+                </div>
+            </div>
+        </div>
+        @if (TempData["error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+            </div>
+        }
+        <div class="card-body">
+            <form class="row g-3" id="formteam1" method="post" enctype="multipart/form-data" >
+                  <div class="col-md-4 mt-3">
+                    <label asp-for="Team.Fullname" class="form-label">Full Name</label>
+                    <input asp-for="Team.Fullname" class="form-control " required />
+                    <span asp-validation-for="Team.Fullname" class="text-white bg-danger"></span>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <label asp-for="Team.Phone" class="form-label">Phone Number</label>
+                    <input asp-for="Team.Phone" type="tel" class="form-control" required />
+                    <span asp-validation-for="Team.Phone" class="text-white bg-danger"></span>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <label asp-for="Team.Email" class="form-label">Email Address</label>
+                    <input asp-for="Team.Email" class="form-control" required />
+                    <span asp-validation-for="Team.Email" class="text-white bg-danger"></span>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <label class="form-label">Passport Picture</label>
+                    <input type="file" name="file" class="form-control" @(manage) />
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <label asp-for="Team.Hierarchy" class="form-label">Hierarchy</label>
+                    <input type="number" asp-for="Team.Hierarchy" class="form-control" required />
+                    <span asp-validation-for="Team.Hierarchy" class="text-white bg-danger"></span>
+                  </div>
+                  <div class="col-md-4 mt-3">
+                    <label asp-for="Team.Position" class="form-label">Position</label>
+                    <input class="form-control" asp-for="Team.Position" required />
+                    <span asp-validation-for="Team.Position" class="text-white bg-dn=anger"></span>
+                  </div>
+                  <div class="col-md-12 mt-3">
+                    <label asp-for="Team.Note" class="form-label">Bio-Data</label>
+                    <textarea asp-for="Team.Note" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Team.Note" class="text-white bg-danger"></span>
+                  </div>
+                  <div class="col-12 mt-3">
+                      <input type="hidden" asp-for="Team.Id"/>
+                    <button id="senddata11" class="btn btn-primary" type="submit">@(btnname)</button>
+                  </div>
+            </form>
+            @if (!string.IsNullOrEmpty(Model.Team?.ImagePath))
+            {
+                <div class="row mt-3" id="imagediv">
+                    <div class="col-sm-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <img src="https://aggocollegemkd.com.ng/@(Model.Team.ImagePath)" width="100%" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+//
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/lib/blockui/jquery.blockui.min.js"></script>
+    <script src="~/js/managementteam.js"></script>
+}

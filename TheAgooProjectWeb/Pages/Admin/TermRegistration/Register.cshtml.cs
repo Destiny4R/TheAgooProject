@@ -1,13 +1,16 @@
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
 using TheAgooProjectModel;
 using TheAgooProjectModel.ViewModels;
 
 namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
 {
+    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer}")]
     public class RegisterModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
@@ -115,12 +118,12 @@ namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
                     Text = k.Name,
                     Value = k.Id.ToString()
                 }),
-                SessionYearz = dbContext.SessionYears.Select(k => new SelectListItem
+                SessionYearz = dbContext.SessionYears.OrderByDescending (k => k.Name).Select(k => new SelectListItem
                 {
                     Text = k.Name,
                     Value = k.Id.ToString()
                 }),
-                Subjects = dbContext.Subjects.Select(k => new SelectListItem
+                Subjects = dbContext.Subjects.Where(j => j.Register_State).Select(k => new SelectListItem
                 {
                     Text = k.Name,
                     Value = k.Id.ToString()

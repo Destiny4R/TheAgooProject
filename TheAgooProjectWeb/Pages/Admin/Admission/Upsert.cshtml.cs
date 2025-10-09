@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TheAgooProjectWeb.Pages.Admin.Admission
 {
-    [Authorize]
+    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer},{SD.Role_Accountant}")]
     public class UpsertModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
@@ -120,16 +120,17 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
                     int sub = DateTime.Now.Year;
                     if (stu_list > 0)
                     {
-                        username = $"AGG/SM/{sub}/"+(100+stu_list);
+                        username = $"ACM/SM/{sub}/"+(100+stu_list);
                     }
                     else
                     {
-                        username = $"AGG/SM/{sub}/100";
+                        username = $"ACM/SM/{sub}/100";
                     }
                     var getnewuser = await userManager.FindByNameAsync(username);
                     if (getnewuser != null)
                     {
-						username = $"AGG/SM/{sub}/" + (100 + stu_list+1);
+                        var count = dbContext.ApplicationUsers.Count();
+						username = $"ACM/SM/{sub}/" + (100 + count+1);
 					}
                     var user = new ApplicationUser
                     {
@@ -160,9 +161,12 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
                         }
                         student.UserID = claim.Value;
                         dbContext.Add(student);
-                        dbContext.SaveChanges();
-                        TempData["success"] = "Student successfully registered!";
-                        return RedirectToPage("Index");
+                        int result3 = dbContext.SaveChanges();
+                        if (result3 > 0)
+                        {
+                            TempData["success"] = "Student successfully registered!";
+                            return RedirectToPage("Index");
+                        }
                     }
                 }
                 TempData["error"] = "An error occured while registering student check and try again";
@@ -173,7 +177,7 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
         }
         void sessionyear()
         {
-            SessionYearz = dbContext.SessionYears.Select(k => new SelectListItem
+            SessionYearz = dbContext.SessionYears.OrderByDescending (k => k.Name).Select(k => new SelectListItem
             {
                 Text = k.Name,
                 Value = k.Id.ToString()
@@ -202,7 +206,7 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
             }
             return string.Empty;
         }
-        public async Task<string> CompressAndSaveImageAsync(IFormFile imageFile, string outputPath, int targetSizeKB = 120, string? oldImagePath=null)
+        private async Task<string> CompressAndSaveImageAsync(IFormFile imageFile, string outputPath, int targetSizeKB = 120, string? oldImagePath=null)
         {
 
             if (!string.IsNullOrEmpty(oldImagePath))
