@@ -1,0 +1,113 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Admin.system_backup.IndexModel
+@{
+    ViewData["Title"] = "System Backup resoration";
+}
+<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+<div class="page-content">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between">
+                <div class="badge  badge-info bg-info text-uppercase"><strong class="h5">@ViewData["Title"]</strong></div>
+                <button class="btn btn-danger" data-toggle="modal" data-target="#restoreDbModal">
+                    ⚠️ Restore Database
+                </button>
+            </div>
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success mt-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    <strong><i class="fas fa-check-double text-success"></i></strong> &emsp; @TempData["success"].
+                </div>
+            }
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger mt-2" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+                    <strong><i class="fas fa-check-double text-danger"></i></strong> &emsp; @TempData["error"].
+                </div>
+            }
+        </div>
+        <div class="card-body">
+            <div class="card border-danger shadow-sm mb-4">
+                <div class="card-header bg-danger text-white fw-bold">
+                    <h2 class="text-center">⚠️ VERY IMPORTANT WARNINGS</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger mb-0">
+                        <h5 class="fw-bold mb-3">🚨 This action will:</h5>
+                        <ul class="mb-0 fs-5">
+                            <li>❌ <strong>DELETE / OVERWRITE</strong> existing data</li>
+                            <li>❌ <strong>REPLACE</strong> the database content</li>
+                            <li>❌ <strong>Cannot be undone</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Restore Database Modal -->
+<div class="modal fade" id="restoreDbModal" tabindex="-1" aria-labelledby="restoreDbModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-danger">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="restoreDbModalLabel">
+                    ⚠️ DANGEROUS OPERATION — Restore Database
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <strong>WARNING:</strong> This action will:
+                    <ul class="mb-0">
+                        <li>❌ Permanently delete current database data</li>
+                        <li>❌ Replace everything with the backup version</li>
+                        <li>❌ Cannot be undone</li>
+                        <li>❌ May cause data loss</li>
+                    </ul>
+                </div>
+
+                <p class="fw-bold text-danger">
+                    Only proceed if you are absolutely sure.
+                </p>
+
+                <p>
+                    To confirm, type:
+                    <span class="badge bg-dark text-white">RESTORE DATABASE</span>
+                </p>
+
+                <input type="text" class="form-control" id="restoreConfirmInput"
+                       placeholder="Type RESTORE DATABASE to confirm"
+                       oninput="checkRestoreConfirm()" />
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Cancel
+                </button>
+
+                <form method="post">
+                    <button type="submit" id="confirmRestoreBtn" class="btn btn-danger" disabled>
+                        ⚠️ Yes, Restore Database
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+    <script>
+        function checkRestoreConfirm() {
+            const input = document.getElementById("restoreConfirmInput").value;
+            const btn = document.getElementById("confirmRestoreBtn");
+
+            btn.disabled = input !== "RESTORE DATABASE";
+        }
+    </script>
+
+}

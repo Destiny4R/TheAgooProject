@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
 using TheAgooProjectModel;
+using TheAgooProjectModel.ViewModels;
 using static TheAgooProjectWeb.Pages.Messaging.Send_SMS.SMS_SendModel;
 
 namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
@@ -14,9 +16,14 @@ namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
         private readonly ApplicationDbContext dbContext;
         public bool CheckAll2 { get; set; }
 
+        public ViewSelectModel ViewSelectModel { get; set; }
+        [BindProperty]
+        public CTSSClass CTSSClass { get; set; }
+
         public IndexModel(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
+            getViewSelect();
         }
         public void OnGet()
         {
@@ -89,6 +96,28 @@ namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
             }
             TempData["error"] = "No data was sent to the server for processing. Please check and try again.";
             return Page();
+        }
+
+        private void getViewSelect()
+        {
+            ViewSelectModel = new()
+            {
+                Class = dbContext.SchoolClasses.Select(k => new SelectListItem
+                {
+                    Text = k.Name,
+                    Value = k.Id.ToString()
+                }),
+                SubClass = dbContext.SubClasses.Select(k => new SelectListItem
+                {
+                    Text = k.Name,
+                    Value = k.Id.ToString()
+                }),
+                SessionYearz = dbContext.SessionYears.OrderByDescending(k => k.Name).Select(k => new SelectListItem
+                {
+                    Text = k.Name,
+                    Value = k.Id.ToString()
+                })
+            };
         }
         public class IncomingData
         {

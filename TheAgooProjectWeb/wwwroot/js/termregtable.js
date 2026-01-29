@@ -24,7 +24,15 @@ $(document).ready(function () {
         "ajax": {
             "url": "/Home/TermRegistration",
             "type": "POST",
-            "datatype": "json"
+            "datatype": "json",
+            data: function (d) {
+                var f = collectFormData();
+                d.term = f.term;
+                d.classes = f.classes;
+                d.subclass = f.subclass;
+                d.sessionYear = f.sessionYear;
+                return d;
+            }
         },
         "columnDefs": [{ "visible": true, "searchable": true, }],
         "columns": [
@@ -76,6 +84,27 @@ $(document).ready(function () {
                 }
             }
         ]
+    });
+
+
+    function collectFormData() {
+        return {
+            term: $('select[name="CTSSClass.Term"]').val(),
+            sessionYear: $('select[name="CTSSClass.SessionYear"]').val(),
+            classes: $('select[name="CTSSClass.Classes"]').val(),
+            subclass: $('select[name="CTSSClass.Subclass"]').val()
+        };
+    }
+
+    // Handle changes and send AJAX request
+    $('select[name^="CTSSClass"]').on('change', function () {
+        var formData = collectFormData();
+
+        // Example: Only proceed if all fields are selected
+        if (formData.term && formData.sessionYear && formData.classes && formData.subclass) {
+            //console.log('All fields selected:', formData);
+            datatable.ajax.reload();
+        }
     });
 });
 

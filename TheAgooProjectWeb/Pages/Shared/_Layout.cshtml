@@ -226,12 +226,21 @@
                             </a>
                         </li>
 
-                        <li>
-                            <a asp-page="/Admin/System-User/Index" class=" waves-effect">
-                                <i class="mdi mdi-calendar-month"></i>
-                                <span>System Users</span>
-                            </a>
-                        </li>
+                        @if (User.IsInRole(SD.Role_Admin))
+                        {
+                            <li>
+                                <a asp-page="/Admin/System-User/Index" class=" waves-effect">
+                                    <i class="mdi mdi-calendar-month"></i>
+                                    <span>System Users</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-page="/Admin/system-backup/Index" class=" waves-effect">
+                                    <i class="mdi mdi-cloud"></i>
+                                    <span>Restore Database</span>
+                                </a>
+                            </li>
+                        }
 
                         <li>
                             <a href="javascript: void(0);" class="has-arrow waves-effect">

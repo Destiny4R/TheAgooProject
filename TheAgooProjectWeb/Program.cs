@@ -36,6 +36,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
 }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<ISmsSender, SmsSender>();
 builder.Services.AddScoped<IMailSender, EmailSender>();
+builder.Services.AddHostedService<MySqlBackupBackgroundService>();
 builder.Services.ConfigureApplicationCookie(a =>
 {
     a.LoginPath = $"/Account/Login";

@@ -41,14 +41,63 @@
 
         <div class="card-body">
             <form method="post" id="thecheckhouse">
-                <div class="input-group mb-3">
-                    <div class="">
-                        <input type="checkbox" asp-for="CheckAll2" id="checkAll" />&nbsp;
-                        <label class="form-check-label" for="checkAll">Check All</label>
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="input-group mb-3">
+                            <div class="">
+                                <input type="checkbox" asp-for="CheckAll2" id="checkAll" />&nbsp;
+                                <label class="form-check-label" for="checkAll">Check All</label>
+                            </div>
+                            &emsp;
+                            <button type="submit" title="Delete multiple records" class="btn btn-sm btn-outline-dark"><i class="fa fa-trash"></i></button>
+                        </div>
                     </div>
-                    &emsp;
-                    <button type="submit" title="Delete multiple records" class="btn btn-sm btn-outline-dark"><i class="fa fa-trash"></i></button>
+                    <div class="col-lg-8">
+                        <div class="row mt-3">
+                            <div class="col-md-3">
+                                <div class="mb-2">
+                                    <label class="form-label">Term</label>
+                                    <select asp-for="CTSSClass.Term" class="form-control form-control-sm">
+                                        <option value="" disabled selected>---Select Term---</option>
+                                        <option value="First">First</option>
+                                        <option value="Second">Second</option>
+                                        <option value="Third">Third</option>
+                                    </select>
+                                    <span asp-validation-for="CTSSClass.Term" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-2">
+                                    <label class="form-label">Year/Session</label>
+                                    <select class="form-control form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                                        <option value="" disabled selected>---Select Session/Year---</option>
+                                    </select>
+                                    <span asp-validation-for="CTSSClass.SessionYear" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-2">
+                                    <label class="form-label">Class</label>
+                                    <select class="form-control form-control-sm " asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class">
+                                        <option value="" disabled selected>---Select Class---</option>
+                                    </select>
+                                    <span asp-validation-for="CTSSClass.Classes" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="mb-2">
+                                    <label class="form-label">Sub Class</label>
+                                    <select asp-for="CTSSClass.Subclass" class="form-control form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
+                                        <option value="" disabled selected>---Select Sub-Class---</option>
+                                    </select>
+                                    <span asp-validation-for="CTSSClass.Subclass" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
                 <table class="table table-sm table-bordered table-hover table-striped" id="termregtable1" width="100%">
                     <thead>
                         <tr>

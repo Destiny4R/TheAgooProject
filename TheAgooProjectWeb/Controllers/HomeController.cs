@@ -6,6 +6,7 @@ using System.Security.Claims;
 using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
 using TheAgooProjectModel;
+using TheAgooProjectModel.DTOs;
 using TheAgooProjectModel.Models;
 using TheAgooProjectModel.ViewModels;
 
@@ -211,12 +212,20 @@ namespace TheAgooProjectWeb.Controllers
 
         //Term Registration
         [AcceptVerbs(["Post", "Get"])]
-        public IActionResult TermRegistration()
+        public IActionResult TermRegistration(termregDTO response)
         {
             try
             {
                 IEnumerable<TermRegistration> userData;
-                userData = dbContext.TermRegistrations.Include(k=>k.SessionYear).Include(k => k.SubClasses).Include(k => k.Schoolclasses).Include(k => k.StudentsData).Include(k => k.ResultTable).ToList();
+                if (ModelState.IsValid)
+                {
+                    userData = dbContext.TermRegistrations.Include(k => k.SessionYear).Include(k => k.SubClasses).Include(k => k.Schoolclasses).Include(k => k.StudentsData).Include(k => k.ResultTable)
+                        .Where(d => d.Term == response.term && d.ClassesInSchoolId == response.classes && d.SubClassId == response.subclass && d.SessionYearId == response.sessionYear).ToList();
+                }
+                else
+                {
+                    userData = dbContext.TermRegistrations.Include(k => k.SessionYear).Include(k => k.SubClasses).Include(k => k.Schoolclasses).Include(k => k.StudentsData).Include(k => k.ResultTable).ToList();
+                }
 
                 userData = userData.OrderByDescending(k => k.Id).ToList();
                 var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();

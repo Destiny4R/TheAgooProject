@@ -98,7 +98,7 @@ namespace TheAgooProjectWeb.Pages.Account
             user.UserName = StudentReg;
             user.Fullname = "Admin Officer";
             user.Position = SD.Role_Admin;
-            string password = "Aggo2024";
+            string password = "Aggo@2024";
 
             var result = userManager.CreateAsync(user, password).GetAwaiter().GetResult();
             userManager.AddToRoleAsync(user, SD.Role_Admin).GetAwaiter().GetResult();
