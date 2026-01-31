@@ -18,6 +18,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(j => {
     j.UseMySql(connection, ServerVersion.AutoDetect(connection));
 });
 
+builder.Services.AddHostedService(provider =>
+{
+    var env = provider.GetRequiredService<IWebHostEnvironment>();
+    var config = provider.GetRequiredService<IConfiguration>();
+    var logger = provider.GetRequiredService<ILogger<MySqlBackupBackgroundService001>>();
+
+    var backupPath = Path.Combine(env.WebRootPath, "_protected", "mysql-backups");
+
+    return new MySqlBackupBackgroundService001(logger, config, backupPath);
+});
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
 {
     //Accont Lockout configuration
@@ -36,7 +47,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
 }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.AddScoped<ISmsSender, SmsSender>();
 builder.Services.AddScoped<IMailSender, EmailSender>();
-builder.Services.AddHostedService<MySqlBackupBackgroundService>();
+//builder.Services.AddHostedService<MySqlBackupBackgroundService>();
+
 builder.Services.ConfigureApplicationCookie(a =>
 {
     a.LoginPath = $"/Account/Login";

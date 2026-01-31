@@ -1,7 +1,7 @@
 ﻿@page
 @model TheAgooProjectWeb.Pages.Admin.system_backup.IndexModel
 @{
-    ViewData["Title"] = "System Backup resoration";
+    ViewData["Title"] = "System Backup restoration";
 }
 <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
 <div class="page-content">
@@ -59,42 +59,48 @@
                 <button type="button" class="btn-close btn-close-white" data-dismiss="modal"></button>
             </div>
 
-            <div class="modal-body">
-                <div class="alert alert-danger">
-                    <strong>WARNING:</strong> This action will:
-                    <ul class="mb-0">
-                        <li>❌ Permanently delete current database data</li>
-                        <li>❌ Replace everything with the backup version</li>
-                        <li>❌ Cannot be undone</li>
-                        <li>❌ May cause data loss</li>
-                    </ul>
+            <form method="post">
+                <div class="modal-body">
+                    <div class="alert alert-danger">
+                        <strong>WARNING:</strong> This action will:
+                        <ul class="mb-0">
+                            <li>❌ Permanently delete current database data</li>
+                            <li>❌ Replace everything with the backup version</li>
+                            <li>❌ Cannot be undone</li>
+                            <li>❌ May cause data loss</li>
+                        </ul>
+                    </div>
+
+                    <p class="fw-bold text-danger">
+                        Only proceed if you are absolutely sure.
+                    </p>
+
+                    <p>
+                        To confirm, type:
+                        <span class="badge bg-dark text-white">RESTORE DATABASE</span>
+                    </p>
+
+                    <input type="text" class="form-control" id="restoreConfirmInput"
+                           placeholder="Type RESTORE DATABASE to confirm"
+                           oninput="checkRestoreConfirm()" />
+                    <div class="mb-3 mt-3">
+                        <label class="form-label">Select Backup Version</label>
+                        <select asp-for="SelectedBackup" asp-items="Model.Backups" class="form-select" required>
+                            <option value="">-- Select backup --</option>
+                        </select>
+                    </div>
                 </div>
 
-                <p class="fw-bold text-danger">
-                    Only proceed if you are absolutely sure.
-                </p>
-
-                <p>
-                    To confirm, type:
-                    <span class="badge bg-dark text-white">RESTORE DATABASE</span>
-                </p>
-
-                <input type="text" class="form-control" id="restoreConfirmInput"
-                       placeholder="Type RESTORE DATABASE to confirm"
-                       oninput="checkRestoreConfirm()" />
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    Cancel
-                </button>
-
-                <form method="post">
-                    <button type="submit" id="confirmRestoreBtn" class="btn btn-danger" disabled>
-                        ⚠️ Yes, Restore Database
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Cancel
                     </button>
-                </form>
-            </div>
+
+                        <button type="submit" id="confirmRestoreBtn" class="btn btn-danger" disabled>
+                            ⚠️ Yes, Restore Database
+                        </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -53,6 +53,7 @@
     <Folder Include="wwwroot\appicons\" />
     <Folder Include="wwwroot\image\signature\" />
     <Folder Include="wwwroot\image\Passports\" />
+    <Folder Include="wwwroot\_protected\mysql-backups\" />
   </ItemGroup>
 
   <ItemGroup>
