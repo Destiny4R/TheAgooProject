@@ -63,26 +63,26 @@ namespace TheAgooProjectWeb.Pages.Account
                         ModelState.AddModelError(string.Empty, "User account has been disabled from accessing the system. Please contact your system administrator.");
                         return Page();
                     }
-                    //var result = await signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, false);
-                    await signInManager.SignInAsync(user, true, null);
-                    return RedirectToPage("/Index");
-                    //if (result.Succeeded)
-                    //{
-                    //    if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
-                    //    {
-                    //        if (ReturnUrl == "/")
-                    //        {
-                    //            return RedirectToPage("/Index");
-                    //        }
-                    //        return Redirect(ReturnUrl);
-                    //    }
-                    //    else
-                    //    {
-                    //        return RedirectToPage("/Index");
-                    //    }
-                    //}
-                    //ModelState.AddModelError(string.Empty, "Wrong Username or Password");
-                    //return Page();
+                    var result = await signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, false);
+                    //await signInManager.SignInAsync(user, true, null);
+                   // return RedirectToPage("/Index");
+                    if (result.Succeeded)
+                    {
+                        if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+                        {
+                            if (ReturnUrl == "/")
+                            {
+                                return RedirectToPage("/Index");
+                            }
+                            return Redirect(ReturnUrl);
+                        }
+                        else
+                        {
+                            return RedirectToPage("/Index");
+                        }
+                    }
+                    ModelState.AddModelError(string.Empty, "Wrong Username or Password");
+                    return Page();
                 }
                 ModelState.AddModelError(string.Empty, "Wrong Username or Password");
                 return Page();

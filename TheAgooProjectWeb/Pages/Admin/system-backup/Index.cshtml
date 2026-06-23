@@ -37,9 +37,9 @@
                     <div class="alert alert-danger mb-0">
                         <h5 class="fw-bold mb-3">🚨 This action will:</h5>
                         <ul class="mb-0 fs-5">
-                            <li>❌ <strong>DELETE / OVERWRITE</strong> existing data</li>
-                            <li>❌ <strong>REPLACE</strong> the database content</li>
-                            <li>❌ <strong>Cannot be undone</strong></li>
+                            <li class="mt-3">❌ <strong>DELETE / OVERWRITE</strong> existing data</li>
+                            <li class="mt-3">❌ <strong>REPLACE</strong> the database content</li>
+                            <li class="mt-3">❌ <strong>Cannot be undone</strong></li>
                         </ul>
                     </div>
                 </div>
@@ -64,10 +64,10 @@
                     <div class="alert alert-danger">
                         <strong>WARNING:</strong> This action will:
                         <ul class="mb-0">
-                            <li>❌ Permanently delete current database data</li>
-                            <li>❌ Replace everything with the backup version</li>
-                            <li>❌ Cannot be undone</li>
-                            <li>❌ May cause data loss</li>
+                            <li class="mt-3">❌ Permanently delete current database data</li>
+                            <li class="mt-3">❌ Replace everything with the backup version</li>
+                            <li class="mt-3">❌ Cannot be undone</li>
+                            <li class="mt-3">❌ May cause data loss</li>
                         </ul>
                     </div>
 
@@ -85,7 +85,7 @@
                            oninput="checkRestoreConfirm()" />
                     <div class="mb-3 mt-3">
                         <label class="form-label">Select Backup Version</label>
-                        <select asp-for="SelectedBackup" asp-items="Model.Backups" class="form-select" required>
+                        <select asp-for="SelectedBackup" asp-items="Model.Backups" class="custom-select" required>
                             <option value="">-- Select backup --</option>
                         </select>
                     </div>
