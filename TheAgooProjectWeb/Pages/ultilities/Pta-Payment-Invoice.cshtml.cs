@@ -9,7 +9,7 @@ using TheAgooProjectModel;
 
 namespace TheAgooProjectWeb.Pages.ultilities
 {
-    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer},{SD.Role_Accountant}")]
+    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer},{SD.Role_Accountant},{SD.IsStudent}")]
     public class Pta_Payment_InvoiceModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
@@ -31,6 +31,12 @@ namespace TheAgooProjectWeb.Pages.ultilities
                 {
                     TempData["error"] = "Receipt information not found";
                     return RedirectToPage("/Admin/Fees-Manager/PTA-Fees/Index");
+                }
+                var user = await userManager.GetUserAsync(User);
+                if (user != null && User.IsInRole(SD.IsStudent) && invoice.Termregistration.StudentsData.ApplicationUserId != user.Id)
+                {
+                    TempData["error"] = "Receipt information not found";
+                    return RedirectToPage("/student/PTA-Fees-Payment");
                 }
                 var admin = await userManager.GetUsersInRoleAsync(SD.Role_Admin);
                 if (admin.Any())

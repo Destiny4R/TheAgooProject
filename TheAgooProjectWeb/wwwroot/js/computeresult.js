@@ -39,9 +39,9 @@ $(document).ready(function () {
             {
                 "data": null, "render": function (data, type, full) {
                     if (data.attendance) {
-                        return `<span class="badge h4 bg-success" title="Attendance not added"><i class="fas fa-check-double"></i></span>`;
+                        return `<span class="badge h4 bg-success" title="Attendance not added"><i class="bi bi-check2-all"></i></span>`;
                     } else {
-                        return `<label title="Attendance yet to be added" class="badge bg-danger"><i class="far fa-times-circle"></i></label>`;
+                        return `<label title="Attendance yet to be added" class="badge bg-danger"><i class="bi bi-x-circle-fill"></i></label>`;
                     }
                 }
             },
@@ -51,10 +51,10 @@ $(document).ready(function () {
                         return `
                         <div class="d-flex justify-content-between">
                             <a class="btn btn-info btn-sm" title="View results in detail" href="/Compute-Result/Detail-Result?id=${data.termRegId}" style="cursor:pointer">
-                                <i class="fa fa-eye"></i>
+                                <i class="bi bi-eye"></i>
                             </a>&nbsp;
                             <a class="btn btn-success btn-sm" href="/Compute-Result/Remark-Comment?id=${data.termRegId}" style="cursor:pointer" title="Edit student remark">
-                                <i class="fas fa-check-double"></i> &nbsp; Remark
+                                Remark
                             </a>
                         </div>
                     `;
@@ -62,10 +62,10 @@ $(document).ready(function () {
                         return `
                         <div class="d-flex justify-content-between">
                             <a class="btn btn-info btn-sm" title="View results in detail" href="/Compute-Result/Detail-Result?id=${data.termRegId}" style="cursor:pointer">
-                                <i class="fa fa-eye"></i>
+                                <i class="bi bi-eye"></i>
                             </a>&nbsp;
                             <a class="btn btn-danger btn-sm" href="/Compute-Result/Remark-Comment?id=${data.termRegId}" style="cursor:pointer" title="Add student remark">
-                                <i class="fas fa-window-close"></i> &nbsp; Remark
+                                Remark
                             </a>
                         </div>
                     `;

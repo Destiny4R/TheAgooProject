@@ -2,40 +2,41 @@
 @model TheAgooProjectWeb.Pages.Admin.Parents_Guardian.IndexModel
 @{
     ViewData["Title"] = "Parents List";
+    ViewData["SubTitle"] = "View and manage parents and guardians";
 }
-@section AddToHead {
+@section Sheets {
     <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    @await Html.PartialAsync("_DataTablesSheetFiles")
 }
-<div class="page-content">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class="badge bg-dark"><h4 class="text-white">Parents/Guardian List</h4></div>
-
-                <div class="">
-                    <a class="btn btn-info btn-sm" asp-page="Upsert"><i class="fas fa-user-plus"></i>&ensp; Add Parent</a>
-                </div>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-person-hearts me-2"></i> Parents/Guardian List
             </div>
-            @if (TempData["success"] != null)
-            {
-                <div class="alert alert-success mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
-                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"]
-                </div>
-            }
-            @if (TempData["error"] != null)
-            {
-                <div class="alert alert-danger mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
-                    <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"]
-                </div>
-            }
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">@ViewData["SubTitle"]</div>
         </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-light btn-sm" asp-page="Upsert"><i class="bi bi-person-plus me-1"></i> Add Parent</a>
+        </div>
+    </div>
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success mt-2" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+            <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"]
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger mt-2" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+            <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"]
+        </div>
+    }
+    <div class="card">
         <div class="card-body">
-            <table id="studentdata" class="table-bordered table-striped table" width="100%">
+            <table id="studentdata" class="table-sm table-striped table" width="100%">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -55,10 +56,7 @@
 
 @section Scripts {
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
-    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    @await Html.PartialAsync("_DataTablesScriptsFiles")
     <script src="~/lib/blockui/jquery.blockui.min.js"></script>
-    <script src="~/js/parentstudent.js"></script>
+    <script src="~/js/parentstudent.js" asp-append-version="true"></script>
 }

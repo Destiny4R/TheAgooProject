@@ -13,9 +13,6 @@ $(document).ready(function () {
             }
         }
     });
-    let no = 0;
-
-
     datatable = $("#termregtable1").DataTable({
         "processing": true, "serverSide": true,
         "filter": true,
@@ -42,15 +39,14 @@ $(document).ready(function () {
                 }
             },
             {
-                "data": null, "render": function (data, type, full) {
-                    //<input type="checkbox" class="check-class" name="datas[${no}].ischeck" id="checkAll_${no}" value="false" />
+                "data": null, "render": function (data, type, row, meta) {
                     return `
-                        <input type="checkbox" class="check-class" name="datas[${no}].ischeck" id="checkAll_${no}" value="true">
+                        <input type="checkbox" class="check-class" name="datas[${meta.row}].ischeck" value="true">
                     `;
                 }
             },
             {
-                "data": null, "render": function (data, type, full) {
+                "data": null, "render": function (data, type, row, meta) {
                     var name = data.studentsData.surName + ' ' + (data?.studentsData.otherName||'') + ' ' + data.studentsData.firstName;
                     return name;
                 }
@@ -61,31 +57,91 @@ $(document).ready(function () {
             { "data": "schoolclasses.name", "autoWidth": true },
             { "data": "subClasses.name", "autoWidth": true },
             {
-                "data": null, "render": function (data, type, full) {
+                "data": null, "render": function (data, type, row, meta) {
                     var output = Object.keys(data.resultTable).length;
                     return output + ' Subjects';
                 }
 
             },
             {
-                "data": null, "render": function (data, type, full) {
-                    no++;
+                "data": null, "render": function (data, type, row, meta) {
                     return `
-                            <div class="d-flex justify-content-center">
-                             <a class=" btn-secondary btn-sm" href="/Admin/TermRegistration/Edit?id=${data.id}" style="cursor:pointer" title="Edit">
-                                    <i class="fa fa-edit"></i>
-                                </a> &nbsp;
-                                <input type="hidden" name="datas[${no - 1}].id"  value="${data.id}" hidden />
-                                <a onclick=removeStudent("/api/ManageTermReg?id=${data.id}") class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                       <i class="fa fa-trash"></i>
-                                   </a>
-                            </div>`;
+                        <div class="dropdown">
+                          <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/Admin/TermRegistration/Edit?id=${data.id}"><i class="bi bi-pencil-square me-2"></i> Edit</a></li>
+                            <li><button class="dropdown-item" data-id="${data.id}" id="btnDelete" type="button"><i class="bi bi-trash3 me-2"></i> Delete</button></li>
+                            <input type="hidden" name="datas[${meta.row}].id"  value="${data.id}" />
+                          </ul>
+                        </div>
+                        `;
 
                 }
             }
         ]
     });
 
+
+    $(document).on('click', '#btnDelete', function () {
+        var id = $(this).data('id');
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success ',
+                cancelButton: 'btn btn-danger me-3'
+            },
+            buttonsStyling: false
+        })
+
+        swalWithBootstrapButtons.fire({
+            title: 'Are you sure?',
+            text: "You want to remove this sudent from this term?!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "POST",
+                    url: `/api/ManageTermReg/${id}`,
+                    success: function (data) {
+                        $.unblockUI();
+                        if (data.success) {
+                            swal.fire(
+                                'Deleted!',
+                                data.message,
+                                'success'
+                            );
+                            datatable.ajax.reload();
+                        } else {
+                            swal.fire(
+                                'Deleted!',
+                                data.message,
+                                'error'
+                            );
+                        }
+                    },
+                    beforeSend: function () {
+                        blockcallback();
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Something went wrong!',
+                            footer: 'Check internet connectivity!'
+                        });
+                    },
+                    complete: function () {
+                        $.unblockUI();
+                    }
+                });
+            }
+        });
+    });
 
     function collectFormData() {
         return {
@@ -109,68 +165,7 @@ $(document).ready(function () {
 });
 
 function removeStudent(url) {
-    const swalWithBootstrapButtons = Swal.mixin({
-        customClass: {
-            confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
-        },
-        buttonsStyling: false
-    })
-
-    swalWithBootstrapButtons.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to recover this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'No, cancel!',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                type: "DELETE",
-                url: url,
-                success: function (data) {
-                    $.unblockUI();
-                    if (data.success) {
-                        swal.fire(
-                            'Deleted!',
-                            data.message,
-                            'success'
-                        );
-                        datatable.ajax.reload();
-                    } else {
-                        swal.fire(
-                            'Deleted!',
-                            data.message,
-                            'error'
-                        );
-                    }
-                },
-                beforeSend: function () {
-                    blockcallback();
-                },
-                error: function () {
-                    $.unblockUI();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong!',
-                        footer: 'Check internet connectivity!'
-                    });
-                },
-                complete: function () {
-                    $.unblockUI();
-                }
-            });
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-            swal.fire(
-                'Cancelled',
-                'Student NOT removed from the term!',
-                'error'
-            );
-        }
-    });
+    
 }
 
 function manage(url) {

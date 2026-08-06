@@ -2,15 +2,21 @@
 @model TheAgooProjectWeb.Pages.Admin.System_User.UpsertModel
 @{
     ViewData["Title"] = Model.canEdit > 0 ? "Update User Account" : "Add System User";
+    ViewData["SubTitle"] = "Create or update system user accounts";
 }
-<div class="page-content">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class="badge  badge-info bg-info text-uppercase"><strong class="h5">@ViewData["Title"]</strong></div>
-                <a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-person-badge me-2"></i> @ViewData["Title"]
             </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">@ViewData["SubTitle"]</div>
         </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-light btn-sm" asp-page="Index"><i class="bi bi-arrow-left me-1"></i> Back</a>
+        </div>
+    </div>
+    <div class="card">
         <div class="card-body">
             <h4 class="header-title">System User Details</h4>
             <form method="post">
@@ -31,17 +37,17 @@
                         <input class="form-control" asp-for="user.Fullname" required/>
                     </div>
                 </div>
-                <div class="form-group row">
+                <div class="form-group row mt-3">
                     <label asp-for="user.Position" class="col-md-4 col-form-label">Postion</label>
                     <div class="col-md-8">
-                        <select class="custom-select" asp-for="user.Position" required>
+                        <select class="form-select" asp-for="user.Position" required>
                             <option disabled selected>**Select User Role**</option>
                             <option value="@(SD.Role_ExamOfficer)">@(SD.Role_ExamOfficer)</option>
                             <option value="@(SD.Role_Accountant)">@(SD.Role_Accountant)</option>
                         </select>
                     </div>
                 </div>
-                <div class="form-group row">
+                <div class="form-group row mt-3">
                     <div class="col-md-8 offset-md-4">
                         <button class="btn btn-primary" type="submit">
                             @(Model.canEdit > 0 ? "Update" : "Add user")

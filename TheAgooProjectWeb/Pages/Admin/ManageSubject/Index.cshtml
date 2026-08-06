@@ -2,38 +2,46 @@
 @model TheAgooProjectWeb.Pages.Admin.ManageSubject.IndexModel
 @{
     ViewData["Title"] = "Subject List";
+    ViewData["SubTitle"] = "Manage school subjects and registrations";
 }
-@section AddToHead{
+@section Sheets{
     <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    @await Html.PartialAsync("_DataTablesSheetFiles")
     <link href="~/lib/jquery-multiselect/jquery.multiselect.css" rel="stylesheet" />
 }
 
-<div class="page-content">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">List</strong></div>
-                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                    <button type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#subjectsModal">
-                        Register Subjects
-                    </button>
-                    <a asp-page="Upsert" class="btn btn-outline-dark"><i class="fas fa-plus"></i>&nbsp; Add subject</a>
-                </div>
-                @* <div><a asp-page="Upsert" class="btn btn-dark"><i class="fas fa-plus"></i>&nbsp; Add subject</a></div> *@
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-journal-text me-2"></i> @ViewData["Title"]
             </div>
-            @if (TempData["success"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"].
-                </div>
-            }
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">@ViewData["SubTitle"]</div>
         </div>
+        <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#subjectsModal">
+                <i class="bi bi-journal-plus me-1"></i> Register Subjects
+            </button>
+            <button type="button" class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
+                <i class="fas fa-plus me-2"></i> Add Subject
+            </button>
+        </div>
+    </div>
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong><i class="bi bi-info-circle"></i></strong> @TempData["success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong><i class="bi bi-exclamation-triangle"></i></strong> @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <div class="card">
         <div class="card-body">
             <table id="classtable" class="table table-sm table-boredered table-hover table-stripped" width="100%">
                 <thead>
@@ -53,23 +61,80 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title fs-5 h2" id="subjectsModalLabel">Subject Registration</div>
-                <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">Close</button>
+                <button type="button" class="btn btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="post">
+            <form method="post" asp-page-handler="ManageSubject">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12">
                             <label for="validationCustom04" class="form-label">Select Subjects</label>
-                            <select class="form-select active 2col" required multiple name="subjects[]" asp-items="Model.ViewSelectModel.Subjects">
+                            <select class="form-select active 2col form-control" required multiple name="subjects[]" asp-items="Model.ViewSelectModel.Subjects">
                                 @* <option selected disabled value="">Choose...</option> *@
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Register</button>
                 </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--ADD SUBJECT Modal -->
+<div class="modal fade" id="addSubjectModal" tabindex="-1" aria-labelledby="addSubjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h1 class="modal-title fs-5" id="addClassModalLabel">Add New Subject</h1>
+                    <small>Manage new Subject infomation</small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-page-handler="AddAndUpdate">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label asp-for="subject.Name" class="form-label"></label>
+                        <input type="text" class="form-control" asp-for="subject.Name" required />
+                        <span asp-validation-for="subject.Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Subject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--EDIT Subject Modal -->
+<div class="modal fade" id="editSubjectModal" tabindex="-1" aria-labelledby="editSubjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h1 class="modal-title fs-5" id="editSubjectModalLabel">Edit Subject</h1>
+                    <small>Manage subject information</small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" asp-page-handler="AddAndUpdate">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label asp-for="subject.Name" class="form-label"></label>
+                        <input type="text" class="form-control" asp-for="subject.Name" required />
+                        <span asp-validation-for="subject.Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+                <input type="hidden" asp-for="subject.Id" />
             </form>
         </div>
     </div>
@@ -77,10 +142,7 @@
 
 @section Scripts {
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
-    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    @await Html.PartialAsync("_DataTablesScriptsFiles")
     <script src="~/lib/blockui/jquery.blockui.min.js"></script>
     <script src="~/lib/jquery-multiselect/jquery.multiselect.js"></script>
     <script src="~/js/subjects.js"></script>

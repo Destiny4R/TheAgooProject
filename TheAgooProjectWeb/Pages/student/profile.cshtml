@@ -1,0 +1,326 @@
+@page
+@model TheAgooProjectWeb.Pages.student.profileModel
+@{
+    ViewData["Title"] = "My Profile";
+    var s = Model.Student;
+    int age = DateTime.Now.Year - s.DateOfBirth.Year;
+    if (DateTime.Now.DayOfYear < s.DateOfBirth.DayOfYear) age--;
+}
+
+<style>
+    .profile-hero {
+        background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #3949ab 100%);
+        border-radius: 0 0 1.5rem 1.5rem;
+        padding: 2.5rem 2rem 3.5rem;
+        color: #ffffff;
+        position: relative;
+        overflow: hidden;
+    }
+    [data-bs-theme="dark"] .profile-hero {
+        background: linear-gradient(135deg, #151d65 0%, #1e2873 50%, #253380 100%);
+    }
+    .profile-hero::before {
+        content: '';
+        position: absolute;
+        top: -60%; right: -20%;
+        width: 400px; height: 400px;
+        background: rgba(255,255,255,.04);
+        border-radius: 50%;
+    }
+    .profile-hero::after {
+        content: '';
+        position: absolute;
+        bottom: -40%; left: -10%;
+        width: 300px; height: 300px;
+        background: rgba(255,255,255,.03);
+        border-radius: 50%;
+    }
+    .passport-frame {
+        width: 130px; height: 130px;
+        border-radius: 50%;
+        border: 4px solid rgba(255,255,255,.35);
+        object-fit: cover;
+        box-shadow: 0 8px 24px rgba(0,0,0,.25);
+        background: var(--bs-primary-bg-subtle);
+    }
+    .profile-name { font-size: 1.6rem; font-weight: 700; letter-spacing: .3px; color: #ffffff; }
+    .profile-reg { opacity: .85; font-size: .88rem; color: #ffffff; }
+    .profile-badge {
+        display: inline-flex; align-items: center; gap: .35rem;
+        background: rgba(255,255,255,.15);
+        backdrop-filter: blur(4px);
+        padding: .3rem .75rem;
+        border-radius: 2rem;
+        font-size: .78rem;
+        font-weight: 500;
+        color: #ffffff;
+    }
+    .info-card {
+        border: 1px solid var(--bs-card-border-color);
+        border-radius: .75rem;
+        background-color: var(--bs-card-bg);
+        box-shadow: 0 1px 6px rgba(0,0,0,.06);
+        transition: box-shadow .2s;
+    }
+    .info-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.12); }
+    .info-card .card-header {
+        background: transparent;
+        border-bottom: 1px solid var(--bs-border-color);
+        padding: .85rem 1.25rem;
+    }
+    .info-card .card-body { padding: 1.1rem 1.25rem; }
+    .field-label {
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        color: var(--bs-secondary-color);
+        font-weight: 600;
+        margin-bottom: .15rem;
+    }
+    .field-value {
+        font-size: .92rem;
+        color: var(--bs-body-color);
+        font-weight: 500;
+        word-break: break-word;
+    }
+    .section-heading {
+        font-size: .95rem;
+        font-weight: 700;
+        color: var(--bs-heading-color);
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+    .section-heading i {
+        font-size: 1.1rem;
+        color: var(--bs-primary);
+    }
+    .parent-card {
+        border-left: 3px solid var(--bs-primary);
+        border-radius: .5rem;
+        background-color: var(--bs-card-bg);
+        border: 1px solid var(--bs-border-color);
+    }
+    .parent-avatar {
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        background: var(--bs-primary-bg-subtle);
+        display: flex; align-items: center; justify-content: center;
+        color: var(--bs-primary);
+        font-weight: 700;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+    .stat-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: .3rem;
+        background: var(--bs-tertiary-bg);
+        padding: .25rem .65rem;
+        border-radius: 1rem;
+        font-size: .76rem;
+        font-weight: 500;
+        color: var(--bs-secondary-color);
+    }
+    .divider {
+        height: 1px;
+        background: var(--bs-border-color);
+        margin: 0;
+    }
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem 1.5rem;
+    }
+    @@media (max-width: 575.98px) {
+        .profile-hero { padding: 2rem 1.25rem 3rem; }
+        .passport-frame { width: 100px; height: 100px; border-width: 3px; }
+        .profile-name { font-size: 1.25rem; }
+        .detail-grid { grid-template-columns: repeat(2, 1fr); gap: .75rem 1rem; }
+    }
+</style>
+
+<div class="page-content fade-in">
+    <div class="profile-hero">
+        <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-start gap-3 position-relative" style="z-index:1;">
+            @if (!string.IsNullOrEmpty(s.Passport))
+            {
+                <img src="/@s.Passport" alt="Passport" class="passport-frame" />
+            }
+            else
+            {
+                <div class="passport-frame d-flex align-items-center justify-content-center" style="font-size:2.2rem;font-weight:700;background:var(--bs-primary-bg-subtle);color:var(--bs-primary);">
+                    @s.FirstName[0]@s.SurName[0]
+                </div>
+            }
+            <div class="text-center text-sm-start">
+                <div class="profile-name">@s.SurName @s.FirstName @s.OtherName</div>
+                <div class="profile-reg mb-2">@s.StudentRegNo</div>
+                <div class="d-flex flex-wrap justify-content-center justify-content-sm-start gap-2">
+                    <span class="profile-badge"><i class="bi bi-person-fill"></i> @s.Gender</span>
+                    <span class="profile-badge"><i class="bi bi-calendar3"></i> Age @age</span>
+                    <span class="profile-badge"><i class="bi bi-shield-check"></i> @(s.IsActive ? "Active" : "Inactive")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid px-3 px-md-4" style="margin-top:-1.5rem; position:relative; z-index:2;">
+        <div class="row g-3">
+
+            <div class="col-lg-8">
+                <div class="card info-card">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <span class="section-heading mb-0"><i class="bi bi-person-vcard"></i> Personal Information</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="detail-grid">
+                            <div>
+                                <div class="field-label">Full Name</div>
+                                <div class="field-value">@s.SurName @s.FirstName @s.OtherName</div>
+                            </div>
+                            <div>
+                                <div class="field-label">Registration No.</div>
+                                <div class="field-value">@(s.StudentRegNo ?? "—")</div>
+                            </div>
+                            <div>
+                                <div class="field-label">Gender</div>
+                                <div class="field-value">@s.Gender</div>
+                            </div>
+                            <div>
+                                <div class="field-label">Date of Birth</div>
+                                <div class="field-value">@s.DateOfBirth.ToString("dd MMMM yyyy")</div>
+                            </div>
+                            <div>
+                                <div class="field-label">Age</div>
+                                <div class="field-value">@age years</div>
+                            </div>
+                            <div>
+                                <div class="field-label">State of Origin</div>
+                                <div class="field-value">@s.State</div>
+                            </div>
+                            <div>
+                                <div class="field-label">Local Government</div>
+                                <div class="field-value">@s.LocalGov</div>
+                            </div>
+                            <div>
+                                <div class="field-label">Address</div>
+                                <div class="field-value">@(s.Address ?? "—")</div>
+                            </div>
+                            <div>
+                                <div class="field-label">Date Enrolled</div>
+                                <div class="field-value">@s.CreateDate.ToString("dd MMMM yyyy")</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card info-card h-100">
+                    <div class="card-header">
+                        <span class="section-heading mb-0"><i class="bi bi-mortarboard"></i> Enrollment</span>
+                    </div>
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        @if (Model.LatestEnrollment != null)
+                        {
+                            var e = Model.LatestEnrollment;
+                            <div>
+                                <div class="mb-3">
+                                    <div class="field-label">Current Session</div>
+                                    <div class="field-value">@e.Session</div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="field-label">Current Term</div>
+                                    <div class="field-value">@e.Term Term</div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="field-label">Class</div>
+                                    <div class="field-value">@e.ClassName</div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="field-label">Sub-Class</div>
+                                    <div class="field-value">@e.SubClassName</div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="field-label">Registered On</div>
+                                    <div class="field-value">@e.DateRegistered.ToString("dd MMM yyyy")</div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center text-muted py-3">
+                                <i class="bi bi-inbox display-5 d-block mb-2"></i>
+                                <span>No enrollment record found.</span>
+                            </div>
+                        }
+                        <div class="divider my-3"></div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="field-label mb-0">Total Registrations</span>
+                            <span class="stat-pill"><i class="bi bi-collection"></i> @Model.TotalEnrollments</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card info-card">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <span class="section-heading mb-0"><i class="bi bi-people"></i> Parent / Guardian Information</span>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Parents.Any())
+                        {
+                            <div class="row g-3">
+                                @foreach (var p in Model.Parents)
+                                {
+                                    var initials = !string.IsNullOrEmpty(p.Name)
+                                        ? string.Join("", p.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => w[0]))
+                                        : "?";
+                                    <div class="col-md-6">
+                                        <div class="card parent-card h-100 shadow-sm">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-start gap-3 mb-3">
+                                                    <div class="parent-avatar">@initials</div>
+                                                    <div>
+                                                        <div class="fw-semibold field-value">@p.Name</div>
+                                                        <span class="stat-pill mt-1" style="background:var(--bs-primary-bg-subtle);color:var(--bs-primary);">@p.Relationship</span>
+                                                    </div>
+                                                </div>
+                                                <div class="detail-grid" style="grid-template-columns:1fr;">
+                                                    <div>
+                                                        <div class="field-label">Occupation</div>
+                                                        <div class="field-value">@(p.Occupation ?? "—")</div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="field-label">Phone Number</div>
+                                                        <div class="field-value">
+                                                            <a href="tel:@p.PhoneNumber" class="text-decoration-none text-primary">@p.PhoneNumber</a>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="field-label">Address</div>
+                                                        <div class="field-value">@(p.Address ?? "—")</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center text-muted py-4">
+                                <i class="bi bi-person-raised-hand display-5 d-block mb-2"></i>
+                                <span>No parent or guardian information on file.</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

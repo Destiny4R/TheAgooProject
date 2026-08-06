@@ -1,191 +1,389 @@
 ﻿@page
 @model TheAgooProjectWeb.Pages.Portal.Terminal_Master_SheetModel
 @{
-    ViewData["Title"] = "Terminal Master Sheet";
+    ViewData["Title"] = "Terminal Assessment Master Sheet";
+    ViewData["SubTitle"] = "Session-by-session class performance overview with subject breakdown";
     int sn = 0;
+
+    // Column count used for colspan calculations.
+    // Fixed = 3 (S/N, Adm No., Name) + summary = 6 (Total, Avg, Pos, Grade, Remark, Action)
+    // Dynamic per subject = 6 sub-columns each.
+    int subjectColspan = Model.Subjects.Count * Model.AssessmentColumns.Count;
+    int totalColspan = 3 + subjectColspan + 6;
+
+    string scoreStyle(double v) =>
+        v == 0
+            ? "background:#fafafa;color:#bbb;"
+            : (v >= 70 ? "background:#c8e6c9;color:#1b5e20;"
+            : (v >= 50 ? "background:#fff9c4;color:#f57f17;"
+            : "background:#ffcdd2;color:#b71c1c;"));
+
+    string gradeStyle(string g) => g switch
+    {
+        "A" => "background:#1b5e20;color:#fff;",
+        "B" => "background:#2e7d32;color:#fff;",
+        "C" => "background:#f9a825;color:#fff;",
+        "D" => "background:#ef6c00;color:#fff;",
+        "E" => "background:#c62828;color:#fff;",
+        _ => "background:#6c757d;color:#fff;"
+    };
 }
-@section AddToHead{
-    <link href="/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+@section Sheets {
+    @await Html.PartialAsync("_DataTablesSheetFiles")
 }
-<div class="page-content">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class="badge  badge-info bg-info text-uppercase"><strong class="h5">Terminal Master Sheet</strong></div>
-                <a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-table me-2"></i> @ViewData["Title"]
             </div>
-            @if (TempData["error"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show mb-2 mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">@ViewData["SubTitle"]</div>
+        </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="Index"><i class="bi bi-arrow-left me-1"></i>&ensp; Back</a>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">
+                            <i class="bi bi-calendar3 me-1" style="color:#3949ab"></i>Session / Year
+                        </label>
+                        <select asp-for="CTSSClass.SessionYear" class="form-select form-select-sm" asp-items="Model.ViewSelectModel.SessionYearz">
+                            <option value="" disabled selected>— Select Session —</option>
+                        </select>
+                        <span asp-validation-for="CTSSClass.SessionYear" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small fw-semibold">
+                            <i class="bi bi-book me-1" style="color:#3949ab"></i>Term
+                        </label>
+                        <select asp-for="CTSSClass.Term" class="form-select form-select-sm">
+                            <option value="" disabled selected>— Select Term —</option>
+                            <option value="First">First Term</option>
+                            <option value="Second">Second Term</option>
+                            <option value="Third">Third Term</option>
+                        </select>
+                        <span asp-validation-for="CTSSClass.Term" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">
+                            <i class="bi bi-mortarboard me-1" style="color:#3949ab"></i>Class
+                        </label>
+                        <select asp-for="CTSSClass.Classes" class="form-select form-select-sm" asp-items="Model.ViewSelectModel.Class">
+                            <option value="" disabled selected>— Select Class —</option>
+                        </select>
+                        <span asp-validation-for="CTSSClass.Classes" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small fw-semibold">
+                            <i class="bi bi-people me-1" style="color:#3949ab"></i>Sub-Class
+                        </label>
+                        <select asp-for="CTSSClass.Subclass" class="form-select form-select-sm" asp-items="Model.ViewSelectModel.SubClass">
+                            <option value="" disabled selected>— Sub-Class —</option>
+                        </select>
+                        <span asp-validation-for="CTSSClass.Subclass" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-sm w-100" type="submit" style="background:#283593;color:#fff;font-weight:600;padding:.42rem;">
+                            <i class="bi bi-search me-1"></i> Generate
+                        </button>
+                    </div>
                 </div>
-            }
-            <div class="row p-2">
-                <div class="col-md-10">
-                    <form method="post">
-                        <div class="form-row align-items-center">
-                            <div class="col-auto">
-                                <div class="mt-3 mr-sm-2">
-                                    <label class="sr-only">Term</label>
-                                    <select asp-for="CTSSClass.Term" class="form-control form-control-sm">
-                                        <option value="" disabled selected>---Select Term---</option>
-                                        <option value="First">First</option>
-                                        <option value="Second">Second</option>
-                                        <option value="Third">Third</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="mt-3 mr-sm-2">
-                                    <label class="sr-only">Session/Year</label>
-                                    <select class="form-control form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz" required>
-                                        <option value="" disabled selected>---Select Session/Year---</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="mt-3 mr-sm-2">
-                                    <label class="sr-only">Class</label>
-                                    <select class="form-control form-control-sm " asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class" required>
-                                        <option value="" disabled selected>---Select Class---</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="mt-3 mr-sm-2">
-                                    <label class="sr-only">Sub Class</label>
-                                    <select asp-for="CTSSClass.Subclass" class="form-control form-control-sm" asp-items="Model.ViewSelectModel.SubClass" required>
-                                        <option value="" disabled selected>---Select Sub-Class---</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <button type="submit" class="btn btn-sm btn-primary mt-3"><i class="fas fa-search"></i></button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.StudentRows.Any())
+    {
+        <!-- Session / class info strip -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mt-3 p-2 rounded" style="background:#e8eaf6;border:1px solid #c5cae9;">
+            <span class="small text-muted">
+                <i class="bi bi-info-circle me-1"></i>Showing results for:
+            </span>
+            <span class="badge" style="background:#283593;color:#fff;">@Model.BannerSession</span>
+            <span class="badge" style="background:#283593;color:#fff;">@Model.BannerTerm Term</span>
+            <span class="badge" style="background:#283593;color:#fff;">@Model.BannerClass — @Model.BannerSubClass</span>
+            <span class="ms-auto" style="font-size:.78rem;color:#555;">
+                <i class="bi bi-people me-1"></i>@Model.StudentRows.Count student(s) &nbsp;|&nbsp;
+                <i class="bi bi-book me-1"></i>@Model.Subjects.Count subject(s)
+            </span>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="d-flex flex-wrap gap-2 my-3">
+            <button id="btnExcel" class="btn btn-sm btn-success" title="Export to Excel">
+                <i class="bi bi-file-earmark-excel me-1"></i> Export to Excel
+            </button>
+            <button onclick="window.print()" class="btn btn-sm btn-outline-secondary" title="Print">
+                <i class="bi bi-printer me-1"></i> Print
+            </button>
+        </div>
+
+        <!-- Master sheet table -->
+        <div class="table-responsive">
+            <table id="masterSheetTable" class="table table-bordered table-sm" style="font-size:.8rem;width:100%;">
+                <thead>
+                    <!-- Row 1: Subject group headers -->
+                    <tr>
+                        <th rowspan="3" class="text-center" style="min-width:35px;vertical-align:middle;background:#e8eaf6;">S/N</th>
+                        <th rowspan="3" class="text-center" style="min-width:95px;vertical-align:middle;background:#e8eaf6;">Adm. No.</th>
+                        <th rowspan="3" style="min-width:140px;vertical-align:middle;background:#e8eaf6;">Student Name</th>
+
+                        @foreach (var sub in Model.Subjects)
+                        {
+                            <th colspan="@Model.AssessmentColumns.Count" class="text-center" style="background:#c5cae9;color:#1a237e;font-size:.72rem;">@sub.SubjectName.ToUpper()</th>
+                        }
+
+                        <th rowspan="2" class="text-center" style="min-width:55px;vertical-align:middle;background:#283593;color:#fff;">TOTAL<br/>SCORE</th>
+                        <th rowspan="2" class="text-center" style="min-width:52px;vertical-align:middle;background:#283593;color:#fff;">AVERAGE</th>
+                        <th rowspan="2" class="text-center" style="min-width:52px;vertical-align:middle;background:#283593;color:#fff;">POSITION</th>
+                        <th rowspan="2" class="text-center" style="min-width:40px;vertical-align:middle;background:#283593;color:#fff;">GRADE</th>
+                        <th rowspan="2" class="text-center" style="min-width:70px;vertical-align:middle;background:#283593;color:#fff;">REMARK</th>
+                        <th rowspan="3" class="text-center" style="min-width:70px;vertical-align:middle;background:#283593;color:#fff;">ACTION</th>
+                    </tr>
+
+                    <!-- Row 2: Assessment sub-column headers per subject -->
+                    <tr>
+                        @foreach (var sub in Model.Subjects)
+                        {
+                            @foreach (var col in Model.AssessmentColumns)
+                            {
+                                <th class="text-center" style="min-width:38px;background:#e8eaf6;font-size:.68rem;">@col</th>
+                            }
+                        }
+                    </tr>
+
+                    <!-- Row 3: Fixed info row -->
+                    <tr>
+                        @foreach (var sub in Model.Subjects)
+                        {
+                            <th colspan="@Model.AssessmentColumns.Count" class="text-center" style="font-size:.66rem;color:#3949ab;background:#f5f5f5;">
+                                @string.Join(" | ", Model.AssessmentColumns)
+                            </th>
+                        }
+                        <th class="text-center" style="font-size:.68rem;background:#e8eaf6;">@(Model.Subjects.Count)×100</th>
+                        <th class="text-center" style="font-size:.68rem;background:#e8eaf6;">%</th>
+                        <th class="text-center" style="font-size:.68rem;background:#e8eaf6;">Out of @Model.StudentRows.Count</th>
+                        <th class="text-center" style="font-size:.68rem;background:#e8eaf6;">A-E</th>
+                        <th class="text-center" style="font-size:.68rem;background:#e8eaf6;">Remarks</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @{
+                        sn = 0;
+                    }
+                    @foreach (var row in Model.StudentRows.OrderBy(r => r.SerialNo))
+                    {
+                        sn++;
+                        string rowClass = sn % 2 == 0 ? "bg-light" : "";
+                        <tr class="@rowClass">
+                            <td class="text-center"><strong>@sn</strong></td>
+                            <td class="text-center">@row.AdmissionNo</td>
+                            <td style="text-align:left;font-weight:600;">@row.FullName</td>
+
+                            @foreach (var sub in Model.Subjects)
+                            {
+                                if (row.SubjectScores.TryGetValue(sub.SubjectId, out var sc) && sc != null)
+                                {
+                                    <td class="text-center" style="@scoreStyle(sc.Assignment)">@sc.Assignment</td>
+                                    <td class="text-center" style="@scoreStyle(sc.Test)">@sc.Test</td>
+                                    <td class="text-center" style="@scoreStyle(sc.Project)">@sc.Project</td>
+                                    <td class="text-center" style="@scoreStyle(sc.ClassWork)">@sc.ClassWork</td>
+                                    <td class="text-center" style="@scoreStyle(sc.Examination)">@sc.Examination</td>
+                                    <td class="text-center" style="@scoreStyle(sc.Total);font-weight:700;">@sc.Total</td>
+                                }
+                                else
+                                {
+                                    <td class="text-center" style="background:#fafafa;color:#bbb;">—</td>
+                                    <td class="text-center" style="background:#fafafa;color:#bbb;">—</td>
+                                    <td class="text-center" style="background:#fafafa;color:#bbb;">—</td>
+                                    <td class="text-center" style="background:#fafafa;color:#bbb;">—</td>
+                                    <td class="text-center" style="background:#fafafa;color:#bbb;">—</td>
+                                    <td class="text-center" style="background:#fafafa;color:#bbb;">—</td>
+                                }
+                            }
+
+                            <td class="text-center" style="font-weight:700;color:#1a237e;">@row.CumulativeTotal</td>
+                            <td class="text-center" style="font-weight:700;color:#1a237e;">@row.Average</td>
+
+                            <td class="text-center">
+                                @if (row.Position > 0)
+                                {
+                                    @row.Position<sup>@SD.specialNumber(row.Position)</sup>
+                                }
+                                else
+                                {
+                                    <span style="color:#bbb;">—</span>
+                                }
+                            </td>
+
+                            <td class="text-center">
+                                <span class="badge" style="@gradeStyle(row.Grade)">@row.Grade</span>
+                            </td>
+
+                            <td style="text-align:left;font-size:.71rem;">@row.Remark</td>
+
+                            <td class="text-center">
+                                <a asp-page="Terminal-Result"
+                                   asp-route-termregid="@row.TermRegId"
+                                   class="btn btn-sm btn-outline-primary text-decoration-none" target="_blank"
+                                   title="View @row.FullName's result"> View
+                                </a>
+                                @* @if (Model.SchoolClass != null && Model.SchoolClass.Elective)
+                                {
+                                    <a asp-page="Senior-Result-Sheet"
+                                       asp-route-session="@Model.CTSSClass.SessionYear"
+                                       asp-route-classes="@Model.CTSSClass.Classes"
+                                       asp-route-subclass="@Model.CTSSClass.Subclass"
+                                       asp-route-studentid="@row.StudentId"
+                                       asp-route-term="@Model.CTSSClass.Term"
+                                       class="btn btn-sm btn-outline-primary text-decoration-none" target="_blank"
+                                       title="View @row.FullName's result">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-page="Junior-Result-Sheet"
+                                       asp-route-session="@Model.CTSSClass.SessionYear"
+                                       asp-route-classes="@Model.CTSSClass.Classes"
+                                       asp-route-subclass="@Model.CTSSClass.Subclass"
+                                       asp-route-studentid="@row.StudentId"
+                                       asp-route-term="@Model.CTSSClass.Term"
+                                       class="btn btn-sm btn-outline-primary text-decoration-none" target="_blank"
+                                       title="View @row.FullName's result">
+                                         View
+                                    </a>
+                                } *@
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+                <!-- Summary footer -->
+                <tfoot>
+                    <!-- Subject average row -->
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">
+                            <i class="bi bi-bar-chart me-1"></i>Class Avg per Subject →
+                        </td>
+                        @foreach (var sub in Model.Subjects)
+                        {
+                            var subScores = Model.StudentRows
+                                .Where(r => r.SubjectScores.ContainsKey(sub.SubjectId) && r.SubjectScores[sub.SubjectId] != null)
+                                .Select(r => r.SubjectScores[sub.SubjectId]!)
+                                .ToList();
+                            int cnt = subScores.Count;
+                            double avgAssign = cnt > 0 ? Math.Round(subScores.Average(x => x.Assignment), 1) : 0;
+                            double avgTest = cnt > 0 ? Math.Round(subScores.Average(x => x.Test), 1) : 0;
+                            double avgProject = cnt > 0 ? Math.Round(subScores.Average(x => x.Project), 1) : 0;
+                            double avgCW = cnt > 0 ? Math.Round(subScores.Average(x => x.ClassWork), 1) : 0;
+                            double avgExam = cnt > 0 ? Math.Round(subScores.Average(x => x.Examination), 1) : 0;
+                            double avgTot = cnt > 0 ? Math.Round(subScores.Average(x => x.Total), 1) : 0;
+
+                            <td class="text-center">@avgAssign</td>
+                            <td class="text-center">@avgTest</td>
+                            <td class="text-center">@avgProject</td>
+                            <td class="text-center">@avgCW</td>
+                            <td class="text-center">@avgExam</td>
+                            <td class="text-center fw-bold">@avgTot</td>
+                        }
+                        <td colspan="5" style="font-style:italic;color:#555;">Class avg by subject shown above</td>
+                        <td></td>
+                    </tr>
+
+                    <!-- Highest score per subject -->
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">
+                            <i class="bi bi-arrow-up me-1"></i>Highest Score per Subject →
+                        </td>
+                        @foreach (var sub in Model.Subjects)
+                        {
+                            var subTotals = Model.StudentRows
+                                .Where(r => r.SubjectScores.ContainsKey(sub.SubjectId) && r.SubjectScores[sub.SubjectId] != null)
+                                .Select(r => r.SubjectScores[sub.SubjectId]!.Total)
+                                .ToList();
+                            double highest = subTotals.Any() ? subTotals.Max() : 0;
+                            <td colspan="@Model.AssessmentColumns.Count" class="text-center fw-bold" style="color:#1b5e20;">@highest</td>
+                        }
+                        <td colspan="6"></td>
+                    </tr>
+
+                    <!-- Lowest score per subject -->
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">
+                            <i class="bi bi-arrow-down me-1"></i>Lowest Score per Subject →
+                        </td>
+                        @foreach (var sub in Model.Subjects)
+                        {
+                            var subTotalsL = Model.StudentRows
+                                .Where(r => r.SubjectScores.ContainsKey(sub.SubjectId) && r.SubjectScores[sub.SubjectId] != null)
+                                .Select(r => r.SubjectScores[sub.SubjectId]!.Total)
+                                .ToList();
+                            double lowest = subTotalsL.Any() ? subTotalsL.Min() : 0;
+                            <td colspan="@Model.AssessmentColumns.Count" class="text-center fw-bold" style="color:#880e4f;">@lowest</td>
+                        }
+                        <td colspan="6"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Grade key legend -->
+        <div class="mt-3 p-2 rounded" style="background:#f5f5f5;border:1px solid #e0e0e0;font-size:.78rem;color:#555;">
+            <strong>Grade Key:</strong>
+            &nbsp;<span class="badge" style="background:#1b5e20;color:#fff;">A</span> Excellent (75–100) &nbsp;
+            <span class="badge" style="background:#2e7d32;color:#fff;">B</span> Very Good (65–74) &nbsp;
+            <span class="badge" style="background:#f9a825;color:#fff;">C</span> Good (55–64) &nbsp;
+            <span class="badge" style="background:#ef6c00;color:#fff;">D</span> Fair (40–54) &nbsp;
+            <span class="badge" style="background:#c62828;color:#fff;">E</span> Poor (Below 40)
+        </div>
+    }
+    else if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger d-flex align-items-center gap-2 mt-3" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>@TempData["error"]</span>
+        </div>
+    }
+    else
+    {
+        <div class="card mt-3">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-table" style="font-size:3rem;color:#c5cae9;"></i>
+                <h4 class="mt-2">No Data to Display</h4>
+                <p class="text-muted mb-0">
+                    Select a <strong>Session</strong>, <strong>Term</strong>, <strong>Class</strong> and
+                    <strong>Sub-Class</strong> above, then click <em>Generate</em> to load the
+                    Terminal Assessment Master Sheet.
+                </p>
             </div>
         </div>
-        @if (Model.Result?.Count() > 0)
-        {
-            <div class="card-body">
-                <div class="mb-2 d-flex justify-content-end">
-                    <button class="btn-success btn mt-2" type="button" id="getexcelbtn"><i class="far fa-file-excel"></i>&nbsp; Export excel</button>
-                </div>
-                <table class="table-bordered table table-responsive" id="terminalTable" width="100%">
-                    <thead>
-                        <tr class="table-primary">
-                            <th colspan="3">@(Html.Raw(Model.information))</th>
-                            @foreach (var item in Model.GetSubjects.OrderByDescending(q => q.SubjId))
-                            {
-                                <th rowspan="2" class="rotate-upward text-center">@item.Name</th>
-                            }
-                            <th rowspan="2" class="rotate-upward text-center">Total</th>
-                            <th rowspan="2" class="rotate-upward text-center">Average</th>
-                            <th rowspan="2" class="rotate-upward text-center">Position</th>
-                            <th rowspan="2" class="rotate-upward text-center">Remark</th>
-                        </tr>
-                        <tr class="table-primary">
-                            <th>#</th>
-                            <th>Full Name</th>
-                            <th>Sex</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.Result.GroupBy(q => q.TermRegId))
-                        {
-                            sn++;
-                            string name = item.FirstOrDefault().Termregistration.StudentsData.SurName + " "
-                                + item.FirstOrDefault().Termregistration.StudentsData.OtherName + " "
-                                + item.FirstOrDefault().Termregistration.StudentsData.FirstName;
-                            <tr>
-                                <td>@(sn)</td>
-                                <td>@(name)</td>
-                                <td>@(item.FirstOrDefault().Termregistration.StudentsData.Gender)</td>
-
-                                @foreach (var subj in Model.GetSubjects.OrderByDescending(q => q.SubjId))
-                                {
-                                    var subject = item.Where(k => k.SubjectId == subj.SubjId).ToList();
-                                    var firstSubject = subject.FirstOrDefault();
-                                    if (firstSubject != null)
-                                    {
-                                        <td>@firstSubject.Total</td>
-                                    }
-                                    else
-                                    {
-                                        <td><label class="badge badge-info">Null</label></td>
-                                    }
-                                }
-
-
-                                <td>@(Model.students.Where(q=>q.StudId==item.FirstOrDefault().TermRegId).FirstOrDefault().TotalScore)</td>
-                                <td>
-                                    @{ 
-                                        var _Average = Math.Round(Model.students.Where(q => q.StudId == item.FirstOrDefault().TermRegId).FirstOrDefault().Average, 2);
-                                    }
-                                    @(_Average)
-                                </td>
-                                <td>
-                                    @{
-                                        var datax = Model.students.Where(q => q.StudId == item.FirstOrDefault().TermRegId).FirstOrDefault().Rank;
-                                    }
-                                    <strong>@datax<sup>@(SD.specialNumber(datax))</sup></strong>
-                                </td>
-                                <td>@(SD.GetRemark(Math.Round(_Average)))</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-    </div>
+    }
 </div>
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />
-    <script src="/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <!-- Buttons examples -->
-    <script src="/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-    <script src="/assets/libs/jszip/jszip.min.js"></script>
-    <script src="/assets/libs/pdfmake/build/pdfmake.min.js"></script>
-    <script src="/assets/libs/pdfmake/build/vfs_fonts.js"></script>
-    <script src="/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
-    <script src="/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
-    <!-- Responsive examples -->
-    <script src="/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-    <script src="~/js/jquery.table2excel.js"></script>
+    @await Html.PartialAsync("_DataTablesScriptsFiles")
     <script>
-        $(function () {
-            $("#terminalTable").DataTable({
-                lengthChange: !1,
-                "filter": false,
+        $(document).ready(function () {
+            var table = $('#masterSheetTable').DataTable({
+                paging: false,
+                filter: false,
+                info: false,
                 responsive: false,
-                "info": false,
-                "paging": false,
-                buttons: ["copy", "excel", "pdf", "colvis"]
-            }).buttons().container().appendTo("#terminalTable_wrapper .col-md-6:eq(0)")
-
-
-
-            $("#terminalTable").find('#getexcelbtn').on('click', function () {
-                $.print("#terminalTable");
+                lengthChange: false,
+                dom: '<"d-flex justify-content-end mb-2"B>t',
+                buttons: {
+                    buttons: ['excel', 'pdf', 'print'],
+                    title: null
+                }
             });
-            $("#getexcelbtn").click(function (e) {
-                $("#terminalTable").table2excel({
-                    name: "Worksheet Name",
-                    filename: 'Terminal_Report_Sheet',
-                    fileext: ".xlsx",
-                    preserveColors: true
-                });
+            $('#btnExcel').on('click', function () {
+                table.button('.buttons-excel').trigger();
             });
         });
     </script>

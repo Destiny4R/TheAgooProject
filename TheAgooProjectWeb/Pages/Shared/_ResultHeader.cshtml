@@ -1,0 +1,17 @@
+﻿@inject IOptions<AppConfigurations> SchoolConfig
+
+<td width="15%" class="text-start">
+    <img class="rounded-circle shadow-sm" src="@(SchoolConfig.Value.Logo)" width="110" height="110" alt="School Logo" />
+</td>
+<td width="70%" class="text-center">
+    <div class="getfont">
+        <h2 class="school-header-title">@(SchoolConfig.Value.SchoolName) @(SchoolConfig.Value.Layout1)</h2>
+        <p class="school-header-subtitle">@(SchoolConfig.Value.Address)</p>
+        <p class="fw-bold text-secondary mb-1" style="font-size: 0.95rem;">@(SchoolConfig.Value.StateAddress)</p>
+        <p class="mb-1" style="font-size: 0.88rem;"><strong>MOTTO:</strong> @(SchoolConfig.Value.Motto)</p>
+        <p class="mb-0" style="font-size: 0.85rem;">
+            <strong>EMAIL:</strong> @(SchoolConfig.Value.Email) &emsp;
+            <strong>Tel:</strong> @(SchoolConfig.Value.Phone)
+        </p>
+    </div>
+</td>

@@ -38,18 +38,32 @@ $(document).ready(function () {
                 "data": null, "render": function (data, type, full) {
                     return `
                         <div class="">
-                            <a class="btn btn-primary btn-sm" title="Edit Class Name" href="/Admin/ManageClass/Upsert?id=${data.id}" style="cursor:pointer">
-                                <i class="fa fa-edit"></i>
-                            </a>
+                            <button type="button" class="btn btn-primary btn-sm btn-edit-class" title="Edit Class Name" data-id="${data.id}" data-name="${data.name}" data-elective="${data.elective}" style="cursor:pointer">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
                             &nbsp;  &emsp;
                             <a onclick=removeClass("/api/classmanager/${data.id}") title="Permanently Remove class" class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                <i class="fa fa-trash"></i>
+                                <i class="bi bi-trash"></i>
                             </a>
                         </div>
                     `;
                 }
             }
         ]
+    });
+
+    $(document).on("click", ".btn-edit-class", function () {
+        var id = $(this).data("id");
+        var name = $(this).data("name");
+        var elective = String($(this).data("elective")).toLowerCase() === "true";
+
+        $("#editClassModal input[name='_class.Name']").val(name);
+        $("#editClassModal input[name='_class.Id']").val(id);
+        $("#editClassModal input[name='customRadio'][value='Cando']").prop("checked", elective);
+        $("#editClassModal input[name='customRadio'][value='Cannot']").prop("checked", !elective);
+
+        var modal = new bootstrap.Modal(document.getElementById("editClassModal"));
+        modal.show();
     });
 });
 
@@ -58,7 +72,7 @@ function removeClass(url) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
+            cancelButton: 'btn btn-danger me-2'
         },
         buttonsStyling: false
     })
@@ -68,7 +82,7 @@ function removeClass(url) {
         text: "You won't be able to revert this!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, delete!',
         cancelButtonText: 'No, cancel!',
         reverseButtons: true
     }).then((result) => {

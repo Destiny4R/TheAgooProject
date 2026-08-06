@@ -94,5 +94,11 @@
     "inputFiles": [
       "wwwroot/js/feedback.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/termregtable.min.js",
+    "inputFiles": [
+      "wwwroot/js/termregtable.js"
+    ]
   }
 ]

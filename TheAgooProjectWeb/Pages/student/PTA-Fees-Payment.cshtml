@@ -1,0 +1,48 @@
+@page
+@model TheAgooProjectWeb.Pages.student.PTA_Fees_PaymentModel
+@{
+    ViewData["Title"] = "Fees List";
+}
+@section Sheets {
+    @await Html.PartialAsync("_DataTablesSheetFiles")
+}
+<div class="container-fluid px-3 px-md-4 page-content fade-in mt-3">
+    <div class="tms-header">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-table me-2"></i>PTA Fees Payments
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">
+                My PTA fees payment records
+            </div>
+        </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="index">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
+    <div class="card mt-3">
+        <div class="card-body">
+            <table id="ptapayment" class="table table-sm table-lg-responsive table-bordered table-hover table-striped" width="100%">
+                <thead>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Full Name</th>
+                        <th>PTA Fees</th>
+                        <th>Amount Paid</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                        <th>Session/Year</th>
+                        <th>Term</th>
+                        <th>Class</th>
+                        <th>Payment Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @await Html.PartialAsync("_DataTablesScriptsFiles")
+    <script src="~/js/studentfees.js" asp-append-version="true"></script>
+}

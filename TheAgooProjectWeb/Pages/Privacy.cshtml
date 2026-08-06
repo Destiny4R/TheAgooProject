@@ -2,7 +2,18 @@
 @model PrivacyModel
 @{
     ViewData["Title"] = "Privacy Policy";
+    ViewData["SubTitle"] = "How the school handles and protects your data";
 }
-<h1>@ViewData["Title"]</h1>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-shield-lock me-2"></i> @ViewData["Title"]
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">@ViewData["SubTitle"]</div>
+        </div>
+    </div>
+    <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+    <p>Use this page to detail your site's privacy policy.</p>
+</div>

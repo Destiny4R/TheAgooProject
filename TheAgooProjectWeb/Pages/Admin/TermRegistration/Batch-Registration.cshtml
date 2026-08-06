@@ -2,77 +2,80 @@
 @model TheAgooProjectWeb.Pages.Admin.TermRegistration.Batch_RegistrationModel
 @{
     ViewData["Title"] = "Buck Students Term Registration";
+    ViewData["SubTitle"] = "Duplicate previous term registrations in bulk";
     int sn = 0;
 }
 <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-<div class="page-content">
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-clipboard-check me-2"></i> Duplicate Previous Term Registeration
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">@ViewData["SubTitle"]</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-light btn-sm" asp-page="Index"><i class="bi bi-arrow-left me-1"></i> Back</a>
+        </div>
+    </div>
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong><i class="bi bi-info-circle"></i></strong> @TempData["success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong><i class="bi bi-exclamation-triangle"></i></strong> @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
     <div class="card">
         <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class=" badge text-white bg-blue text-uppercase bg-info"><strong class="h5">Duplicate Previous Term Registeration</strong></div>
-                <div><a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
-            </div>
             <div class="mt-2">
                 <form method="post" asp-page-handler="Search">
-                    <div class="input-group mt-2 col-12">
-                        <div>
-                            <select asp-for="CTSSClass.Term" class="form-control form-control-sm">
+                    <div class="g-2 mt-2 row">
+                        <div class="col-md-3">
+                            <select asp-for="CTSSClass.Term" class="form-select form-control-sm">
                                 <option value="" disabled selected>---Select Term---</option>
                                 <option value="First">First</option><option value="Second">Second</option><option value="Third">Third</option>
                             </select>
                             <span asp-validation-for="CTSSClass.Term" class="text-white field-validation-valid badge badge-danger"></span>
                         </div>
-                        <div>
-                            <select class="form-control form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                        <div class="col-md-3">
+                            <select class="form-select form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
                                 <option value="" disabled selected>---Select Session/Year---</option>
                             </select>
                             <span asp-validation-for="CTSSClass.SessionYear" class="text-white field-validation-valid badge badge-danger"></span>
                         </div>
-                        <div>
-                            <select class="form-control form-control-sm " asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class">
+                        <div class="col-md-3">
+                            <select class="form-select form-control-sm " asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class">
                                 <option value="" disabled selected>---Select Class---</option>
                             </select>
                             <span asp-validation-for="CTSSClass.Classes" class="text-white field-validation-valid badge badge-danger"></span>
                         </div>
-                        <div>
-                            <select asp-for="CTSSClass.Subclass" class="form-control form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
+                        <div class="col-md-2">
+                            <select asp-for="CTSSClass.Subclass" class="form-select form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
                                 <option value="" disabled selected>---Select Sub-Class---</option>
                             </select>
                             <span asp-validation-for="CTSSClass.Subclass" class="text-white field-validation-valid badge badge-danger"></span>
                         </div>
-                        <div>
-                            <button class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                        <div class="col-md-1">
+                            <button class="btn btn-success btn-sm" type="submit"><i class="bi bi-search"></i></button>
                         </div>
                     </div>
                 </form>
             </div>
-
-            @if (TempData["success"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"].
-                </div>
-            }
-            @if (TempData["error"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
-                </div>
-            }
         </div>
         @if (Model.hasValue > 0)
         {
             <div class="card-body">
                 <form method="post" asp-page-handler="PostAll">
-                    <div class="input-group mt-2 col-12">
-                        <div>
-                            <select asp-for="RegCtssClass.Term" class="form-control form-control-sm">
+                    <div class="input-group mt-2 row">
+                        <div class="col-md-3">
+                            <select asp-for="RegCtssClass.Term" class="form-select form-control-sm">
                                 <option value="" disabled selected>---Select Term---</option>
                                 <option value="First">First</option>
                                 <option value="Second">Second</option>
@@ -80,20 +83,20 @@
                             </select>
                             <span asp-validation-for="RegCtssClass.Term" class="text-white field-validation-valid badge badge-danger"></span>
                         </div>
-                        <div>
-                            <select class="form-control form-control-sm" asp-for="RegCtssClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                        <div class="col-md-3">
+                            <select class="form-select form-control-sm" asp-for="RegCtssClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
                                 <option value="" disabled selected>---Select Session/Year---</option>
                             </select>
                             <span asp-validation-for="RegCtssClass.SessionYear" class="text-white field-validation-valid badge badge-danger"></span>
                         </div>
-                        <div>
-                            <select class="form-control form-control-sm " asp-for="RegCtssClass.Classes" asp-items="Model.ViewSelectModel.Class">
+                        <div class="col-md-3">
+                            <select class="form-select form-control-sm " asp-for="RegCtssClass.Classes" asp-items="Model.ViewSelectModel.Class">
                                 <option value="" disabled selected>---Select Class---</option>
                             </select>
                             <span asp-validation-for="RegCtssClass.Classes" class="text-white field-validation-valid badge badge-danger"></span>
                         </div>
-                        <div>
-                            <select asp-for="RegCtssClass.Subclass" class="form-control form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
+                        <div class="col-md-3">
+                            <select asp-for="RegCtssClass.Subclass" class="form-select form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
                                 <option value="" disabled selected>---Select Sub-Class---</option>
                             </select>
                             <span asp-validation-for="RegCtssClass.Subclass" class="text-white field-validation-valid badge badge-danger"></span>
@@ -126,7 +129,7 @@
                                     <td>@(Model.TermReg[i].SubClasses.Name)</td>
                                     <td>
                                         <input type="hidden" asp-for="@Model.TermReg[i].Id"/>
-                                        <button type="button" class="btn btn-sm btn-danger" onclick="Remove(this);"><i class='fa fa-trash'></i></button>
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="Remove(this);"><i class='bi bi-trash'></i></button>
                                     </td>
                                 </tr>
                             }

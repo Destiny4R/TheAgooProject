@@ -1,280 +1,325 @@
 ﻿@page
-@model TheAgooProjectWeb.Pages.Portal.Annual_MasterModel
+@model TheAgooProjectWeb.Pages.Portal.AnnualMasterModel
 @{
     ViewData["Title"] = "Class Annual Master Result";
+    ViewData["SubTitle"] = "View and export the annual master sheet";
     int sn = 0;
-    string[] _terms = ["First", "Second", "Third"];
-    var highlow = new List<TheAgooProjectWeb.Pages.Portal.Annual_MasterModel.HighLow>();
-    var dcounter = new List<TheAgooProjectWeb.Pages.Portal.Annual_MasterModel.D_Count>();
-    if (Model._subjects.Any())
+
+    // Column count used for colspan calculations.
+    // Fixed = 3 (S/N, Full Name, Sex) + summary = 6 (Annual Total, Avg, Pos, Grade, Remark, Action)
+    // Dynamic per subject = 3 term columns each.
+    int subjectColspan = Model.Subjects.Count * 3;
+    int summaryColspan = 6;
+
+    string scoreStyle(double v) =>
+        v == 0
+            ? "background:#fafafa;color:#bbb;"
+            : (v >= 70 ? "background:#c8e6c9;color:#1b5e20;"
+            : (v >= 50 ? "background:#fff9c4;color:#f57f17;"
+            : "background:#ffcdd2;color:#b71c1c;"));
+
+    string gradeStyle(string g) => g switch
     {
-        foreach (var item in Model._resultSummary.OrderByDescending(l => l.SubId).GroupBy(g => g.SubId))
-        {
-            var _highlow = new TheAgooProjectWeb.Pages.Portal.Annual_MasterModel.HighLow();
-            foreach (var item1 in item)
-            {
-                _highlow.TotalScore += item1.TotalScore;
-            }
-            highlow.Add(_highlow);
-        }
-    }
+        "A" => "background:#1b5e20;color:#fff;",
+        "B" => "background:#2e7d32;color:#fff;",
+        "C" => "background:#f9a825;color:#fff;",
+        "D" => "background:#ef6c00;color:#fff;",
+        "E" => "background:#c62828;color:#fff;",
+        _ => "background:#6c757d;color:#fff;"
+    };
 }
-<div class="page-content">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class="badge  badge-info bg-info text-uppercase"><strong class="h5">Annual Result Master Sheet</strong></div>
-                <a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+@section Sheets {
+    @await Html.PartialAsync("_DataTablesSheetFiles")
+}
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-bar-chart-line me-2"></i> @ViewData["Title"]
             </div>
-            @if (TempData["error"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show mb-2 mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">@ViewData["SubTitle"]</div>
+        </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="Index"><i class="bi bi-arrow-left me-1"></i>&ensp; Back</a>
+    </div>
+
+    <!-- Filter Form -->
+    <div class="card">
+        <div class="card-body">
+            <form method="post">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-semibold">
+                            <i class="bi bi-calendar3 me-1" style="color:#3949ab"></i>Session / Year
+                        </label>
+                        <select asp-for="CTSSClass.SessionYear" class="form-select form-select-sm" asp-items="Model.ViewSelectModel.SessionYearz">
+                            <option value="" disabled selected>— Select Session —</option>
+                        </select>
+                        <span asp-validation-for="CTSSClass.SessionYear" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">
+                            <i class="bi bi-mortarboard me-1" style="color:#3949ab"></i>Class
+                        </label>
+                        <select asp-for="CTSSClass.Classes" class="form-select form-select-sm" asp-items="Model.ViewSelectModel.Class">
+                            <option value="" disabled selected>— Select Class —</option>
+                        </select>
+                        <span asp-validation-for="CTSSClass.Classes" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-semibold">
+                            <i class="bi bi-people me-1" style="color:#3949ab"></i>Sub-Class
+                        </label>
+                        <select asp-for="CTSSClass.Subclass" class="form-select form-select-sm" asp-items="Model.ViewSelectModel.SubClass">
+                            <option value="" disabled selected>— Sub-Class —</option>
+                        </select>
+                        <span asp-validation-for="CTSSClass.Subclass" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-sm w-100" type="submit" style="background:#283593;color:#fff;font-weight:600;padding:.42rem;">
+                            <i class="bi bi-search me-1"></i> Generate
+                        </button>
+                    </div>
                 </div>
-            }
-            <div class="row p-2">
-                <div class="col-md-10">
-                    <form method="post">
-                        <div class="form-row align-items-center">
-                            <div class="col-auto">
-                                <div class="mt-3 mr-sm-2">
-                                    <label class="sr-only" for="inlineFormInput">Session/Year</label>
-                                    <select class="form-control form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz" required>
-                                        <option value="" disabled selected>---Select Session/Year---</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="mt-3 mr-sm-2">
-                                    <label class="sr-only" for="inlineFormInput">Class</label>
-                                    <select class="form-control form-control-sm " asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class" required>
-                                        <option value="" disabled selected>---Select Class---</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="mt-3 mr-sm-2">
-                                    <label class="sr-only" for="inlineFormInput">Sub Class</label>
-                                    <select asp-for="CTSSClass.Subclass" class="form-control form-control-sm" asp-items="Model.ViewSelectModel.SubClass" required>
-                                        <option value="" disabled selected>---Select Sub-Class---</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <button type="submit" class="btn btn-sm btn-primary mt-3"><i class="fas fa-search"></i></button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                
+            </form>
+        </div>
+    </div>
+
+    @if (Model.StudentRows.Any())
+    {
+        <!-- Session / class info strip -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mt-3 p-2 rounded" style="background:#e8eaf6;border:1px solid #c5cae9;">
+            <span class="small text-muted">
+                <i class="bi bi-info-circle me-1"></i>Showing results for:
+            </span>
+            <span class="badge" style="background:#283593;color:#fff;">@Model.BannerSession</span>
+            <span class="badge" style="background:#283593;color:#fff;">@Model.BannerClass — @Model.BannerSubClass</span>
+            <span class="badge" style="background:#3949ab;color:#fff;">@Model.BannerTerms</span>
+            <span class="ms-auto" style="font-size:.78rem;color:#555;">
+                <i class="bi bi-people me-1"></i>@Model.StudentCount student(s) &nbsp;|&nbsp;
+                <i class="bi bi-book me-1"></i>@Model.SubjectCount subject(s) &nbsp;|&nbsp;
+                <i class="bi bi-calendar-range me-1"></i>@Model.ActiveTermCount term(s)
+            </span>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="d-flex flex-wrap gap-2 my-3">
+            <button id="btnExcel" class="btn btn-sm btn-success" title="Export to Excel">
+                <i class="bi bi-file-earmark-excel me-1"></i> Export to Excel
+            </button>
+            <button onclick="window.print()" class="btn btn-sm btn-outline-secondary" title="Print">
+                <i class="bi bi-printer me-1"></i> Print
+            </button>
+        </div>
+
+        <!-- Master sheet table -->
+        <div class="table-responsive">
+            <table id="masterSheetTable" class="table table-bordered table-sm" style="font-size:.8rem;width:100%;">
+                <thead>
+                    <!-- Row 1: Subject group headers + annual summary columns -->
+                    <tr>
+                        <th rowspan="3" class="text-center" style="min-width:35px;vertical-align:middle;background:#e8eaf6;">S/N</th>
+                        <th rowspan="3" style="min-width:150px;vertical-align:middle;background:#e8eaf6;">Full Name</th>
+                        <th rowspan="3" class="text-center" style="min-width:55px;vertical-align:middle;background:#e8eaf6;">Sex</th>
+
+                        @foreach (var sub in Model.Subjects)
+                        {
+                            <th colspan="3" class="text-center" style="background:#c5cae9;color:#1a237e;font-size:.72rem;">@sub.SubjectName.ToUpper()</th>
+                        }
+
+                        <th rowspan="3" class="text-center" style="min-width:70px;vertical-align:middle;background:#283593;color:#fff;">ANNUAL<br/>TOTAL</th>
+                        <th rowspan="3" class="text-center" style="min-width:60px;vertical-align:middle;background:#283593;color:#fff;">ANNUAL<br/>AVERAGE</th>
+                        <th rowspan="3" class="text-center" style="min-width:60px;vertical-align:middle;background:#283593;color:#fff;">ANNUAL<br/>POSITION</th>
+                        <th rowspan="3" class="text-center" style="min-width:45px;vertical-align:middle;background:#283593;color:#fff;">GRADE</th>
+                        <th rowspan="3" class="text-center" style="min-width:75px;vertical-align:middle;background:#283593;color:#fff;">REMARK</th>
+                        <th rowspan="3" class="text-center" style="min-width:70px;vertical-align:middle;background:#283593;color:#fff;">ACTION</th>
+                    </tr>
+
+                    <!-- Row 2: Period group label -->
+                    <tr>
+                        @foreach (var sub in Model.Subjects)
+                        {
+                            <th colspan="3" class="text-center" style="font-size:.66rem;color:#3949ab;background:#f5f5f5;">PERIOD</th>
+                        }
+                    </tr>
+
+                    <!-- Row 3: Term columns -->
+                    <tr>
+                        @foreach (var sub in Model.Subjects)
+                        {
+                            <th class="text-center" style="min-width:40px;background:#e8eaf6;font-size:.68rem;">1<sup>st</sup></th>
+                            <th class="text-center" style="min-width:40px;background:#e8eaf6;font-size:.68rem;">2<sup>nd</sup></th>
+                            <th class="text-center" style="min-width:40px;background:#e8eaf6;font-size:.68rem;">3<sup>rd</sup></th>
+                        }
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @{
+                        sn = 0;
+                    }
+                    @foreach (var row in Model.StudentRows)
+                    {
+                        sn++;
+                        string rowClass = sn % 2 == 0 ? "bg-light" : "";
+                        <tr class="@rowClass">
+                            <td class="text-center"><strong>@sn</strong></td>
+                            <td style="text-align:left;font-weight:600;">
+                                @row.FullName
+                                <br />
+                                <span class="badge bg-warning">@row.AdmissionNo</span>
+                            </td>
+                            <td class="text-center">@row.Gender</td>
+
+                            @foreach (var sub in Model.Subjects)
+                            {
+                                if (row.SubjectTotals.TryGetValue(sub.SubjectId, out var st) && st != null)
+                                {
+                                    <td class="text-center" style="@scoreStyle(st.First)">@st.First</td>
+                                    <td class="text-center" style="@scoreStyle(st.Second)">@st.Second</td>
+                                    <td class="text-center" style="@scoreStyle(st.Third)">@st.Third</td>
+                                }
+                                else
+                                {
+                                    <td class="text-center" style="background:#fafafa;color:#bbb;">—</td>
+                                    <td class="text-center" style="background:#fafafa;color:#bbb;">—</td>
+                                    <td class="text-center" style="background:#fafafa;color:#bbb;">—</td>
+                                }
+                            }
+
+                            <td class="text-center" style="font-weight:700;color:#1a237e;">@row.AnnualTotal</td>
+                            <td class="text-center" style="font-weight:700;color:#1a237e;">@row.AnnualAverage</td>
+                            <td class="text-center">
+                                @if (row.Position > 0)
+                                {
+                                    @row.Position<sup>@SD.specialNumber(row.Position)</sup>
+                                }
+                                else
+                                {
+                                    <span style="color:#bbb;">—</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <span class="badge" style="@gradeStyle(row.Grade)">@row.Grade</span>
+                            </td>
+                            <td style="text-align:left;font-size:.71rem;">@row.Remark</td>
+                            <td class="text-center">
+                                <a asp-page="Annual-Result"
+                                   asp-route-studentid="@row.StudentId"
+                                   asp-route-session="@Model.CTSSClass.SessionYear"
+                                   class="btn btn-sm btn-outline-primary text-decoration-none" target="_blank"
+                                   title="View @row.FullName's annual result">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+                <!-- Summary footer -->
+                <tfoot>
+                    <!-- Termly subject averages -->
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">
+                            <i class="bi bi-bar-chart me-1"></i>Termly Subject Average →
+                        </td>
+                        @foreach (var s in Model.SubjectSummaries)
+                        {
+                            <td class="text-center">@s.FirstAverage</td>
+                            <td class="text-center">@s.SecondAverage</td>
+                            <td class="text-center">@s.ThirdAverage</td>
+                        }
+                        <td colspan="@summaryColspan"></td>
+                    </tr>
+
+                    <!-- Annual subject average -->
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">
+                            <i class="bi bi-graph-up me-1"></i>Annual Subject Average →
+                        </td>
+                        @foreach (var s in Model.SubjectSummaries)
+                        {
+                            <td colspan="3" class="text-center fw-bold" style="color:#1a237e;">@s.AnnualAverage</td>
+                        }
+                        <td colspan="@summaryColspan"></td>
+                    </tr>
+
+                    <!-- Highest annual mark per subject -->
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">
+                            <i class="bi bi-arrow-up me-1"></i>Highest Annual Mark in Class →
+                        </td>
+                        @foreach (var s in Model.SubjectSummaries)
+                        {
+                            <td colspan="3" class="text-center fw-bold" style="color:#1b5e20;">@s.Highest</td>
+                        }
+                        <td colspan="@summaryColspan"></td>
+                    </tr>
+
+                    <!-- Lowest annual mark per subject -->
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">
+                            <i class="bi bi-arrow-down me-1"></i>Lowest Annual Mark in Class →
+                        </td>
+                        @foreach (var s in Model.SubjectSummaries)
+                        {
+                            <td colspan="3" class="text-center fw-bold" style="color:#880e4f;">@s.Lowest</td>
+                        }
+                        <td colspan="@summaryColspan"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Grade key legend -->
+        <div class="mt-3 p-2 rounded" style="background:#f5f5f5;border:1px solid #e0e0e0;font-size:.78rem;color:#555;">
+            <strong>Grade Key:</strong>
+            &nbsp;<span class="badge" style="background:#1b5e20;color:#fff;">A</span> Excellent (75–100) &nbsp;
+            <span class="badge" style="background:#2e7d32;color:#fff;">B</span> Very Good (65–74) &nbsp;
+            <span class="badge" style="background:#f9a825;color:#fff;">C</span> Good (55–64) &nbsp;
+            <span class="badge" style="background:#ef6c00;color:#fff;">D</span> Fair (40–54) &nbsp;
+            <span class="badge" style="background:#c62828;color:#fff;">E</span> Poor (Below 40)
+        </div>
+    }
+    else if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger d-flex align-items-center gap-2 mt-3" role="alert">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>@TempData["error"]</span>
+        </div>
+    }
+    else
+    {
+        <div class="card mt-3">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-bar-chart-line" style="font-size:3rem;color:#c5cae9;"></i>
+                <h4 class="mt-2">No Data to Display</h4>
+                <p class="text-muted mb-0">
+                    Select a <strong>Session/Year</strong>, <strong>Class</strong> and <strong>Sub-Class</strong>
+                    above, then click <em>Generate</em> to load the Class Annual Master Result.
+                </p>
             </div>
         </div>
-        @if (Model._subjects.Count() > 0)
-        {
-            <div class="card-body">
-                <div class="mb-2 d-flex justify-content-end">
-                    <button class="btn-success btn mt-2" type="button" id="getexcelbtn"><i class="far fa-file-excel"></i>&nbsp; Export excel</button>
-                </div>
-                <table class="table-bordered table table-responsive" id="terminalTable">
-                    <thead class="text-center table-info">
-                        <tr>
-                            <th colspan="3" rowspan="2">SUBJECT</th>
-                            @foreach (var item in Model._subjects.OrderByDescending(l => l.Subid))
-                            {
-                                <th colspan="3">@item.SubjectName</th>
-                            }
-                            <th rowspan="3" class="rotate-upward">Annual Total</th>
-                            <th rowspan="3" class="rotate-upward">Annual Average</th>
-                            <th rowspan="3" class="rotate-upward">Annual Position</th>
-                            <th rowspan="3" class="rotate-upward">Grade</th>
-                            <th rowspan="3">Remark</th>
-                            <th rowspan="3">Action</th>
-                        </tr>
-                        <tr>
-                            @foreach (var item in Model._subjects.OrderByDescending(l => l.Subid))
-                            {
-                                <th colspan="3">Period</th>
-                            }
-                        </tr>
-                        <tr>
-                            <th>S/N</th>
-                            <th>Full Name</th>
-                            <th>Sex</th>
-                            @foreach (var item in Model._subjects.OrderByDescending(l => l.Subid))
-                            {
-                                <th>1<sup>st</sup></th>
-                                <th>2<sup>nd</sup></th>
-                                <th>3<sup>rd</sup></th>
-                            }
-                            @* <th>850</th>
-                    <th>68.12%</th>
-                    <th>2<sup>nd</sup></th>
-                    <th>A</th>
-                    <th>Excellent</th> *@
-
-                        </tr>
-                    </thead>
-                    <tbody class="table-bordered border-primary">
-                        @foreach (var item in Model.Results.GroupBy(k => k.Termregistration.StudentId))
-                        {
-                            int termcount = item.Select(g => new TermRegistration { }).Where(j => j.Id == item.FirstOrDefault().Termregistration.StudentId && j.SessionYearId == item.FirstOrDefault().Termregistration.SessionYearId).Count();
-                            int term = 0;
-                            double totalscores = 0;
-                            int getterm = item.GroupBy(q => q.Termregistration.Term).Count();
-                            sn++;
-                            <tr class="">
-                                <td>@(sn)</td>
-                                <td>
-                                    @(item.FirstOrDefault().Termregistration.StudentsData.SurName + " " +
-                                    item.FirstOrDefault().Termregistration.StudentsData.OtherName + " " +
-                                    item.FirstOrDefault().Termregistration.StudentsData.FirstName)
-                                </td>
-                                <td>@(item.FirstOrDefault().Termregistration.StudentsData.Gender)</td>
-                                @if (Model?._subjects != null)
-                                {
-                                    var orderedSubjects = Model._subjects.OrderByDescending(l => l?.Subid ?? 0);
-                                    @foreach (var item2 in orderedSubjects)
-                                    {
-                                        var first = item?.FirstOrDefault(k => k.SubjectId == item2.Subid && k.Termregistration.Term == "First");
-                                        if (first == null)
-                                        {
-                                            <td>0</td>
-                                        }
-                                        else
-                                        {
-                                            totalscores += first.Total ?? 0;
-                                            term++;
-                                            <td>@(first.Total)</td>
-                                        }
-                                        var second = item?.FirstOrDefault(k => k.SubjectId == item2.Subid && k.Termregistration.Term == "Second");
-                                        if (second == null)
-                                        {
-                                            <td>0</td>
-                                        }
-                                        else
-                                        {
-                                            term++;
-                                            totalscores += second.Total ?? 0;
-                                            <td>@(second.Total)</td>
-                                        }
-                                        var third = item?.FirstOrDefault(k => k.SubjectId == item2.Subid && k.Termregistration.Term == "Third");
-                                        if (third == null)
-                                        {
-                                            <td>0</td>
-                                        }
-                                        else
-                                        {
-                                            term++;
-                                            totalscores += third.Total ?? 0;
-                                            <td>@(third.Total)</td>
-                                        }
-                                    }
-                                }
-                                <td>@(totalscores)</td>
-                                <th>@SD.AnnualAverage((double)totalscores, Model.Results.Where(k => k.TermRegId == item?.FirstOrDefault().Termregistration.Id).Count())</th>
-                                <th>
-                                    @(Model._studentscore.FirstOrDefault(g => g.StudId == item.FirstOrDefault().Termregistration.StudentId).Rank)<sup>@(SD.specialNumber(Model._studentscore.FirstOrDefault(g => g.StudId == item.FirstOrDefault().Termregistration.StudentId).Rank))</sup>
-                                </th>
-                                <th>@(SD.Annual_Calculate_Grade(SD.AnnualAverage((double)totalscores, Model.Results.Where(k => k.TermRegId == item?.FirstOrDefault().Termregistration.Id).Count()), getterm))</th>
-                                <th>@(SD.Annual_Calculate_Remark(SD.AnnualAverage((double)totalscores, Model.Results.Where(k => k.TermRegId == item?.FirstOrDefault().Termregistration.Id).Count()), getterm))</th>
-                                @**@
-                                <th><a class="btn btn-success" target="_blank" asp-page="Annual-Result" asp-route-studentid="@item?.FirstOrDefault().Termregistration.StudentId" asp-route-session="@item.FirstOrDefault().Termregistration.SessionYearId"><i class="fas fa-eye"></i></a></th>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3" class="desieze2">TERMLY SUBJECT AVERAGE MARK</td>
-
-                            @foreach (var item in Model._subjects.OrderByDescending(l => l.Subid).ToList())
-                            {
-                                <td>
-                                    @{
-                                        var FirstScores = Model._resultSummary.FirstOrDefault(k => k.SubId == item.Subid && k.Term == "First")?.TotalScore ?? 0;
-                                        var firstNoInClass = Model.Results.Where(j => j.Termregistration.Term == "First" && j.SubjectId == item.Subid).GroupBy(h => h.Termregistration.StudentId).Count();
-                                    }
-                                    @SD.AnnualTermAverage(firstNoInClass, FirstScores)
-                                </td>
-                                <td>
-                                    @{
-                                        var SecondScores = Model._resultSummary.FirstOrDefault(k => k.SubId == item.Subid && k.Term == "Second")?.TotalScore ?? 0;
-                                        var secondNoInClass = Model.Results.Where(j => j.Termregistration.Term == "Second" && j.SubjectId == item.Subid).GroupBy(h => h.Termregistration.StudentId).Count();
-                                    }
-                                    @SD.AnnualTermAverage(secondNoInClass, SecondScores)
-                                </td>
-                                <td>
-                                    @{
-                                        var ThirdScores = Model._resultSummary.FirstOrDefault(k => k.SubId == item.Subid && k.Term == "Third")?.TotalScore ?? 0;
-                                        var thirdNoInClass = Model.Results.Where(j => j.Termregistration.Term == "Third" && j.SubjectId == item.Subid).GroupBy(h => h.Termregistration.StudentId).Count();
-                                    }
-                                    @SD.AnnualTermAverage(thirdNoInClass, ThirdScores)
-                                </td>
-                                @* <td>@(Model._resultSummary.FirstOrDefault(k => k.SubId == item.Subid && k.Term == "Second")?.TotalScore ?? 0)</td>
-                        <td>@(Model._resultSummary.FirstOrDefault(k => k.SubId == item.Subid && k.Term == "Third")?.TotalScore ?? 0)</td> *@
-                            }
-
-                        </tr>
-                        <tr class="text-center">
-                            <td colspan="3" class="desieze2">ANNUAL SUBJECT AVERAGE MARK</td>
-                            @{
-                                var noInClass = Model.Results.GroupBy(k => k.Termregistration.StudentId).Count();
-                            }
-
-                            @foreach (var item in Model._resultSummary.OrderByDescending(m => m.SubId).GroupBy(k => k.SubId))
-                            {
-                                int maxtTerm = 0;
-                                double scores = 0;
-                                var Firster = Model.Results.Where(j => j.Termregistration.Term == "First" && j.SubjectId == item.FirstOrDefault().SubId).GroupBy(h => h.Termregistration.StudentId).Count();
-                                if (Firster > 0) { maxtTerm++; }
-                                var Seconder = Model.Results.Where(j => j.Termregistration.Term == "Second" && j.SubjectId == item.FirstOrDefault().SubId).GroupBy(h => h.Termregistration.StudentId).Count();
-                                if (Seconder > 0) { maxtTerm++; }
-                                var Thirder = Model.Results.Where(j => j.Termregistration.Term == "Third" && j.SubjectId == item.FirstOrDefault().SubId).GroupBy(h => h.Termregistration.StudentId).Count();
-                                if (Thirder > 0) { maxtTerm++; }
-                                foreach (var item2 in item)
-                                {
-                                    scores += item2.TotalScore;//08136899959 Priase
-                                }
-                                <td colspan="3">@(SD.AnnualTermAverage(noInClass, scores))</td>
-                            }
-                        </tr>
-                        <tr class="text-center">
-                            <td colspan="3" class="desieze2">HIGHEST ANNUAL MARK IN CLASS</td>
-                            @foreach (var item in Model._subjects.OrderByDescending(l => l.Subid))
-                            {
-                                <td colspan="3">@(Model._resultSummary2.Where(k=>k.SubId==item.Subid).Max(k => k.TotalScore))</td>
-                            }
-                        </tr>
-                        <tr class="text-center">
-                            <td colspan="3" class="desieze2">LOWEST ANNUAL MARK IN CLASS</td>
-                            @foreach (var item in Model._subjects.OrderByDescending(l => l.Subid))
-                            {
-                                <td colspan="3">@(Model._resultSummary2.Where(k => k.SubId == item.Subid).Min(k => k.TotalScore))</td>
-                            }
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        }
-    </div>
+    }
 </div>
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/jquery.table2excel.js"></script>
+    @await Html.PartialAsync("_DataTablesScriptsFiles")
     <script>
-        $(function () {
-            $("#terminalTable").find('#getexcelbtn').on('click', function () {
-                $.print("#terminalTable");
+        $(document).ready(function () {
+            var table = $('#masterSheetTable').DataTable({
+                paging: false,
+                filter: false,
+                info: false,
+                responsive: false,
+                lengthChange: false,
+                dom: '<"d-flex justify-content-end mb-2"B>t',
+                buttons: {
+                    buttons: ['excel', 'pdf', 'print'],
+                    title: null
+                }
             });
-            $("#getexcelbtn").click(function (e) {
-                $("#terminalTable").table2excel({
-                    name: "Worksheet Name",
-                    filename: 'Annual_Report_Sheet',
-                    fileext: ".xlsx",
-                    preserveColors: true
-                });
+            $('#btnExcel').on('click', function () {
+                table.button('.buttons-excel').trigger();
             });
         });
     </script>

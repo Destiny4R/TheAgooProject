@@ -27,7 +27,7 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
             var claim = ClaimFinder.FindFirst(ClaimTypes.NameIdentifier);
 
             var settings = dbContext.Settings.FirstOrDefault(h => h.ApplicationUserId == claim.Value);
-            
+
             settingNames = new()
             {
                 Sessionyear = dbContext.SessionYears.Find(settings.sessionYear).Name,
@@ -35,7 +35,7 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
                 Classes = dbContext.SchoolClasses.Find(settings.Classes).Name,
                 Subclass = dbContext.SubClasses.Find(settings.subclass).Name,
             };
-            var _GetResult2 = dbContext.ResultTable.Include(c => c.Termregistration.SessionYear).Include(c => c.Subjects).Include(k => k.Termregistration.StudentsData).Include(c => c.Termregistration.Schoolclasses).Include(c => c.Termregistration.RemarkPositions).Include(c => c.Termregistration.SubClasses).Where(h => h.Termregistration.SessionYearId == settings.sessionYear && h.Termregistration.ClassesInSchoolId == settings.Classes && h.Termregistration.SubClassId == settings.subclass && h.Termregistration.Term == settings.Term).ToList();
+            var _GetResult2 = dbContext.ResultTable.Include(c => c.Termregistration.SessionYear).Include(c => c.Subjects).Include(k => k.Termregistration.StudentsData.SessionYear).Include(c => c.Termregistration.Schoolclasses).Include(c => c.Termregistration.RemarkPositions).Include(c => c.Termregistration.SubClasses).Where(h => h.Termregistration.SessionYearId == settings.sessionYear && h.Termregistration.ClassesInSchoolId == settings.Classes && h.Termregistration.SubClassId == settings.subclass && h.Termregistration.Term == settings.Term).ToList();
             if (_GetResult2 != null)
             {
                 DataTrue = 2;
@@ -84,7 +84,7 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
                         ResultPost.R_Status = true;
                         remark.Add(ResultPost);
                         var RateElective = dbContext.StudentRatings.FirstOrDefault(g => g.TermRegId == ResultPost.TermRegId);
-                        if (RateElective !=null)
+                        if (RateElective != null)
                         {
                             if (ResultPost.Termregistration.Schoolclasses.Elective)
                             {
@@ -145,10 +145,10 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
                                 dbContext.SaveChanges();
                             }
                         }
-                        
+
                     }
                 }
-                if (remark.Count() > 0 )
+                if (remark.Count() > 0)
                 {
                     try
                     {
@@ -158,7 +158,8 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
                         ResultTables = _GetResult2;
                         TempData["success"] = "Students postions in Class has been successfully computed and updated!";
                         return RedirectToPage();
-                    }catch(Exception ex)
+                    }
+                    catch (Exception ex)
                     {
                         TempData["error"] = $"“Sorry!! {ex.Message}”";
                         return RedirectToPage();

@@ -66,10 +66,10 @@
                     return `
                         <div class="d-flex justify-content-between">
                             <a class="btn btn-success btn-sm" title="View feed back from customer" href="/Messaging/Feed-Back/Message-Detail?id=${data}" style="cursor:pointer">
-                                <i class="fa fa-eye"></i>
+                                <i class="bi bi-eye"></i>
                             </a>
                             <a onclick=Delete("/api/DeleteFeedback/${data}") class="btn btn-danger btn-sm pl-2" href="#" style="cursor:pointer">
-                                <i class="fas fa-trash-alt"></i>
+                                <i class="bi bi-trash3"></i>
                             </a>
                         </div>
                     `;

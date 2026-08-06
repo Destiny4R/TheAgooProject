@@ -214,50 +214,58 @@ namespace TheAgooProjectWeb.Controllers
         [AcceptVerbs(["Post", "Get"])]
         public IActionResult TermRegistration(termregDTO response)
         {
-            try
-            {
-                IEnumerable<TermRegistration> userData;
-                if (ModelState.IsValid)
-                {
-                    userData = dbContext.TermRegistrations.Include(k => k.SessionYear).Include(k => k.SubClasses).Include(k => k.Schoolclasses).Include(k => k.StudentsData).Include(k => k.ResultTable)
-                        .Where(d => d.Term == response.term && d.ClassesInSchoolId == response.classes && d.SubClassId == response.subclass && d.SessionYearId == response.sessionYear).ToList();
-                }
-                else
-                {
-                    userData = dbContext.TermRegistrations.Include(k => k.SessionYear).Include(k => k.SubClasses).Include(k => k.Schoolclasses).Include(k => k.StudentsData).Include(k => k.ResultTable).ToList();
-                }
+            var draw = Request.Form["draw"].FirstOrDefault();
+            var start = Request.Form["start"].FirstOrDefault();
+            var length = Request.Form["length"].FirstOrDefault();
+            var sortColumnName = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+            var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
+            var searchValue = Request.Form["search[value]"].FirstOrDefault();
+            int pageSize = Convert.ToInt32(length ?? "0");
+            int skip = Convert.ToInt32(start ?? "0");
 
-                userData = userData.OrderByDescending(k => k.Id).ToList();
-                var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
-                var draw = Request.Form["draw"].FirstOrDefault();
-                var start = Request.Form["start"].FirstOrDefault();
-                var length = Request.Form["length"].FirstOrDefault();
-                var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
-                var searchValue = Request.Form["search[value]"].FirstOrDefault();
-                int pageSize = length != null ? Convert.ToInt32(length) : 0;
-                int skip = start != null ? Convert.ToInt32(start) : 0;
-                int recordsTotal = 0;
-                if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
-                {
-                    userData = userData.OrderBy(s => sortColumn + " " + sortColumnDirection);
-                }
-                if (!string.IsNullOrEmpty(searchValue))
-                {
-                    userData = dbContext.TermRegistrations.Include(k => k.SessionYear).Include(k => k.SubClasses).Include(k => k.Schoolclasses).Include(k => k.StudentsData).Include(k => k.ResultTable).Where(m => (m.StudentsData.StudentRegNo.Contains(searchValue)
-                                                || m.SessionYear.Name.Contains(searchValue)
-                                                || m.Schoolclasses.Name.Contains(searchValue)
-                                                || m.StudentsData.SurName.Contains(searchValue)
-                                                || m.Term.Contains(searchValue)));
-                }
-                recordsTotal = userData.Count();
-                var data = userData.Skip(skip).Take(pageSize).ToList();
-                var jsonData = new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data };
-                return Json(jsonData);
-            }
-            catch (Exception ex)
+            IQueryable<TermRegistration> query = dbContext.TermRegistrations
+                .Include(k => k.SessionYear)
+                .Include(k => k.SubClasses)
+                .Include(k => k.Schoolclasses)
+                .Include(k => k.StudentsData)
+                .Include(k => k.ResultTable);
+
+            if (ModelState.IsValid)
             {
-                throw;
+                query = query.Where(d => d.Term == response.term
+                    && d.ClassesInSchoolId == response.classes
+                    && d.SubClassId == response.subclass
+                    && d.SessionYearId == response.sessionYear);
             }
+
+            int recordsTotal = query.Count();
+
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                query = query.Where(m => m.StudentsData.StudentRegNo.Contains(searchValue)
+                    || m.SessionYear.Name.Contains(searchValue)
+                    || m.Schoolclasses.Name.Contains(searchValue)
+                    || m.StudentsData.SurName.Contains(searchValue)
+                    || m.Term.Contains(searchValue));
+            }
+
+            query = (sortColumnName, sortColumnDirection?.ToLower()) switch
+            {
+                ("studentsData.studentRegNo", "desc") => query.OrderByDescending(m => m.StudentsData.StudentRegNo),
+                ("studentsData.studentRegNo", _) => query.OrderBy(m => m.StudentsData.StudentRegNo),
+                ("term", "desc") => query.OrderByDescending(m => m.Term),
+                ("term", _) => query.OrderBy(m => m.Term),
+                ("sessionYear.name", "desc") => query.OrderByDescending(m => m.SessionYear.Name),
+                ("sessionYear.name", _) => query.OrderBy(m => m.SessionYear.Name),
+                ("schoolclasses.name", "desc") => query.OrderByDescending(m => m.Schoolclasses.Name),
+                ("schoolclasses.name", _) => query.OrderBy(m => m.Schoolclasses.Name),
+                ("subClasses.name", "desc") => query.OrderByDescending(m => m.SubClasses.Name),
+                ("subClasses.name", _) => query.OrderBy(m => m.SubClasses.Name),
+                _ => query.OrderByDescending(m => m.Id)
+            };
+
+            var data = query.Skip(skip).Take(pageSize).ToList();
+            return Json(new { draw, recordsFiltered = query.Count(), recordsTotal, data });
         }
         //Logic Statement about putting result data together and reading meaning out of it
         [HttpPost]

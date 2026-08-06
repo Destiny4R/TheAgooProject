@@ -59,7 +59,7 @@
 
     //Add Remove cell.
     cell = $(row.insertCell(-1));
-    var btnRemove = $("<button><i class='fa fa-trash'></i></button>");
+    var btnRemove = $("<button><i class='bi bi-trash'></i></button>");
     btnRemove.attr("type", "button");
     btnRemove.attr("class", "btn btn-sm btn-danger");
     btnRemove.attr("onclick", "Remove(this);");

@@ -2,6 +2,7 @@
 @model TheAgooProjectWeb.Pages.Appsettings.IndexModel
 @{
     ViewData["Title"] = "Settings Class";
+    ViewData["SubTitle"] = "Configure term, session and class defaults";
     var _checked = "";
     if (User.IsInRole(SD.Role_Admin))
     {
@@ -16,27 +17,30 @@
 }
 <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
 <link href="~/assets/libs/switchery/switchery.min.css" rel="stylesheet" />
-<div class="page-content">
-    <div class="d-flex justify-content-between">
-        <div class="badge bg-dark"><h4 class="text-white">Make Class Settings</h4></div>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
         <div>
-            <a class="btn btn-info btn-sm" asp-page="/Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
+            <div class="tms-title">
+                <i class="bi bi-gear me-2"></i> Make Class Settings
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">Configure term, session and class defaults</div>
         </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="/Index"><i class="bi bi-arrow-left me-1"></i> Back</a>
     </div>
     <div class="card mt-3">
         <div class="card-body">
             @if (TempData["success"] != null)
             {
-                <div class="alert alert-success mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
-                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"].
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong><i class="bi bi-info-circle"></i></strong> @TempData["success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
             @if (TempData["error"] != null)
             {
-                <div class="alert alert-danger mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
-                    <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"].
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong><i class="bi bi-exclamation-triangle"></i></strong> @TempData["error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
             <form method="post">

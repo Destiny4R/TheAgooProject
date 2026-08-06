@@ -29,18 +29,33 @@ $(document).ready(function () {
                 "data": null, "render": function (data, type, full) {
                     return `
                         <div class="d-flex justify-content-between">
-                            <a class="btn btn-primary btn-sm" title="Edit sub-class Name" href="/Admin/ManageSubClass/Upsert?id=${data.id}" style="cursor:pointer">
-                                <i class="fa fa-edit"></i>
-                            </a>
+                            <button class="btn btn-primary btn-sm btn-edit" title="Edit Sub Class Name" data-id="${data.id}" data-name="${data.name}" style="cursor:pointer">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
                             &nbsp;  &emsp;
                             <a onclick=removeClass("/api/subclassmanager/${data.id}") title="Permanently Remove sub-class" class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                <i class="fa fa-trash"></i>
+                                <i class="bi bi-trash"></i>
                             </a>
                         </div>
                     `;
                 }
             }
         ]
+    });
+
+    $(document).on("click", ".btn-edit", function () {
+
+        // Get values from data attributes
+        var name = $(this).data("name");
+        var id = $(this).data("id");
+
+        // Populate modal input fields
+        $("#editSubClassModal input[name='subClass.Name']").val(name);
+        $("#editSubClassModal input[name='subClass.Id']").val(id);
+
+        // Show Bootstrap modal
+        var modal = new bootstrap.Modal(document.getElementById('editSubClassModal'));
+        modal.show();
     });
 });
 
@@ -49,7 +64,7 @@ function removeClass(url) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
+            cancelButton: 'btn btn-danger me-2'
         },
         buttonsStyling: false
     })
@@ -59,7 +74,7 @@ function removeClass(url) {
         text: "You won't be able to revert this!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, delete!',
         cancelButtonText: 'No, cancel!',
         reverseButtons: true
     }).then((result) => {

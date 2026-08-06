@@ -2,15 +2,19 @@
 @model TheAgooProjectWeb.Pages.Messaging.Feed_Back.Message_DetailModel
 @{
     ViewData["Title"] = "Feed Back From: " + Model.feedBack.Subject;
+    ViewData["SubTitle"] = "View the full content of a feedback message";
 }
-<div class="page-content">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class="badge bg-dark"><strong class="h4 text-white">Feed back message detail</strong></div>
-                <div><a class="btn btn-info btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-envelope me-2"></i> Feed back message detail
             </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">View the full content of a feedback message</div>
         </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="Index"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+    <div class="card">
         <div class="card-body">
             <div class="container">
                 <div class="form-group row">

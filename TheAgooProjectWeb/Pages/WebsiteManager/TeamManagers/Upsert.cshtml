@@ -1,28 +1,30 @@
 ﻿@page
+@inject IOptions<AppConfigurations> SchoolConfig
 @model TheAgooProjectWeb.Pages.WebsiteManager.TeamManagers.UpsertModel
 @{
     ViewData["Title"] = Model.Team?.Id > 0 ? "Update Team Member Data" : "Add New Team Member";
+    ViewData["SubTitle"] = "Add or update team member profiles";
     var btnname = Model.Team?.Id > 0 ? "Update" : "Add Team";
     string manage = Model.Team?.Id > 0 ? "" : "required";
 }
-@section AddToHead 
+@section Sheets
 {
     <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
 }
-<div class="page-content">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class="badge bg-dark"><h4 class="text-white">@ViewData["Title"]</h4></div>
-
-                <div class="">
-                    <a class="btn btn-info btn-sm" asp-page="Index"><i class="fas fa-arrow-left"></i>&ensp; Back</a>
-                </div>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-person-badge me-2"></i> @ViewData["Title"]
             </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">Add or update team member profiles</div>
         </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="Index"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+    <div class="card">
         @if (TempData["error"] != null)
         {
-            <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -76,7 +78,7 @@
                     <div class="col-sm-4">
                         <div class="card">
                             <div class="card-body">
-                                <img src="https://aggocollegemkd.com.ng/@(Model.Team.ImagePath)" width="100%" />
+                                <img src="@(SchoolConfig.Value.BaseUrl)/@(Model.Team.ImagePath)" width="100%" />
                             </div>
                         </div>
                     </div>
@@ -85,7 +87,7 @@
         </div>
     </div>
 </div>
-//
+<input type="hidden" id="baseUrl" value="@SchoolConfig.Value.BaseUrl" />
 @section Scripts{
     <partial name="_ValidationScriptsPartial" />
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>

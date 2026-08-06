@@ -2,38 +2,40 @@
 @model TheAgooProjectWeb.Pages.Compute_Result.General_Class_Info.IndexModel
 @{
     ViewData["Title"] = "Class General Info List";
+    ViewData["SubTitle"] = "Manage general information for classes";
 }
-<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-<link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-<div class="page-content">
-    <div class="card">
-        <div class="card-header-pill">
-            <div class="d-flex justify-content-between p-2">
-                <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">General Class Info List</strong></div>
-                <div><a asp-page="Upsert" class="btn btn-dark"><i class="fas fa-plus"></i>&nbsp; Add Info</a></div>
+@section Sheets {
+    <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    @await Html.PartialAsync("_DataTablesSheetFiles")
+}
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-clipboard-check me-2"></i> General Class Info List
             </div>
-
-            @if (TempData["success"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show mt-1 p-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <strong><i class="fas fa-info-circle"></i>  </strong> @TempData["success"].
-                </div>
-            }
-            @if (TempData["error"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show mt-1 p-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
-                </div>
-            }
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">Manage general information for classes</div>
         </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a asp-page="Upsert" class="btn btn-light btn-sm"><i class="bi bi-plus-square me-1"></i>&nbsp; Add Info</a>
+        </div>
+    </div>
+
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong><i class="bi bi-info-circle"></i></strong> @TempData["success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong><i class="bi bi-exclamation-triangle"></i></strong> @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <div class="card">
         <div class="card-body">
             <div class="table-responsive">
                 <table id="general" class="table table-sm table-bordered table-striped">
@@ -58,10 +60,7 @@
 
 @section Scripts{
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
-    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    @await Html.PartialAsync("_DataTablesScriptsFiles")
     <script src="~/lib/blockui/jquery.blockui.min.js"></script>
     <script src="~/js/generaltabledata.js" asp-append-version="true"></script>
 }

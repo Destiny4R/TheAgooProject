@@ -1,0 +1,50 @@
+@page
+@model TheAgooProjectWeb.Pages.student.Other_PaymentModel
+@{
+    ViewData["Title"] = "Other Payment History";
+}
+@section Sheets {
+    @await Html.PartialAsync("_DataTablesSheetFiles")
+}
+<div class="container-fluid px-3 px-md-4 page-content fade-in mt-3">
+    <div class="tms-header">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-table me-2"></i>Other Fees Payments
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">
+                My other fees payment history records
+            </div>
+        </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="index">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+    </div>
+    <div class="">
+        <div class="card mt-2">
+            <div class="card-body">
+                <table id="fee_payment" class="table table-bordered table-striped table-sm" width="100%">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Full Name</th>
+                            <th>Fees</th>
+                            <th>Paid For</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Session/Year</th>
+                            <th>Term</th>
+                            <th>Class</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @await Html.PartialAsync("_DataTablesScriptsFiles")
+    <script src="~/js/studentfees.js" asp-append-version="true"></script>
+}

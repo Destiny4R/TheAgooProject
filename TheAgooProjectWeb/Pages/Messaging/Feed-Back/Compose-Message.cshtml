@@ -2,16 +2,20 @@
 @model TheAgooProjectWeb.Pages.Messaging.Feed_Back.Compose_MessageModel
 @{
     ViewData["Title"] = "Send and reply emails";
+    ViewData["SubTitle"] = "Compose and send new emails or replies";
 }
-<div class="page-content">
-    <div class="d-flex justify-content-between mt-3">
-        <div class="badge bg-facebook"><strong class="h4">@ViewData["Title"]</strong></div>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
         <div>
-            <a class="btn btn-secondary" asp-page="Index">
-                <i class="fa fa-arrow-left"></i>
-                Back
-            </a>
+            <div class="tms-title">
+                <i class="bi bi-pencil-square me-2"></i> @ViewData["Title"]
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">Compose and send new emails or replies</div>
         </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="Index">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back
+        </a>
     </div>
     @if (TempData["error"] != null)
     {

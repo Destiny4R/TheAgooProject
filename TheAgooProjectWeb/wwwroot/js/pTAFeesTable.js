@@ -40,11 +40,11 @@ $(document).ready(function () {
                     return `
                         <div class="d-flex justify-content-between">
                             <a class="btn btn-primary btn-sm" title="Edit PTA Fees" href="/Admin/Fees-Manager/PTA-Fees-Setup/Upsert?id=${data.id}" style="cursor:pointer">
-                                <i class="fa fa-edit"></i>
+                                <i class="bi bi-pencil-square"></i>
                             </a>
                             &nbsp;
                             <a onclick=removeSession("/api/ManagerPTAFees/${data.id}") title="Permanently Remove PTA Fees" class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                <i class="fa fa-trash"></i>
+                                <i class="bi bi-trash3"></i>
                             </a>
                         </div>
                     `;

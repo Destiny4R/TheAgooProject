@@ -2,6 +2,43 @@
 var datatablez;
 $(document).ready(function () {
     datatablez = $("#subjectTablez").DataTable({
+        dom: "<'row mb-2'<'col-sm-6'B><'col-sm-6'f>>" +
+            "<'row'<'col-sm-12'tr>>" +
+            "<'row mt-2'<'col-sm-4'l><'col-sm-4 text-center'i><'col-sm-4'p>>",
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                text: '<i class="bi bi-file-earmark-excel me-1"></i> Export to Excel',
+                className: 'btn btn-success btn-sm',
+                title: 'Terminal_Master_Sheet_@Model.MasterSheet.ClassName.Replace(" ", "_")_@Model.MasterSheet.TermName',
+                exportOptions: {
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, col, node) {
+                            var html = $(node).html();
+                            var text = $('<div>').html(html).text();
+                            return text.trim();
+                        }
+                    }
+                }
+            },
+            {
+                extend: 'print',
+                text: '<i class="bi bi-printer me-1"></i> Print',
+                className: 'btn btn-secondary btn-sm',
+                title: 'Terminal Master Sheet - @Model.MasterSheet.ClassName',
+                exportOptions: {
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, col, node) {
+                            var html = $(node).html();
+                            var text = $('<div>').html(html).text();
+                            return text.trim();
+                        }
+                    }
+                }
+            }
+        ],
         "processing": true,
         "serverSide": true,
         "filter": true,
@@ -47,33 +84,29 @@ $(document).ready(function () {
             {
                 "data": "applicationUser.active", "render": function (data, type, full) {
                     if (data == true) {
-                        font = "fa-unlock";
-                        clazz = "btn-success";
-                        return data;
+                        font = "bi-lock";
+                        clazz = "Deactivate";
+                        return '<span class="badge text-bg-success"><i class="bi bi-lock me-2"></i>Active</span>';
                     } else {
-                        font = "fa-lock";
-                        clazz = "btn-warning";
-                        return data;
+                        font = "bi-unlock";
+                        clazz = "Activate";
+                        return '<span class="badge text-bg-warning"><i class="bi bi-unlock me-2"></i>Inactive</span>';
                     }
                 }
             },
             {
                 "data": null, "render": function (data, type, full) {
                     return `
-                        <div class="d-flex justify-content-between">
-                            <a class="btn btn-primary btn-sm" title="Edit Student Record" href="/Admin/Admission/Upsert?id=${data.id}" style="cursor:pointer">
-                                <i class="fa fa-edit"></i>
-                            </a>&nbsp;
-                            <a class="btn btn-info btn-sm" href="/Account/ChangeUserPassword?id=${data.applicationUserId}&_returnUrl=/Admin/Admission/Index" style="cursor:pointer" title="Reset student/pupil password">
-                                <i class="fas fa-bolt"></i>
-                            </a>&nbsp;
-                            <a onclick=AccountStudent("/api/LockUnlockAccount/${data.applicationUserId}") title="Suspend Student Account" class="btn ${clazz} btn-sm" href="#" style="cursor:pointer">
-                                <i class="fa ${font}"></i>
-                            </a>
-                            &nbsp;
-                            <a onclick=removeStudent("/api/StudentDelete/${data.applicationUserId}") title="Permanently Remove Student Record" class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                <i class="fa fa-trash"></i>
-                            </a>
+                        <div class="dropdown">
+                          <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/Admin/Admission/Upsert?id=${data.id}"><i class="bi bi-pencil-square me-2"></i> Edit</a></li>
+                            <li><a class="dropdown-item" href="/Account/ChangeUserPassword?id=${data.applicationUserId}&url=/Admin/System-User/Index"><i class="bi bi-arrow-clockwise me-2"></i> Change Password</a></li>
+                            <li><a class="dropdown-item" onclick=AccountStudent("/api/LockUnlockAccount?id=${data.applicationUserId}") href="#"><i class="bi ${font} me-2"></i> ${clazz}</a></li>
+                            <li><a class="dropdown-item" onclick=removeStudent("/api/StudentDelete/${data.applicationUserId}") href="#"><i class="bi bi-trash3 me-2"></i> Delete</a></li>
+                          </ul>
                         </div>
                     `;
                 }
@@ -86,7 +119,7 @@ function AccountStudent(url) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
+            cancelButton: 'btn btn-danger me-2'
         },
         buttonsStyling: false
     })
@@ -152,17 +185,17 @@ function removeStudent(url) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
+            cancelButton: 'btn btn-danger me-2'
         },
         buttonsStyling: false
     })
 
     swalWithBootstrapButtons.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
+        title: 'Warning?',
+        text: "Are you sure you want to delete this student, this can not be undone!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, delete!',
         cancelButtonText: 'No, cancel!',
         reverseButtons: true
     }).then((result) => {

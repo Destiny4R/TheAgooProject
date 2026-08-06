@@ -7,9 +7,9 @@ using TheAgooProjectModel;
 
 namespace TheAgooProjectWeb.Pages.Account
 {
-    public class LoginModel : PageModel
+    public class loginModel : PageModel
     {
-        public ILogger<LoginModel> Logger { get; }
+        public ILogger<loginModel> Logger { get; }
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly SignInManager<ApplicationUser> signInManager;
@@ -30,7 +30,7 @@ namespace TheAgooProjectWeb.Pages.Account
         [BindProperty]
         public string? ReturnUrl { get; set; }
 
-        public LoginModel(ILogger<LoginModel> logger,
+        public loginModel(ILogger<loginModel> logger,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager,
             SignInManager<ApplicationUser> signInManager)
@@ -65,11 +65,16 @@ namespace TheAgooProjectWeb.Pages.Account
                     }
                     var result = await signInManager.PasswordSignInAsync(user, Input.Password, Input.RememberMe, false);
                     //await signInManager.SignInAsync(user, true, null);
-                   // return RedirectToPage("/Index");
+                    // return RedirectToPage("/Index");
                     if (result.Succeeded)
                     {
                         if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
                         {
+                            if (User.IsInRole(SD.IsStudent))
+                            {
+                                //Redirect to the student dashboard or a specific page for students
+                                return RedirectToPage("/student/index");
+                            }
                             if (ReturnUrl == "/")
                             {
                                 return RedirectToPage("/Index");
@@ -78,6 +83,11 @@ namespace TheAgooProjectWeb.Pages.Account
                         }
                         else
                         {
+                            if (User.IsInRole(SD.IsStudent))
+                            {
+                                //Redirect to the student dashboard or a specific page for students
+                                return RedirectToPage("/student/index");
+                            }
                             return RedirectToPage("/Index");
                         }
                     }

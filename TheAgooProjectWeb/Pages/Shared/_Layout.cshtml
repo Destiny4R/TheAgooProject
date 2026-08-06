@@ -1,4 +1,5 @@
-﻿@inject SignInManager<ApplicationUser> _signInManager
+@inject IOptions<AppConfigurations> SchoolConfig
+@inject SignInManager<ApplicationUser> _signInManager
 @inject UserManager<ApplicationUser> _userManager
 @inject ApplicationDbContext dbContext
 @{
@@ -13,404 +14,321 @@
         }
         else
         {
-            // Handle cases where Fullname doesn't meet the expected format
-            nyer = user.Fullname; // or any other fallback logic
+            nyer = user.Fullname;
         }
     }
-    var feedBack = dbContext.FeedBacks.Where(j => j.IsRead == false).OrderByDescending(k=>k.Id).ToList();
-
+    var feedBack = dbContext.FeedBacks.Where(j => j.IsRead == false).OrderByDescending(k => k.Id).ToList();
 }
-<!doctype html>
-<html lang="en">
 
-<head>
-    <meta charset="utf-8" />
-    <title>@ViewData["Title"] | Aggo College Makurdi</title>
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+    <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Thereturnpark.com" name="domain" />
-    <meta content="The Return Tech" name="Japheth" />
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="color-scheme" content="light dark">
+    <title>@ViewData["Title"] | @(SchoolConfig.Value.SchoolName) @(SchoolConfig.Value.Layout1)</title>
 
+    <!-- Prevent theme flash: apply saved/preferred theme before first paint -->
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('agoo-theme');
+                if (saved === 'light' || saved === 'dark') {
+                    document.documentElement.setAttribute('data-bs-theme', saved);
+                }
+            } catch (e) { }
+        })();
+    </script>
 
-    <!-- slick css -->
-    <link href="/assets/libs/slick-slider/slick/slick.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/libs/slick-slider/slick/slick-theme.css" rel="stylesheet" type="text/css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    @await RenderSectionAsync("Sheets", required: false)
+    @await RenderSectionAsync("AddToHead", required: false)
+    <!-- Bootstrap -->
+    <link href="~/lib/twitter-bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/main.css">
 
-    <!-- jvectormap -->
-    <link href="/assets/libs/jqvmap/jqvmap.min.css" rel="stylesheet" />
-    @await RenderSectionAsync("AddToHead",required: false)
-    <!-- Bootstrap Css -->
-    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <!-- Icons Css -->
-    <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <!-- App Css-->
-    <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/css/site.css" rel="stylesheet" />
 </head>
 
-<body data-sidebar="dark">
+<body>
+    <div class="d-flex" id="appLayout">
 
-    <!-- Begin page -->
-    <div id="layout-wrapper">
+        <!-- ================= SIDEBAR ================= -->
+        <div class="sidebar offcanvas-lg offcanvas-start d-flex flex-column" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarLabel">
+            <div class="offcanvas-header d-lg-none border-bottom" style="border-color:rgba(255,255,255,.08) !important;">
+                <span class="offcanvas-title fw-semibold text-white" id="sidebarLabel">Menu</span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" data-bs-target="#sidebarOffcanvas"></button>
+            </div>
 
-        <header id="page-topbar">
-            <div class="navbar-header">
-                <div class="d-flex">
-                    <!-- LOGO -->
-                    <div class="navbar-brand-box">
-                        <a asp-page="/Index" class="logo logo-dark">
-                            <span class="logo-sm">
-                                <img src="/appicons/logo-xx.png" alt="" height="22">
-                            </span>
-                            <span class="logo-lg">
-                                <img src="/appicons/logo-xx.png" alt="" height="20">
-                            </span>
-                        </a>
-
-                        <a asp-page="/Index" class="logo logo-light">
-                            <span class="logo-sm">
-                                <img src="/appicons/logo-xx.png" alt="" height="40">
-                            </span>
-                            <span class="logo-lg">
-                                <img src="/appicons/logo-xx.png" alt="" height="50">
-                            </span>
-                        </a>
+            <div class="offcanvas-body d-flex flex-column">
+                <div class="d-flex align-items-center gap-2 p-3 border-bottom flex-shrink-0" style="border-color:rgba(255,255,255,.08) !important;">
+                    <svg width="40" height="40" viewBox="0 0 64 64" class="flex-shrink-0">
+                        <path d="M32 4 L58 12 V30 C58 46 47 56 32 60 C17 56 6 46 6 30 V12 Z" fill="#0F1C33" stroke="#B08D34" stroke-width="2" />
+                        <path d="M32 10 L52 16 V30 C52 43 43 51 32 54 C21 51 12 43 12 30 V16 Z" fill="none" stroke="#D8C089" stroke-width="1" />
+                        <text x="32" y="37" font-family="Georgia, serif" font-size="15" font-weight="700" fill="#D8C089" text-anchor="middle">@(SchoolConfig.Value.Abreviation)</text>
+                    </svg>
+                    <div class="brand-text">
+                        <div class="text-white fw-semibold lh-sm" style="font-family:'Fraunces',serif; font-size:1.02rem;">@(SchoolConfig.Value.SchoolName)<br>@(SchoolConfig.Value.Layout1)</div>
+                        <div style="color:#D8C089; letter-spacing:.1em; text-transform:uppercase; font-size:.62rem;">School Portal</div>
                     </div>
+                </div>
 
-                    <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn">
-                        <i class="mdi mdi-backburger"></i>
-                    </button>
+                <nav class="nav flex-column flex-grow-1 py-2" id="sidebarNav">
 
-                    <!-- App Search-->
-                    <form class="app-search d-none d-lg-block">
-                        <div class="position-relative">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <span class="mdi mdi-magnify"></span>
-                        </div>
+
+                    @if (User.IsInRole(SD.IsStudent))
+                    {
+                        <span class="nav-header d-block px-3 pt-3 pb-1">Student Portal</span>
+                        <a class="nav-link d-flex align-items-center gap-2" asp-page="/student/Index"><i class="bi bi-mortarboard"></i><span class="nav-text">Student Dashboard</span></a>
+                        <a class="nav-link d-flex align-items-center gap-2" asp-page="/student/Profile"><i class="bi bi-person-badge"></i><span class="nav-text">My Profile</span></a>
+                        <a class="nav-link d-flex align-items-center gap-2" asp-page="/student/Payment-Records"><i class="bi bi-cash-stack"></i><span class="nav-text">Fees Payments</span></a>
+                        <a class="nav-link d-flex align-items-center gap-2" asp-page="/student/PTA-Fees-Payment"><i class="bi bi-piggy-bank"></i><span class="nav-text">PTA Fees Payments</span></a>
+                        <a class="nav-link d-flex align-items-center gap-2" asp-page="/student/Other-Payment"><i class="bi bi-receipt"></i><span class="nav-text">Other Payments</span></a>
+                        <a class="nav-link d-flex align-items-center gap-2" asp-page="/student/Index"><i class="bi bi-printer"></i><span class="nav-text">Print My Results</span></a>
+                    }else
+                    {
+                        <span class="nav-header d-block px-3 pt-2 pb-1">Main</span>
+                            <a class="nav-link d-flex align-items-center gap-2" asp-page="/Index"><i class="bi bi-speedometer2"></i><span class="nav-text">Dashboard</span></a>
+                            <a class="nav-link d-flex align-items-center gap-2" asp-page="/Admin/System-User/Index"><i class="bi bi-people"></i><span class="nav-text">System Users</span></a>
+                            <a class="nav-link d-flex align-items-center gap-2" asp-page="/Admin/system-backup/Index"><i class="bi bi-cloud-arrow-down"></i><span class="nav-text">Restore Database</span></a>
+
+
+                            <span class="nav-header d-block px-3 pt-3 pb-1">Students</span>
+
+                            <a class="nav-link d-flex align-items-center gap-2 collapsed" data-bs-toggle="collapse" href="#navAdmission" role="button" aria-expanded="false" aria-controls="navAdmission">
+                                <i class="bi bi-mortarboard"></i><span class="nav-text">Admission</span><i class="bi bi-chevron-right ms-auto chevron"></i>
+                            </a>
+                            <div class="collapse" id="navAdmission" data-bs-parent="#sidebarNav">
+                                <div class="d-flex flex-column ps-4">
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Admission/Index">List</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Admission/Upsert">New student</a>
+                                </div>
+                            </div>
+
+                            <a class="nav-link d-flex align-items-center gap-2 collapsed" data-bs-toggle="collapse" href="#navTermReg" role="button" aria-expanded="false" aria-controls="navTermReg">
+                                <i class="bi bi-clipboard-check"></i><span class="nav-text">Term Registration</span><i class="bi bi-chevron-right ms-auto chevron"></i>
+                            </a>
+                            <div class="collapse" id="navTermReg" data-bs-parent="#sidebarNav">
+                                <div class="d-flex flex-column ps-4">
+                                    <a class="nav-link py-1 small" asp-page="/Admin/TermRegistration/Index">List</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/TermRegistration/Register">Register Student</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/TermRegistration/Group-Registration">Group Registration</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/TermRegistration/Batch-Registration">Batch Registration</a>
+                                </div>
+                            </div>
+
+                            <a class="nav-link d-flex align-items-center gap-2 collapsed" data-bs-toggle="collapse" href="#navParents" role="button" aria-expanded="false" aria-controls="navParents">
+                                <i class="bi bi-person-hearts"></i><span class="nav-text">Parents/Guardian</span><i class="bi bi-chevron-right ms-auto chevron"></i>
+                            </a>
+                            <div class="collapse" id="navParents" data-bs-parent="#sidebarNav">
+                                <div class="d-flex flex-column ps-4">
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Parents-Guardian/Index">List</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Parents-Guardian/Upsert">Add Parent</a>
+                                </div>
+                            </div>
+
+                            <a class="nav-link d-flex align-items-center gap-2 collapsed" data-bs-toggle="collapse" href="#navViews" role="button" aria-expanded="false" aria-controls="navViews">
+                                <i class="bi bi-diagram-3"></i><span class="nav-text">Views Manager</span><i class="bi bi-chevron-right ms-auto chevron"></i>
+                            </a>
+                            <div class="collapse" id="navViews" data-bs-parent="#sidebarNav">
+                                <div class="d-flex flex-column ps-4">
+                                    <a class="nav-link py-1 small" asp-page="/Admin/ManageYear/Index">Add Session/Year</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/ManageSubject/Index">Add Subject</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/ManageClass/Index">Add Class</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/ManageSubClass/Index">Add Sub-Class</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/Expenditure-Type/Index">Add Expense Type</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/manageOtherPay/Index">Other Pay Type</a>
+                                </div>
+                            </div>
+
+                            <span class="nav-header d-block px-3 pt-3 pb-1">Academics</span>
+
+                            <a class="nav-link d-flex align-items-center gap-2 collapsed" data-bs-toggle="collapse" href="#navCompute" role="button" aria-expanded="false" aria-controls="navCompute">
+                                <i class="bi bi-journal-check"></i><span class="nav-text">Compute Result</span><i class="bi bi-chevron-right ms-auto chevron"></i>
+                            </a>
+                            <div class="collapse" id="navCompute" data-bs-parent="#sidebarNav">
+                                <div class="d-flex flex-column ps-4">
+                                    <a class="nav-link py-1 small" asp-page="/Compute-Result/Index">Result Manager Page</a>
+                                    <a class="nav-link py-1 small" asp-page="/Compute-Result/Assessment">Assessment Sheet</a>
+                                    <a class="nav-link py-1 small" asp-page="/Compute-Result/Add-Result">Add Result</a>
+                                    <a class="nav-link py-1 small" asp-page="/Compute-Result/Add-Result-Simplyfy">Simplify Mode</a>
+                                    <a class="nav-link py-1 small" asp-page="/Portal/Index">Portal Result</a>
+                                </div>
+                            </div>
+
+                            <span class="nav-header d-block px-3 pt-3 pb-1">Fees &amp; Expenditure</span>
+
+                            <a class="nav-link d-flex align-items-center gap-2 collapsed" data-bs-toggle="collapse" href="#navFees" role="button" aria-expanded="false" aria-controls="navFees">
+                                <i class="bi bi-cash-coin"></i><span class="nav-text">Fees Manager</span><i class="bi bi-chevron-right ms-auto chevron"></i>
+                            </a>
+                            <div class="collapse" id="navFees" data-bs-parent="#sidebarNav">
+                                <div class="d-flex flex-column ps-4">
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/Fees-Setup/Index">Class Termly Fees</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/Fees-Payment/Index">Fees Payment</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/Fees-Payment/FeesAnalysis">Fees Analyses</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/PTA-Fees-Setup/Index">Termly PTA Fees</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/PTA-Fees/Index">PTA Payment</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/PTA-Fees/PTA-Fees-Analysis">PTA Analyses</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/other-Pay/Index">Other Payment</a>
+                                </div>
+                            </div>
+
+                            <a class="nav-link d-flex align-items-center gap-2 collapsed" data-bs-toggle="collapse" href="#navExpenditure" role="button" aria-expanded="false" aria-controls="navExpenditure">
+                                <i class="bi bi-graph-down-arrow"></i><span class="nav-text">Expenditure Manager</span><i class="bi bi-chevron-right ms-auto chevron"></i>
+                            </a>
+                            <div class="collapse" id="navExpenditure" data-bs-parent="#sidebarNav">
+                                <div class="d-flex flex-column ps-4">
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/Expenditures/Index">Expenses</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/Expenditures/Upsert">Add Expenses</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/Expenditures/Expenditure-Analysis">Expenditure Analyses</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/PTA-Expenditure/Index">Add PTA Expenses</a>
+                                    <a class="nav-link py-1 small" asp-page="/Admin/Fees-Manager/PTA-Expenditure/Analyses">PTA Expenditure Analyses</a>
+                                </div>
+                            </div>
+
+                            <span class="nav-header d-block px-3 pt-3 pb-1">Messaging / Website</span>
+
+                            <a class="nav-link d-flex align-items-center gap-2 collapsed" data-bs-toggle="collapse" href="#navMessage" role="button" aria-expanded="false" aria-controls="navMessage">
+                                <i class="bi bi-envelope-paper"></i><span class="nav-text">Message Manager</span><i class="bi bi-chevron-right ms-auto chevron"></i>
+                            </a>
+                            <div class="collapse" id="navMessage" data-bs-parent="#sidebarNav">
+                                <div class="d-flex flex-column ps-4">
+                                    <a class="nav-link py-1 small" asp-page="/Messaging/Send-SMS/Index">Send SMS</a>
+                                    <a class="nav-link py-1 small" asp-page="/Messaging/Feed-Back/Compose-Message">Send Email</a>
+                                    <a class="nav-link py-1 small" asp-page="/Messaging/Feed-Back/Index">Feed Back</a>
+                                </div>
+                            </div>
+
+                            <a class="nav-link d-flex align-items-center gap-2 collapsed" data-bs-toggle="collapse" href="#navWebsite" role="button" aria-expanded="false" aria-controls="navWebsite">
+                                <i class="bi bi-globe2"></i><span class="nav-text">Manage Website</span><i class="bi bi-chevron-right ms-auto chevron"></i>
+                            </a>
+                            <div class="collapse" id="navWebsite" data-bs-parent="#sidebarNav">
+                                <div class="d-flex flex-column ps-4">
+                                    <a class="nav-link py-1 small" asp-page="/WebsiteManager/TeamManagers/Index">Manage Team</a>
+                                    <a class="nav-link py-1 small" asp-page="/WebsiteManager/WebGallery/Index">Manage Gallery</a>
+                                    <a class="nav-link py-1 small" asp-page="/WebsiteManager/WebNews/Index">Manage News</a>
+                                </div>
+                            </div>
+                        }
+                    </nav>
+                
+                <div class="p-3 border-top flex-shrink-0" style="border-color:rgba(255,255,255,.08) !important;">
+                    <form class="m-0" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("Login")">
+                        <button type="submit" class="nav-link d-flex align-items-center gap-2 p-0 border-0 bg-transparent text-reset w-100 text-start"><i class="bi bi-box-arrow-right"></i><span class="nav-text">Sign out</span></button>
                     </form>
                 </div>
-
-                <div class="d-flex">
-
-                    <div class="dropdown d-inline-block d-lg-none ml-2">
-                        <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="mdi mdi-magnify"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
-                        aria-labelledby="page-header-search-dropdown">
-
-                            <form class="p-3">
-                                <div class="form-group m-0">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button"><i class="mdi mdi-magnify"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <div class="dropdown d-inline-block">
-                        <div  class="">
-                            <div id="balpro" class="mt-3">
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="dropdown d-inline-block">
-                        <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="badge badge-danger badge-pill">@feedBack.Count</span>
-                            <i class="mdi mdi-bell-outline"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
-                        aria-labelledby="page-header-notifications-dropdown">
-                            <div class="p-5">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <h6 class="m-0 font-weight-medium text-uppercase"> Notifications </h6>
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="badge badge-pill badge-danger">New (@feedBack.Count)</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div data-simplebar style="max-height: 230px;">
-                                @if (feedBack.Any())
-                                {
-                                    @foreach (var item in feedBack.Take(5))
-                                    {
-                                        string msg = "";
-                                        <a asp-page="/Messaging/Feed-Back/Message-Detail" asp-route-id="@item.Id" class="text-reset notification-item">
-                                            <div class="media">
-                                                <div class="avatar-xs mr-3">
-                                                    <span class="avatar-title bg-primary rounded-circle font-size-16">
-                                                        <i class="fas fa-mail-bulk"></i>
-                                                    </span>
-                                                </div>
-                                                <div class="media-body">
-                                                    <h6 class="mt-0 mb-1">@(item.Name)</h6>
-                                                    <div class="font-size-12 text-muted">
-                                                        <p class="mb-1">
-                                                            @if(item.Subject.Length > 29){
-                                                                msg = item.Subject.Substring(0, 30);
-                                                            }else{
-                                                                msg = item.Subject;
-                                                            }
-                                                            @(msg)
-                                                        </p>
-                                                        <p class="mb-0"><i class="mdi mdi-clock-outline"></i> @(SD.TimeAgo(item.CreatedDate))</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    }
-                                }
-                            </div>
-                            <div class="p-2 border-top">
-                                <a class="btn-link btn btn-block text-center" asp-page="/Messaging/Feed-Back/Index">
-                                    <i class="mdi mdi-arrow-down-circle mr-1"></i> Load More..
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="dropdown d-inline-block">
-                        <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img class="rounded-circle header-profile-user" src="/appicons/android-icon-192x192.png"
-                                 alt="Header Avatar" />
-                            @if (_signInManager.IsSignedIn(User))
-                            {
-                                <span class="d-none d-sm-inline-block ml-1">@(nyer)</span>
-                            }
-                            <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <!-- item-->
-                            <a class="dropdown-item" href="#"><i class="mdi mdi-face-profile font-size-16 align-middle mr-1"></i> Profile</a>
-                            <a class="dropdown-item" href="#"><i class="mdi mdi-credit-card-outline font-size-16 align-middle mr-1"></i> Billing</a>
-                            <a class="dropdown-item" asp-page="/Appsettings/Index"><i class="mdi mdi-account-settings font-size-16 align-middle mr-1"></i> Settings</a>
-                            <a class="dropdown-item" href="#"><i class="mdi mdi-lock font-size-16 align-middle mr-1"></i> Lock screen</a>
-                            <div class="dropdown-divider"></div>
-                            <form class="form-inline" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("Login")">
-                                <button type="submit" class="nav-link btn btn-link text-dark"><i class="mdi mdi-logout h5"></i> Logout</button>
-                            </form>
-                        </div>
-                    </div>
-
-                </div>
             </div>
-        </header>
+        </div>
 
-        <!-- ========== Left Sidebar Start ========== -->
-        <div class="vertical-menu">
+        <!-- ================= MAIN (its own independent scroll) ================= -->
+        <div class="flex-grow-1 d-flex flex-column" id="mainContent" data-bs-spy="scroll" data-bs-target="#sidebarNav" data-bs-smooth-scroll="true" tabindex="0" style="height:100vh; overflow-y:auto;">
 
-            <div data-simplebar class="h-100">
-
-                <!--- Sidemenu -->
-                <div id="sidebar-menu">
-                    <!-- Left Menu Start -->
-                    <ul class="metismenu list-unstyled" id="side-menu">
-                        <li class="menu-title">Menu</li>
-
-                        <li>
-                            <a asp-page="/Index" class="waves-effect">
-                                <i class="mdi mdi-view-dashboard"></i>@* <span class="badge badge-pill badge-success float-right">3</span> *@
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-
-                        @if (User.IsInRole(SD.Role_Admin))
+            <!-- Topbar -->
+            <div class="d-flex align-items-center justify-content-between bg-body border-bottom p-2 px-3 sticky-top flex-shrink-0" style="z-index:1030;">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-outline-secondary rounded-circle d-inline-flex align-items-center justify-content-center p-0" id="sidebarToggle" type="button" style="width:38px;height:38px;" aria-label="Toggle sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="input-group input-group-sm d-none d-sm-flex" style="max-width:300px;">
+                        <span class="input-group-text bg-body border-end-0"><i class="bi bi-search text-body-secondary"></i></span>
+                        <input type="search" class="form-control border-start-0" placeholder="Search students, staff, records&hellip;">
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="small text-body-secondary d-none d-md-inline" id="clock"></span>
+                    <button class="btn btn-outline-secondary rounded-circle d-inline-flex align-items-center justify-content-center p-0" id="themeToggle" type="button" style="width:38px;height:38px;" aria-label="Toggle theme">
+                        <i class="bi bi-moon-stars" id="themeIcon"></i>
+                    </button>
+                        @if (!User.IsInRole(SD.IsStudent))
                         {
-                            <li>
-                                <a asp-page="/Admin/System-User/Index" class=" waves-effect">
-                                    <i class="mdi mdi-calendar-month"></i>
-                                    <span>System Users</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-page="/Admin/system-backup/Index" class=" waves-effect">
-                                    <i class="mdi mdi-cloud"></i>
-                                    <span>Restore Database</span>
-                                </a>
-                            </li>
-                        }
-
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="mdi mdi-account-group"></i>
-                                <span>Admission</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li><a asp-page="/Admin/Admission/Index">List</a></li>
-                                <li><a asp-page="/Admin/Admission/Upsert">New student</a></li>
-                            </ul>
-                        </li>
-
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="fas fa-school"></i>
-                                <span>Term Registration</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li><a asp-page="/Admin/TermRegistration/Index">List</a></li>
-                                <li><a asp-page="/Admin/TermRegistration/Register">Register Student</a></li>
-                            </ul>
-                        </li>
-
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="fas fa-user-check"></i>
-                                <span>Parents/Guardian</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li><a asp-page="/Admin/Parents-Guardian/Index">List</a></li>
-                                <li><a asp-page="/Admin/Parents-Guardian/Upsert">Add Parent</a></li>
-                            </ul>
-                        </li>
-
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="dripicons-view-apps"></i>
-                                <span>Views Manager </span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li><a asp-page="/Admin/ManageYear/Index">Add Session/Year</a></li>
-                                <li><a asp-page="/Admin/ManageSubject/Index">Add Subject</a></li>
-                                <li><a asp-page="/Admin/ManageClass/Index">Add Class</a></li>
-                                <li><a asp-page="/Admin/ManageSubClass/Index">Add Sub-Class</a></li>
-                                <li><a asp-page="/Admin/Fees-Manager/Expenditure-Type/Index">Add Expense Type</a></li>
-                                <li><a asp-page="/Admin/manageOtherPay/Index">Other Pay Type</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="mdi mdi-format-list-bulleted-square"></i>
-                                <span>Compute Result</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li><a asp-page="/Compute-Result/Index">Result Manager Page</a></li>
-                                <li><a asp-page="/Compute-Result/Assessment">Assessment Sheet</a></li>
-                                <li><a asp-page="/Compute-Result/Add-Result">Add Result</a></li>
-                                <li><a asp-page="/Compute-Result/Add-Result-Simplyfy">Simplify Mode</a></li>
-                                <li><a asp-page="/Portal/Index">Portal Result</a></li>
-                            </ul>
-                        </li>
-
-                        <li class="menu-title">Fees Activities</li>
-
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="fas fa-university"></i>
-                                <span>Fees Manager</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li><a asp-page="/Admin/Fees-Manager/Fees-Setup/Index">Class Termly Fees</a></li>
-                                <li><a asp-page="/Admin/Fees-Manager/Fees-Payment/Index">Fees Payment</a></li>
-                                <li><a asp-page="/Admin/Fees-Manager/Fees-Payment/FeesAnalysis">Fees Analyses</a></li>
-                                <li><a asp-page="/Admin/Fees-Manager/PTA-Fees-Setup/Index">Termly PTA Fees</a></li>
-                                <li><a asp-page="/Admin/Fees-Manager/PTA-Fees/Index">PTA Payment</a></li>
-                                <li><a asp-page="/Admin/Fees-Manager/PTA-Fees/PTA-Fees-Analysis">PTA Analyses</a></li>
-                                <li><a asp-page="/Admin/Fees-Manager/other-Pay/Index">Other Payment</a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-title">Expenditure Activities</li>
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="mdi mdi-chart-areaspline-variant"></i>
-                                <span>Expenditure Manager</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li><a asp-page="/Admin/Fees-Manager/Expenditures/Index">Expenses</a></li>
-                                <li><a asp-page="/Admin/Fees-Manager/Expenditures/Upsert">Add Expenses</a></li>
-                                <li><a asp-page="/Admin/Fees-Manager/Expenditures/Expenditure-Analysis">Expenditure Analyses</a></li>
-                                <li class="dropdown-divider"></li>
-                                <li><a asp-page="/Admin/Fees-Manager/PTA-Expenditure/Index">Add PTA Expenses</a></li>
-                                <li><a asp-page="/Admin/Fees-Manager/PTA-Expenditure/Analyses">PTA Expenditure Analyses</a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-title">Messaging/Feed Back</li>
-                        <li>
-                            <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                <i class="fas fa-envelope-open-text"></i>
-                                <span>Message Manager</span>
-                            </a>
-                            <ul class="sub-menu" aria-expanded="false">
-                                <li><a asp-page="/Messaging/Send-SMS/Index">Send SMS</a></li>
-                                <li><a asp-page="/Messaging/Feed-Back/Compose-Message">Send Email</a></li>
-                                <li><a asp-page="/Messaging/Feed-Back/Index">Feed Back</a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-title">Manage Website Activities</li>
-                            <li>
-                                <a href="javascript: void(0);" class="has-arrow waves-effect">
-                                    <i class="fas fa-blog"></i><span>Manage Website</span>
-                                </a>
-                                <ul class="sub-menu" aria-expanded="false">
-                                    <li><a asp-page="/WebsiteManager/TeamManagers/Index">Manage Team</a></li>
-                                    <li><a asp-page="/WebsiteManager/WebGallery/Index">Manage Gallery</a></li>
-                                    <li><a asp-page="/WebsiteManager/WebNews/Index">Manage News</a></li>
+                            <div id="balpro" class="d-none d-xl-inline-block small text-body-secondary"></div>
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary rounded-circle position-relative d-inline-flex align-items-center justify-content-center p-0" data-bs-toggle="dropdown" type="button" style="width:38px;height:38px;">
+                                    <i class="bi bi-bell"></i>
+                                    @if (feedBack.Any())
+                                    {
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light"><span>@feedBack.Count</span><span class="visually-hidden">unread notifications</span></span>
+                                    }
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width:320px;">
+                                    <li><h6 class="dropdown-header">Notifications</h6></li>
+                                    @if (feedBack.Any())
+                                    {
+                                        @foreach (var item in feedBack.Take(5))
+                                        {
+                                            string msg = item.Subject.Length > 29 ? item.Subject.Substring(0, 30) : item.Subject;
+                                            <li>
+                                                <a asp-page="/Messaging/Feed-Back/Message-Detail" asp-route-id="@item.Id" class="dropdown-item">
+                                                    <div class="d-flex gap-2 align-items-start">
+                                                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary text-white flex-shrink-0" style="width:34px;height:34px;"><i class="bi bi-envelope"></i></span>
+                                                        <div class="min-w-0">
+                                                            <div class="fw-semibold small">@(item.Name)</div>
+                                                            <div class="small text-body-secondary text-truncate">@(msg)</div>
+                                                            <div class="small text-body-secondary"><i class="bi bi-clock me-1"></i>@(SD.TimeAgo(item.CreatedDate))</div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li><span class="dropdown-item-text small text-body-secondary">No unread notifications.</span></li>
+                                    }
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item small text-center" asp-page="/Messaging/Feed-Back/Index"><i class="bi bi-arrow-down-circle me-1"></i>Load More..</a></li>
                                 </ul>
-                            </li>
-                    </ul>
-
-                </div>
-                <!-- Sidebar -->
-            </div>
-        </div>
-        <div class="main-content">
-
-            @RenderBody()
-            <!-- End Page-content -->
-
-
-            <footer class="footer">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            @(DateTime.Now.Year) &copy; Aggo College Makurdi - All Right Reserved
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="text-sm-right d-none d-sm-block">
-                                Developed By: <i class="mdi mdi-heart text-danger"></i> The Return Tech - 08039410863
                             </div>
-                        </div>
+                        }
+                        <div class="dropdown">
+                        <button class="btn p-0 d-flex align-items-center gap-2 border-0 bg-transparent" data-bs-toggle="dropdown" type="button">
+                            @if (_signInManager.IsSignedIn(User) && user != null)
+                            {
+                                <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary text-white fw-bold" style="width:38px;height:38px;font-family:'Fraunces',serif;font-size:.85rem;">@(string.IsNullOrWhiteSpace(user?.Fullname) ? "U" : (string.Concat(user.Fullname.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => w[0])) is string initStr && !string.IsNullOrEmpty(initStr) ? initStr : "U"))</span>
+                                <span class="d-none d-md-inline small fw-semibold">@(nyer) <i class="bi bi-chevron-down small ms-1"></i></span>
+                            }
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                @if (User.IsInRole(SD.IsStudent))
+                                {
+                                    <li>
+                                        <a class="dropdown-item small" asp-page="/student/Profile"><i class="bi bi-person me-2"></i>Profile</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item small" asp-page="/Appsettings/Index"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                                }
+                                <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form class="p-0" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("Login")">
+                                    <button type="submit" class="dropdown-item small"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                                </form>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-            </footer>
+            </div>
+
+                <!-- Content -->
+            <div class="container-fluid p-3 p-md-4 flex-grow-1 d-flex flex-column">
+
+                    @RenderBody()
+                <footer class="d-flex justify-content-between flex-wrap gap-2 border-top pt-3 mt-auto mb-2 small text-body-secondary">
+                    <span>&copy; @(DateTime.Now.Year) <b style="color:var(--bs-heading-color);">@(SchoolConfig.Value.SchoolName) @(SchoolConfig.Value.Layout1) </b>. All rights reserved. V 1.0.2.</span>
+                    <span>School Portal &middot; Developed By: <b style="color:var(--bs-heading-color);">D-Best Return Tech&copy;</b></span>
+                </footer>
+
+            </div>
         </div>
-        <!-- end main content-->
-
     </div>
-    <div class="rightbar-overlay"></div>
-
-    <!-- JAVASCRIPT -->
-    <script src="/assets/libs/jquery/jquery.min.js"></script>
-    <script src="/lib/jquery/dist/jquery.js"></script>
-    <script src="/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/libs/metismenu/metisMenu.min.js"></script>
-    <script src="/assets/libs/simplebar/simplebar.min.js"></script>
-    <script src="/assets/libs/node-waves/waves.min.js"></script>
-
-    <!-- apexcharts -->
-    <script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
-
-    <script src="/assets/libs/slick-slider/slick/slick.min.js"></script>
-
-    <!-- Jq vector map -->
-    <script src="/assets/libs/jqvmap/jquery.vmap.min.js"></script>
-    <script src="/assets/libs/jqvmap/maps/jquery.vmap.usa.js"></script>
-
-    <script src="/assets/js/pages/dashboard.init.js"></script>
-
-    <script src="/assets/js/app.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/main.js"></script>
     <script src="~/js/balance.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -2,22 +2,24 @@
 @model TheAgooProjectWeb.Pages.Messaging.Feed_Back.IndexModel
 @{
     ViewData["Title"] = "Feed Back Messages";
+    ViewData["SubTitle"] = "View and manage messages received from visitors";
 }
-@section AddToHead{
+@section Sheets{
     <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    @await Html.PartialAsync("_DataTablesSheetFiles")
 }
-<div class="page-content">
-    <div class="d-flex justify-content-between mt-3">
-        <div class="badge bg-facebook"><code class="h4">@ViewData["Title"]</code></div>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
         <div>
-            <a class="btn btn-info" asp-page="Compose-Message">
-                <i class="fa fa-send-o"></i>
-                Compose email
-            </a>
+            <div class="tms-title">
+                <i class="bi bi-chat-dots me-2"></i> @ViewData["Title"]
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">View and manage messages received from visitors</div>
         </div>
+        <a class="btn btn-light btn-sm" asp-page="Compose-Message">
+            <i class="bi bi-envelope-paper me-1"></i>
+            Compose email
+        </a>
     </div>
     @if (TempData["error"] != null)
     {
@@ -53,10 +55,7 @@
     </div>
 </div>
 @section Scripts {
-    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    @await Html.PartialAsync("_DataTablesScriptsFiles")
     <script src="~/lib/blockui/jquery.blockui.min.js"></script>
     <script src="~/lib/sweetalert2/sweetalert2.all.min.js"></script>
     <script src="~/js/feedback.js" asp-append-version="true"></script>

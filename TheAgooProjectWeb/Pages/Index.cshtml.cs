@@ -1,190 +1,235 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
 using TheAgooProjectModel;
 
 namespace TheAgooProjectWeb.Pages
 {
-    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer},{SD.Role_Accountant}")]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer},{SD.Role_Accountant},{SD.IsStudent}")]
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
         private readonly ApplicationDbContext dbContext;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public IEnumerable<TermRegistration> Registration { get; set; }
-        public IEnumerable<StudentsData> students {  get; set; }
-        public IEnumerable<PaymentReport> PaymentReports { get; set; }
-        public IEnumerable<PTAFeesReport> pTAFeesReports { get; set; }
-        public IEnumerable<ExpenditureTable> Expenditures { get; set; }
-        public IEnumerable<PTAExpenditureTable> pTAExpenditures { get; set; }
-        public Visit webvisit { get; set; }
-        public int feedback { get; set; }
-        public string[] _theSession { get; set; }
-        public IndexModel(ILogger<IndexModel> logger, ApplicationDbContext dbContext)
+        public IEnumerable<TermRegistration> Registration { get; set; } = new List<TermRegistration>();
+        public IEnumerable<StudentsData> students { get; set; } = new List<StudentsData>();
+        public IEnumerable<PaymentReport> PaymentReports { get; set; } = new List<PaymentReport>();
+        public IEnumerable<PTAFeesReport> pTAFeesReports { get; set; } = new List<PTAFeesReport>();
+        public IEnumerable<ExpenditureTable> Expenditures { get; set; } = new List<ExpenditureTable>();
+        public IEnumerable<PTAExpenditureTable> pTAExpenditures { get; set; } = new List<PTAExpenditureTable>();
+
+        public Visit webvisit { get; set; } = null!;
+        public int feedback { get; set; } = 0;
+        public string[] _theSession { get; set; } = Array.Empty<string>();
+
+        // Dynamic Dashboard Metrics & User Information
+        public string LoggedInUserFullName { get; set; } = "Administrator";
+        public string CurrentSessionName { get; set; } = string.Empty;
+        public string CurrentTermName { get; set; } = string.Empty;
+        public int TotalActiveStudents { get; set; } = 0;
+        public int TotalTermRegistrations { get; set; } = 0;
+
+        public IndexModel(ILogger<IndexModel> logger, ApplicationDbContext dbContext, UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
             this.dbContext = dbContext;
+            this.userManager = userManager;
         }
 
-        public void OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-            //string _getvalue = Request?.Cookies[SD.CookiesKey];
-            //if (string.IsNullOrEmpty(_getvalue))
-            //{
-            //    Guid value = Guid.NewGuid();
-            //    _getvalue = value.ToString();
-            //    Set(SD.CookiesKey, _getvalue.ToString(), TimeSpan.FromMinutes(1440));
-            //    var visit = dbContext.Visitors.FirstOrDefault();
-            //    if (visit != null)
-            //    {
-            //        visit.Website+=1;
-            //        dbContext.Update(visit);
-            //    }
-            //    else
-            //    {
-            //        var vist = new Visit
-            //        {
-            //            Website = 1,
-            //            Portal = 0
-            //        };
-            //        dbContext.Add(vist);
-            //    }
-            //    dbContext.SaveChanges();
-            //}
-            var date2 = DateTime.Now.Year;
-            var date1 = DateTime.Now.Year-10;
-
-            Registration = dbContext.TermRegistrations.Include(m=>m.SessionYear).Include(m => m.Schoolclasses).Where(k=>k.CreatedDate.Year > date1 &&  k.CreatedDate.Year >= date2);
-            students = dbContext.StudentTable.Where(k => k.CreateDate.Year > date1 && k.CreateDate.Year >= date2);
-            PaymentReports = dbContext.PaymentReports.Include(m => m.Termregistration.SessionYear).Include(m => m.Termregistration.Schoolclasses).Where(k => k.CreatedDate.Year > date1 && k.CreatedDate.Year >= date2);
-            pTAFeesReports = dbContext.PTAFeesReports.Include(m => m.Termregistration.SessionYear).Include(m => m.Termregistration.Schoolclasses).Where(k => k.CreatedDate.Year > date1 && k.CreatedDate.Year >= date2);
-            Expenditures = dbContext.ExpenditureTables.Include(m => m.SessionYear).Where(k => k.CreatedDate.Year > date1 && k.CreatedDate.Year >= date2);
-            pTAExpenditures = dbContext.PTAExpenditureTables.Include(j => j.SessionYear).Where(k => k.CreatedDate.Year > date1 && k.CreatedDate.Year >= date2);
-            webvisit = dbContext.Visitors.FirstOrDefault();
-            feedback = dbContext.FeedBacks.Count();
-            var _Session = dbContext.SessionYears.OrderByDescending(k=>k.Name).Take(12).ToList();
-            _theSession = new string[_Session.Count()];
-            for (int i = 0; i < _Session.Count(); i++)
+            if (User.IsInRole(SD.IsStudent))
             {
-                _theSession[i] = _Session[i].Name;
+                return RedirectToPage("/student/index");
             }
-        }
-        public int _Annual(int year, IEnumerable<StudentsData> students)
-        {
-            var result =  students.Where(k=>k.CreateDate.Year==year).ToList();
-            if (result.Any())
-            {
-                return result.Count();
-            }
-            return 0;
-        }
 
-        void Set(string key, string value, TimeSpan? expireTime = null)
-        {
-            CookieOptions option = new CookieOptions();
-
-            if (expireTime.HasValue)
+            var currentUser = await userManager.GetUserAsync(User);
+            if (currentUser != null && !string.IsNullOrWhiteSpace(currentUser.Fullname))
             {
-                option.Expires = DateTime.Now.Add(expireTime.Value);
+                LoggedInUserFullName = currentUser.Fullname;
             }
             else
             {
-                option.Expires = DateTime.Now.AddDays(10);
+                LoggedInUserFullName = User.Identity?.Name ?? "Administrator";
             }
 
-            option.HttpOnly = true;
-            option.Secure = Request.IsHttps;
+            int date1 = DateTime.Now.Year - 10;
 
-            Response.Cookies.Append(key, value, option);
+            // Fetch records for the past 10 years without restricting to current year only
+            Registration = await dbContext.TermRegistrations.AsNoTracking()
+                .Include(m => m.SessionYear)
+                .Include(m => m.Schoolclasses)
+                .Where(k => k.CreatedDate.Year >= date1)
+                .ToListAsync();
+
+            students = await dbContext.StudentTable.AsNoTracking()
+                .Where(k => k.CreateDate.Year >= date1)
+                .ToListAsync();
+
+            PaymentReports = await dbContext.PaymentReports.AsNoTracking()
+                .Include(m => m.Termregistration.SessionYear)
+                .Include(m => m.Termregistration.Schoolclasses)
+                .Where(k => k.CreatedDate.Year >= date1)
+                .ToListAsync();
+
+            pTAFeesReports = await dbContext.PTAFeesReports.AsNoTracking()
+                .Include(m => m.Termregistration.SessionYear)
+                .Include(m => m.Termregistration.Schoolclasses)
+                .Where(k => k.CreatedDate.Year >= date1)
+                .ToListAsync();
+
+            Expenditures = await dbContext.ExpenditureTables.AsNoTracking()
+                .Include(m => m.SessionYear)
+                .Where(k => k.CreatedDate.Year >= date1)
+                .ToListAsync();
+
+            pTAExpenditures = await dbContext.PTAExpenditureTables.AsNoTracking()
+                .Include(j => j.SessionYear)
+                .Where(k => k.CreatedDate.Year >= date1)
+                .ToListAsync();
+
+            webvisit = await dbContext.Visitors.AsNoTracking().FirstOrDefaultAsync() ?? new Visit { Website = 0, Portal = 0 };
+            feedback = await dbContext.FeedBacks.AsNoTracking().CountAsync();
+
+            TotalActiveStudents = await dbContext.StudentTable.AsNoTracking().CountAsync(s => s.IsActive);
+
+            // Dynamically determine current active session and term
+            var latestGeneralClass = await dbContext.GeneralClassTables.AsNoTracking()
+                .Include(g => g.SessionYear)
+                .OrderByDescending(g => g.Id)
+                .FirstOrDefaultAsync();
+
+            if (latestGeneralClass != null)
+            {
+                CurrentSessionName = latestGeneralClass.SessionYear?.Name ?? "2025/2026";
+                CurrentTermName = latestGeneralClass.Term ?? "Third";
+            }
+            else
+            {
+                var latestSession = await dbContext.SessionYears.AsNoTracking()
+                    .OrderByDescending(s => s.Id)
+                    .FirstOrDefaultAsync();
+                CurrentSessionName = latestSession?.Name ?? $"{DateTime.Now.Year - 1}/{DateTime.Now.Year}";
+                CurrentTermName = "Third";
+            }
+
+            var currentSessionYearObj = await dbContext.SessionYears.AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Name == CurrentSessionName);
+
+            if (currentSessionYearObj != null)
+            {
+                TotalTermRegistrations = await dbContext.TermRegistrations.AsNoTracking()
+                    .CountAsync(r => r.SessionYearId == currentSessionYearObj.Id);
+            }
+            else
+            {
+                TotalTermRegistrations = Registration.Count();
+            }
+
+            var sessionList = await dbContext.SessionYears.AsNoTracking()
+                .OrderByDescending(k => k.Name)
+                .Take(12)
+                .ToListAsync();
+
+            _theSession = sessionList.Select(s => s.Name).ToArray();
+
+            return Page();
         }
+
+        public int _Annual(int year, IEnumerable<StudentsData> students)
+        {
+            if (students == null) return 0;
+            return students.Count(k => k.CreateDate.Year == year);
+        }
+
         public string GetSession(int minus, int plus)
         {
-            var date = DateTime.Now.Year;
-            return (date- minus) + "/" + (date - plus);
+            int date = DateTime.Now.Year;
+            return $"{date - minus}/{date - plus}";
         }
+
         public double FeesIncome(string session, IEnumerable<PaymentReport> payments)
         {
-            if (!string.IsNullOrEmpty(session) && payments.Any())
-            {
-                var pay = payments.Where(k=>k.Termregistration.SessionYear.Name==session).ToList();
-                double money = 0;
-                foreach (var item in pay)
-                {
-                    money += item.AccummulatedPay;
-                }
-                return money;
-            }
-            return 0.0;
+            if (string.IsNullOrEmpty(session) || payments == null || !payments.Any())
+                return 0.0;
+
+            return payments
+                .Where(k => k.Termregistration != null && k.Termregistration.SessionYear != null && k.Termregistration.SessionYear.Name == session)
+                .Sum(item => item.AccummulatedPay);
         }
+
         public double FeesExpected(string session, IEnumerable<TermRegistration> termRegistrations)
         {
-            if (!string.IsNullOrEmpty(session) && termRegistrations.Any())
+            if (string.IsNullOrEmpty(session) || termRegistrations == null || !termRegistrations.Any())
+                return 0.0;
+
+            var termreg = termRegistrations.Where(k => k.SessionYear != null && k.SessionYear.Name == session).ToList();
+            if (!termreg.Any()) return 0.0;
+
+            double money = 0;
+            var feeRates = dbContext.TermLyFeesPays.AsNoTracking()
+                .Include(f => f.SessionYear)
+                .Where(f => f.SessionYear.Name == session)
+                .ToList();
+
+            foreach (var classGroup in termreg.GroupBy(k => k.ClassesInSchoolId))
             {
-                var termreg = termRegistrations.Where(k => k.SessionYear.Name == session).ToList();
-                double money = 0;
-                foreach (var item in termreg.GroupBy(k=>k.ClassesInSchoolId))
+                foreach (var termGroup in classGroup.GroupBy(k => k.Term))
                 {
-                    foreach (var item1 in item.GroupBy(k=>k.Term))
+                    int count = termGroup.Count();
+                    if (count > 0)
                     {
-                        var register = item1.Count();
-                        if(register > 0)
+                        string currentTerm = termGroup.Key;
+                        int classId = classGroup.Key;
+
+                        var feeSetting = feeRates.FirstOrDefault(k => k.Term == currentTerm && k.ClassesInSchoolId == classId);
+                        if (feeSetting != null)
                         {
-                            var fees = dbContext.TermLyFeesPays.FirstOrDefault(k=>k.SessionYear.Name == session && k.Term==item1.FirstOrDefault().Term && k.ClassesInSchoolId==item1.FirstOrDefault().ClassesInSchoolId);
-                            if(fees != null)
-                            {
-                                money += (register * fees.Amount);
-                            }
+                            money += count * feeSetting.Amount;
                         }
                     }
                 }
-                return money;
             }
-            return 0.0;
+            return money;
         }
+
         public double Expenses(string session, IEnumerable<ExpenditureTable> expenditures)
         {
-            if (!string.IsNullOrEmpty(session) && expenditures.Any())
-            {
-                var expen = expenditures.Where(k => k.SessionYear.Name == session).ToList();
-                double money = 0;
-                foreach (var item in expen)
-                {
-                    money += item.Amount;
-                }
-                return money;
-            }
-            return 0.0;
+            if (string.IsNullOrEmpty(session) || expenditures == null || !expenditures.Any())
+                return 0.0;
+
+            return expenditures
+                .Where(k => k.SessionYear != null && k.SessionYear.Name == session)
+                .Sum(item => item.Amount);
         }
+
         public double PTAFeesIncome(string session, IEnumerable<PTAFeesReport> payments)
         {
-            if (!string.IsNullOrEmpty(session) && payments.Any())
-            {
-                var pay = payments.Where(k => k.Termregistration.SessionYear.Name == session).ToList();
-                double money = 0;
-                foreach (var item in pay)
-                {
-                    money += item.CulmulativePay;
-                }
-                return money;
-            }
-            return 0.0;
+            if (string.IsNullOrEmpty(session) || payments == null || !payments.Any())
+                return 0.0;
+
+            return payments
+                .Where(k => k.Termregistration != null && k.Termregistration.SessionYear != null && k.Termregistration.SessionYear.Name == session)
+                .Sum(item => item.CulmulativePay);
         }
+
         public double PTAExpenses(string session, IEnumerable<PTAExpenditureTable> expenditures)
         {
-            if (!string.IsNullOrEmpty(session) && expenditures.Any())
-            {
-                var expen = expenditures.Where(k => k.SessionYear.Name == session).ToList();
-                double money = 0;
-                foreach (var item in expen)
-                {
-                    money += item.Amount;
-                }
-                return money;
-            }
-            return 0.0;
+            if (string.IsNullOrEmpty(session) || expenditures == null || !expenditures.Any())
+                return 0.0;
+
+            return expenditures
+                .Where(k => k.SessionYear != null && k.SessionYear.Name == session)
+                .Sum(item => item.Amount);
         }
     }
 }

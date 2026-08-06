@@ -54,11 +54,11 @@ $(document).ready(function () {
                     return `
                         <div class="d-flex justify-content-between">
                             <a class="btn btn-primary btn-sm" target="_blank" title="View Payment Invoice" href="/ultilities/Pta-Payment-Invoice?id=${data.id}"  style="cursor:pointer">
-                                <i class="fa fa-print"></i>
+                                <i class="bi bi-printer"></i>
                             </a>
                             &nbsp;
                             <a onclick=removeSession("/api/PTAFeesPaymentManager/${data.id}") title="Permanently Remove this Expenditure" class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                <i class="fa fa-trash"></i>
+                                <i class="bi bi-trash3"></i>
                             </a>
                         </div>
                     `;

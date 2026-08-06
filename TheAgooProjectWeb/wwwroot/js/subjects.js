@@ -34,18 +34,34 @@ $(document).ready(function () {
                 "data": null, "render": function (data, type, full) {
                     return `
                         <div class="">
-                            <a class="btn btn-primary btn-sm" title="Edit Subject Name" href="/Admin/ManageSubject/Upsert?id=${data.id}" style="cursor:pointer">
-                                <i class="fa fa-edit"></i>
-                            </a>
+                            <button type="button" class="btn btn-primary btn-sm btn-edit" title="Edit Subject Name" data-name="${data.name}" data-id="${data.id}" style="cursor:pointer">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
                             &nbsp;  &emsp;
                             <a onclick=removeSubject("/api/Subjectmanager/${data.id}") title="Permanently Remove subject" class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                <i class="fa fa-trash"></i>
+                                <i class="bi bi-trash"></i>
                             </a>
                         </div>
                     `;
                 }
             }
         ]
+    });
+
+
+    $(document).on("click", ".btn-edit", function () {
+
+        // Get values from data attributes
+        var subjectName = $(this).data("name");
+        var subjectId = $(this).data("id");
+
+        // Populate modal input fields
+        $("#editSubjectModal input[name='subject.Name']").val(subjectName);
+        $("#editSubjectModal input[name='subject.Id']").val(subjectId);
+
+        // Show Bootstrap modal
+        var modal = new bootstrap.Modal(document.getElementById('editSubjectModal'));
+        modal.show();
     });
 });
 
@@ -54,7 +70,7 @@ function removeSubject(url) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
+            cancelButton: 'btn btn-danger me-2'
         },
         buttonsStyling: false
     })
@@ -64,7 +80,7 @@ function removeSubject(url) {
         text: "You won't be able to revert this!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, delete!',
         cancelButtonText: 'No, cancel!',
         reverseButtons: true
     }).then((result) => {

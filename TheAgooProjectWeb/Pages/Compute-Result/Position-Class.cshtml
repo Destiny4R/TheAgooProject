@@ -3,15 +3,21 @@
 @{
 
     ViewData["Title"] = "Compute Postion in Class";
+    ViewData["SubTitle"] = "Compute and update student positions in class";
     int sn = 0;
 }
-<div class="page-content">
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-trophy me-2"></i> @ViewData["Title"]
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">Compute and update student positions in class</div>
+        </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="Index"><i class="bi bi-arrow-left me-1"></i>&ensp; Back</a>
+    </div>
     <div class="card">
         <div class="card-header-pill">
-            <div class="d-flex justify-content-between p-2">
-                <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">Posion in Class</strong></div>
-                <div><a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
-            </div>
             <div class="row p-2">
                 <form method="post">
                     <div class="input-group col-12">
@@ -36,7 +42,7 @@
             }
             @if (TempData["success"] != null)
             {
-                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -56,6 +62,7 @@
         </div>
         @if (Model.DataTrue > 0)
         {
+            <div class="table-responsive">
             <table class="table table-sm table-responsive table-bordered table-striped table-hover" width="100%">
                 <thead class="table-dark">
                     <tr>
@@ -86,7 +93,8 @@
                                     var total = 0.0;
                                     foreach(var item2 in item)
                                     {
-                                        total += (double)item2.Total;
+                                        if(item2.Total !=null)
+                                            total += (double)item2?.Total;
                                     }
 
                                 }@total
@@ -95,7 +103,8 @@
                         </tr>
                     }
                 </tbody>
-            </table>
+                </table>
+            </div>
         }else{
             <div class="h3 text-center text-uppercase"> No result avaliable for the settings </div>
         }

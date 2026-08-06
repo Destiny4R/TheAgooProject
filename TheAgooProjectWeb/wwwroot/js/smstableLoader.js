@@ -33,7 +33,7 @@ $(document).ready(function () {
                 "data": "message",
                 render: function (data, type, row) {
                     if (data.length > 30) {
-                        return data = data.substring(0, 25)+'.....';
+                        return data = data.substring(0, 25) + '.....';
                     } else {
                         return data;
                     }
@@ -56,6 +56,7 @@ $(document).ready(function () {
                             <button type="button" class="btn btn-success btn-sm" onclick="return viewReport(${data});" id="buttonsms"  data-id="${data}" style="cursor:pointer">
                             <i class="fa fa-spin fa-spinner" id="smsloader${data}" style="display:none;"></i>
                                 <i class="fa fa-eye"  id="nosmsloader${data}"></i>
+                                <i class="bi bi-eye"></i>
                             </button>
                         </div>
                     `;
@@ -70,7 +71,7 @@ function viewReport(id) {
     $.ajax({
         type: "POST",
         url: '/webapi/SmsDetails/',
-        data: { id: id},
+        data: { id: id },
         dataType: "json",
         success: successFunc,
         error: errorFunc,
@@ -119,7 +120,7 @@ function viewReport(id) {
             text: 'Something went wrong!',
             footer: 'Check internet connectivity!'
         });
-    } 
+    }
 }
 
 function test() {

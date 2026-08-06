@@ -1,158 +1,149 @@
-﻿@page
+@page
 @model IndexModel
 @{
     ViewData["Title"] = "Dashboard";
+    ViewData["SubTitle"] = "School performance and key metrics at a glance";
     int year = DateTime.UtcNow.Year;
-
 }
-
-<div class="page-content">
-    <div class="container-fluid">
-
-        <!-- start page title -->
-        <div class="row">
-            <div class="col-12">
-                <div class="page-title-box d-flex align-items-center justify-content-between">
-                    <h4 class="mb-0 font-size-18">Dashboard</h4>
-
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Aggo College Makurdi</a></li>
-                            <li class="breadcrumb-item active">Dashboard</li>
-                        </ol>
-                    </div>
-
-                </div>
+<div class="page-content fade-in">
+   @*  <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-speedometer2 me-2"></i> @ViewData["Title"]
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">@ViewData["SubTitle"]</div>
+        </div>
+    </div> *@
+    
+    <div id="overview">
+        <div class="card mb-4">
+            <div class="card-body p-4 position-relative overflow-hidden">
+                <svg class="position-absolute top-50 end-0 translate-middle-y me-3 d-none d-lg-block" width="150" height="150" viewBox="0 0 64 64" style="opacity:.05;">
+                    <path d="M32 4 L58 12 V30 C58 46 47 56 32 60 C17 56 6 46 6 30 V12 Z" style="fill:var(--bs-heading-color);" />
+                </svg>
+                <div class="text-primary text-uppercase fw-semibold" style="letter-spacing:.14em; font-size:.72rem;">Executive Overview</div>
+                <h1 class="h3 mb-1">Good day, @(Model.LoggedInUserFullName)</h1>
+                <p class="text-body-secondary mb-3">Here is how the school is tracking today, <span id="fullDate">&nbsp;</span>.</p>
+                <span class="badge bg-body-tertiary text-body border rounded-pill px-3 py-2 fw-normal">
+                    <i class="bi bi-calendar3 me-1"></i>@(Model.CurrentSessionName) Academic Session &middot; @(Model.CurrentTermName) Term
+                </span>
             </div>
         </div>
-        <!-- end page title -->
 
-        <div class="row">
-            <div class="col-sm-6 col-xl-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="media">
-                            <div class="media-body">
-                                <h5 class="font-size-14">Website Visits</h5>
-                            </div>
-                            <div class="avatar-xs">
-                                <span class="avatar-title rounded-circle bg-primary">
-                                    <i class="dripicons-meter"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <h4 class="m-0 align-self-center">@(Model.webvisit?.Website??0)</h4>
-                        <p class="mb-0 mt-3 text-muted"><span class="text-success">@(DateTime.Now.ToShortDateString()) <i class="mdi mdi-trending-up mr-1"></i></span> As At Today</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-xl-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="media">
-                            <div class="media-body">
-                                <h5 class="font-size-14">Student Portal Visits</h5>
-                            </div>
-                            <div class="avatar-xs">
-                                <span class="avatar-title rounded-circle bg-primary">
-                                    <i class="dripicons-meter"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <h4 class="m-0 align-self-center">@(Model.webvisit?.Portal??0)</h4>
-                        <p class="mb-0 mt-3 text-muted"><span class="text-success">@(DateTime.Now.ToShortDateString()) </span> As At Today</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-xl-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="media">
-                            <div class="media-body">
-                                <h5 class="font-size-14">SMS Credit</h5>
-                            </div>
-                            <div class="avatar-xs">
-                                <span class="avatar-title rounded-circle bg-primary">
-                                    <i class="dripicons-message"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <h4 id="balpro2" class="m-0 align-self-center">
-                            
-                        </h4>
-                        <p class="mb-0 mt-3 text-muted"><span class="text-danger">@(DateTime.Now.ToShortDateString()) </span> As At Today</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-xl-3">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="media">
-                            <div class="media-body">
-                                <h5 class="font-size-14">Feedback Messages</h5>
-                            </div>
-                            <div class="avatar-xs">
-                                <span class="avatar-title rounded-circle bg-primary">
-                                    <i class="dripicons-mail"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <h4 class="m-0 align-self-center">@(Model.feedback)</h4>
-                        <p class="mb-0 mt-3 text-muted"><span class="text-success">@(DateTime.Now.ToShortDateString()) </span> As At Today</p>
-                    </div>
-                </div>
-            </div>
-
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            <a asp-page="/Admin/TermRegistration/Index" class="btn btn-outline-primary btn-sm"><i class="bi bi-person-plus me-1"></i>Register Student</a>
+            <a asp-page="/Compute-Result/Index" class="btn btn-outline-primary btn-sm"><i class="bi bi-megaphone me-1"></i>Compute Result</a>
+            <a asp-page="/Portal/Annual-Master" class="btn btn-outline-primary btn-sm"><i class="bi bi-file-earmark-bar-graph me-1"></i>Annual Master Sheet</a>
+            <a asp-page="/Portal/Terminal-Master-Sheet" class="btn btn-outline-primary btn-sm"><i class="bi bi-journal-text me-1"></i>Terminal Master Sheet</a>
         </div>
-        <!-- end row -->
 
-        <div class="row">
-            <div class="col-xl-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="header-title mb-3">Yearly Number of Admitted Students</h4>
-                        <div id="flot-bar-1" style="height: 320px"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="header-title mb-4">Expected Profit, Income and Debt</h4>
-
-                        <div id="column_chart" class="apex-charts" dir="ltr"></div>
-                    </div>
-                </div><!--end card-->
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6 col-sm-12">
-                <div class="card m-b-30">
-                    <div class="card-body">
-                        <h5 class="header-title pb-3">Revenue and Expenditure</h5>           
-                        <div class="panel-body">
-                            <canvas id="lineChart"></canvas>
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-xl-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex gap-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary-subtle border border-primary-subtle text-primary flex-shrink-0" style="width:46px;height:46px;font-size:1.1rem;">
+                            <i class="bi bi-globe"></i>
+                        </div>
+                        <div>
+                            <div class="text-body-secondary text-uppercase" style="font-size:.72rem; letter-spacing:.06em;">Website Visitors</div>
+                            <div class="kpi-value fw-bold fs-4" style="font-family:'Fraunces',serif; color:var(--bs-heading-color);" data-count="@(Model.webvisit?.Website ?? 0)">0</div>
+                            <div class="text-success small fw-semibold"><i class="bi bi-arrow-up-short"></i>Total page hits</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-sm-12">
-                <div class="card m-b-30">
-                    <div class="card-body">
-                        <h5 class="header-title pb-3">PTA Income and PTA Expenditures</h5>           
-                        <div class="panel-body">
-                            <canvas id="barChart"></canvas>
+
+            <div class="col-6 col-xl-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex gap-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning-subtle border border-warning-subtle text-warning flex-shrink-0" style="width:46px;height:46px;font-size:1.1rem;">
+                            <i class="bi bi-chat-left-text"></i>
+                        </div>
+                        <div>
+                            <div class="text-body-secondary text-uppercase" style="font-size:.72rem; letter-spacing:.06em;">Active Feedback</div>
+                            <div class="kpi-value fw-bold fs-4" style="font-family:'Fraunces',serif; color:var(--bs-heading-color);" data-count="@(Model.feedback)">0</div>
+                            <div class="text-success small fw-semibold"><i class="bi bi-arrow-up-short"></i>Submissions on file</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6 col-xl-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex gap-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle border border-success-subtle text-success flex-shrink-0" style="width:46px;height:46px;font-size:1.1rem;">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div>
+                            <div class="text-body-secondary text-uppercase" style="font-size:.72rem; letter-spacing:.06em;">Total Active Students</div>
+                            <div class="kpi-value fw-bold fs-4" style="font-family:'Fraunces',serif; color:var(--bs-heading-color);" data-count="@(Model.TotalActiveStudents)">0</div>
+                            <div class="text-success small fw-semibold"><i class="bi bi-check-circle me-1"></i>Enrolled students</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6 col-xl-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex gap-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-info-subtle border border-info-subtle text-info flex-shrink-0" style="width:46px;height:46px;font-size:1.1rem;">
+                            <i class="bi bi-card-checklist"></i>
+                        </div>
+                        <div>
+                            <div class="text-body-secondary text-uppercase" style="font-size:.72rem; letter-spacing:.06em;">Term Registrations</div>
+                            <div class="kpi-value fw-bold fs-4" style="font-family:'Fraunces',serif; color:var(--bs-heading-color);" data-count="@(Model.TotalTermRegistrations)">0</div>
+                            <div class="text-info small fw-semibold"><i class="bi bi-calendar-check me-1"></i>Current session registrations</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-    </div> 
+    <!-- Charts Section -->
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="header-title mb-3">Yearly Student Admissions</h5>
+                    <div id="flot-bar-1" style="height: 320px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="header-title mb-4">Expected Profit, Income and Debt</h5>
+                    <div id="column_chart" class="apex-charts" dir="ltr"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 col-sm-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="header-title pb-3">Revenue and Expenditure</h5>           
+                    <div class="panel-body">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="header-title pb-3">PTA Income and PTA Expenditures</h5>           
+                    <div class="panel-body">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 @section Scripts {
     <script src="/assets/libs/apexcharts/apexcharts.min.js"></script>
     <script src="/assets/libs/flot-charts/jquery.flot.js"></script>
@@ -164,8 +155,23 @@
     <script>
         $(function () {
             "use strict";
+            
+            // Format current date in overview card
+            var today = new Date();
+            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            $("#fullDate").text(today.toLocaleDateString("en-US", options));
+
             if ($("#flot-bar-1").length) {
-                var data = [[@(year - 7), @(Model._Annual((year - 7), Model.students))], [@(year - 6), @(Model._Annual((year - 6), Model.students))], [@(year - 5), @(Model._Annual((year - 5), Model.students))], [@(year - 4), @(Model._Annual((year - 4), Model.students))], [@(year - 3), @(Model._Annual((year - 3), Model.students))], [@(year - 2), @(Model._Annual((year - 2), Model.students))], [@(year - 1), @(Model._Annual((year - 1), Model.students))], [@(year), @(Model._Annual((year), Model.students))], [@(year + 1), @(Model._Annual((year + 1), Model.students))]];
+                var data = [
+                    [@(year - 7), @(Model._Annual((year - 7), Model.students))],
+                    [@(year - 6), @(Model._Annual((year - 6), Model.students))],
+                    [@(year - 5), @(Model._Annual((year - 5), Model.students))],
+                    [@(year - 4), @(Model._Annual((year - 4), Model.students))],
+                    [@(year - 3), @(Model._Annual((year - 3), Model.students))],
+                    [@(year - 2), @(Model._Annual((year - 2), Model.students))],
+                    [@(year - 1), @(Model._Annual((year - 1), Model.students))],
+                    [@(year), @(Model._Annual((year), Model.students))]
+                ];
 
                 $.plot($("#flot-bar-1"), [{
                     data: data
@@ -174,7 +180,7 @@
                         bars: {
                             show: true,
                             lineWidth: 0,
-                            barWidth: 0.3,
+                            barWidth: 0.4,
                             fillColor: "#0db4d6"
                         }
                     },
@@ -182,182 +188,227 @@
                         borderWidth: 1,
                         borderColor: "rgba(123, 145, 158,0.1)",
                         labelMargin: 15,
-                        hoverable: true // Enable hover
+                        hoverable: true
                     },
                     yaxis: {
                         tickColor: "rgba(123, 145, 158,0.1)",
-                        font: {
-                            color: "#7b919e",
-                            size: 10
-                        }
+                        font: { color: "#7b919e", size: 10 }
                     },
                     xaxis: {
                         tickColor: "rgba(123, 145, 158,0.1)",
-                        font: {
-                            color: "#7b919e",
-                            size: 10
-                        }
+                        font: { color: "#7b919e", size: 10 }
                     },
                     tooltip: true,
                     tooltipOpts: {
                         content: "%s : %y.0",
-                        shifts: {
-                            x: -30,
-                            y: -50
-                        }
+                        shifts: { x: -30, y: -50 }
                     }
                 });
             }
 
             if ($("#column_chart").length) {
-            var options = {
-                chart: {
-                    height: 350,
-                    type: "bar",
-                    toolbar: {
-                        show: false
-                    }
-                },
-                plotOptions: {
-                    bar: {
-                        horizontal: false,
-                        columnWidth: "45%",
-                        endingShape: "rounded"
-                    }
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    show: true,
-                    width: 2,
-                    colors: ["transparent"]
-                },
-                series: [
-                    {
-                        name: "Expected Profit",
-                                data: [@(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 8), Model.Registration)), @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 7), Model.Registration)), @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 6), Model.Registration)),
-                                    @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 5), Model.Registration)), @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 4), Model.Registration)), @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 3), Model.Registration)),
-                                    @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 2), Model.Registration)), @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 1), Model.Registration)), @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 0), Model.Registration))]
+                var options = {
+                    chart: {
+                        height: 350,
+                        type: "bar",
+                        toolbar: { show: false }
                     },
-                    {
-                        name: "Income",
-                        data: [@(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,8),Model.PaymentReports)), @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,7),Model.PaymentReports)), @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,6),Model.PaymentReports)),
-                            @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,5),Model.PaymentReports)), @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,4),Model.PaymentReports)), @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,3),Model.PaymentReports)),
-                            @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,2),Model.PaymentReports)), @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,1),Model.PaymentReports)), @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,0),Model.PaymentReports))]
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            columnWidth: "45%",
+                            endingShape: "rounded"
+                        }
                     },
-                    {
-                        name: "Debts",
-                        data: [@((Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 8), Model.Registration)-Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,8),Model.PaymentReports))), 
-                                @((Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 7), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,7),Model.PaymentReports))), 
-                                @((Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 6), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,6),Model.PaymentReports))),
-                                @((Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 5), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,5),Model.PaymentReports))), 
-                                @((Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 4), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,4),Model.PaymentReports))), 
-                                @((Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 3), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,3),Model.PaymentReports))),
-                                @((Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 2), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,2),Model.PaymentReports))), 
-                                @((Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 1), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,1),Model.PaymentReports))),
-                                @((Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 0), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,0),Model.PaymentReports)))]
-                    }
-                ],
-                colors: ["#194D04", "#3d8ef8", "#11c46e"],
-                xaxis: {
-                        categories: [`@(SD.GetValueAtIndex(Model._theSession, 7))`, `@(SD.GetValueAtIndex(Model._theSession, 6))`, `@(SD.GetValueAtIndex(Model._theSession, 5))`,
-                                    `@(SD.GetValueAtIndex(Model._theSession, 4))`, ` @(SD.GetValueAtIndex(Model._theSession, 3))`,
-                                    ` @(SD.GetValueAtIndex(Model._theSession, 2))`, ` @(SD.GetValueAtIndex(Model._theSession, 1))`, ` @(SD.GetValueAtIndex(Model._theSession, 0))`]
-                },
-                yaxis: {
-                    title: {
-                            text: "₦ (thousands)"
-                    }
-                },
-                grid: {
-                    borderColor: "#f1f1f1"
-                },
-                fill: {
-                    opacity: 1
-                },
-                tooltip: {
-                    y: {
-                        formatter: function (val) {
-                                return "₦ " + val + " thousands";
+                    dataLabels: { enabled: false },
+                    stroke: { show: true, width: 2, colors: ["transparent"] },
+                    series: [
+                        {
+                            name: "Expected Profit",
+                            data: [
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 8), Model.Registration)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 7), Model.Registration)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 6), Model.Registration)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 5), Model.Registration)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 4), Model.Registration)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 3), Model.Registration)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 2), Model.Registration)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 1), Model.Registration)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 0), Model.Registration))
+                            ]
+                        },
+                        {
+                            name: "Income",
+                            data: [
+                                @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 8), Model.PaymentReports)),
+                                @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 7), Model.PaymentReports)),
+                                @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 6), Model.PaymentReports)),
+                                @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 5), Model.PaymentReports)),
+                                @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 4), Model.PaymentReports)),
+                                @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 3), Model.PaymentReports)),
+                                @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 2), Model.PaymentReports)),
+                                @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 1), Model.PaymentReports)),
+                                @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 0), Model.PaymentReports))
+                            ]
+                        },
+                        {
+                            name: "Debts",
+                            data: [
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 8), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 8), Model.PaymentReports)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 7), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 7), Model.PaymentReports)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 6), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 6), Model.PaymentReports)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 5), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 5), Model.PaymentReports)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 4), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 4), Model.PaymentReports)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 3), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 3), Model.PaymentReports)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 2), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 2), Model.PaymentReports)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 1), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 1), Model.PaymentReports)),
+                                @(Model.FeesExpected(SD.GetValueAtIndex(Model._theSession, 0), Model.Registration) - Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 0), Model.PaymentReports))
+                            ]
                         }
-                    }
-                }
-            };
-            (chart = new ApexCharts(document.querySelector("#column_chart"), options)).render();
-         }
-
-            //line chart
-                var ctx=document.getElementById( "lineChart");
-                ctx.height=220;
-                var myChart=new Chart( ctx, {
-                    type: 'line', data: {
-                        labels: [`@(SD.GetValueAtIndex(Model._theSession, 6))`,`@(SD.GetValueAtIndex(Model._theSession, 5))`,
-                            `@(SD.GetValueAtIndex(Model._theSession, 4))`,`@(SD.GetValueAtIndex(Model._theSession, 3))`,`@(SD.GetValueAtIndex(Model._theSession, 2))`,
-                            `@(SD.GetValueAtIndex(Model._theSession, 1))`,`@(SD.GetValueAtIndex(Model._theSession, 0))`], datasets: [ {
-                            label: "Income", borderColor: "rgba(49, 119, 13, 0.85)", 
-                            borderWidth: "1", backgroundColor: "rgba(49, 119, 13, 0.85)",
-                            data: [ @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,6),Model.PaymentReports)),@(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,5),Model.PaymentReports)),
-                                @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,4),Model.PaymentReports)),@(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,3),Model.PaymentReports)),@(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,2),Model.PaymentReports)),@(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,1),Model.PaymentReports)),
-                                @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession,0),Model.PaymentReports))]
-                        }
-                        , {
-                            label: "Expenditures", borderColor: "rgba(152, 7, 95, 0.75)", 
-                            borderWidth: "1", backgroundColor: "rgba(152, 7, 95, 0.75)", pointHighlightStroke: "rgba(26,179,148,1)", 
-                            data: [ @(Model.Expenses(SD.GetValueAtIndex(Model._theSession,6),Model.Expenditures)),@(Model.Expenses(SD.GetValueAtIndex(Model._theSession,5),Model.Expenditures)),
-                                @(Model.Expenses(SD.GetValueAtIndex(Model._theSession,4),Model.Expenditures)),@(Model.Expenses(SD.GetValueAtIndex(Model._theSession,3),Model.Expenditures)),@(Model.Expenses(SD.GetValueAtIndex(Model._theSession,2),Model.Expenditures)),@(Model.Expenses(SD.GetValueAtIndex(Model._theSession,1),Model.Expenditures)),
-                                @(Model.Expenses(SD.GetValueAtIndex(Model._theSession,0),Model.Expenditures))]
-                        }
+                    ],
+                    colors: ["#194D04", "#3d8ef8", "#dc3545"],
+                    xaxis: {
+                        categories: [
+                            `@(SD.GetValueAtIndex(Model._theSession, 8))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 7))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 6))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 5))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 4))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 3))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 2))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 1))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 0))`
                         ]
-                    }
-                    , options: {
-                        responsive: true, tooltips: {
-                            mode: 'index', intersect: false
+                    },
+                    yaxis: {
+                        title: { text: "₦ (Amount)" }
+                    },
+                    grid: { borderColor: "#f1f1f1" },
+                    fill: { opacity: 1 },
+                    tooltip: {
+                        y: {
+                            formatter: function (val) {
+                                return "₦ " + val.toLocaleString();
+                            }
                         }
-                        , hover: {
-                            mode: 'nearest', intersect: true
+                    }
+                };
+                (new ApexCharts(document.querySelector("#column_chart"), options)).render();
+            }
+
+            // Line Chart: Revenue vs Expenditures
+            if ($("#lineChart").length) {
+                var ctx = document.getElementById("lineChart");
+                ctx.height = 220;
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [
+                            `@(SD.GetValueAtIndex(Model._theSession, 6))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 5))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 4))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 3))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 2))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 1))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 0))`
+                        ],
+                        datasets: [
+                            {
+                                label: "Income",
+                                borderColor: "rgba(49, 119, 13, 0.85)",
+                                borderWidth: "2",
+                                backgroundColor: "rgba(49, 119, 13, 0.15)",
+                                data: [
+                                    @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 6), Model.PaymentReports)),
+                                    @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 5), Model.PaymentReports)),
+                                    @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 4), Model.PaymentReports)),
+                                    @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 3), Model.PaymentReports)),
+                                    @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 2), Model.PaymentReports)),
+                                    @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 1), Model.PaymentReports)),
+                                    @(Model.FeesIncome(SD.GetValueAtIndex(Model._theSession, 0), Model.PaymentReports))
+                                ]
+                            },
+                            {
+                                label: "Expenditures",
+                                borderColor: "rgba(152, 7, 95, 0.75)",
+                                borderWidth: "2",
+                                backgroundColor: "rgba(152, 7, 95, 0.15)",
+                                data: [
+                                    @(Model.Expenses(SD.GetValueAtIndex(Model._theSession, 6), Model.Expenditures)),
+                                    @(Model.Expenses(SD.GetValueAtIndex(Model._theSession, 5), Model.Expenditures)),
+                                    @(Model.Expenses(SD.GetValueAtIndex(Model._theSession, 4), Model.Expenditures)),
+                                    @(Model.Expenses(SD.GetValueAtIndex(Model._theSession, 3), Model.Expenditures)),
+                                    @(Model.Expenses(SD.GetValueAtIndex(Model._theSession, 2), Model.Expenditures)),
+                                    @(Model.Expenses(SD.GetValueAtIndex(Model._theSession, 1), Model.Expenditures)),
+                                    @(Model.Expenses(SD.GetValueAtIndex(Model._theSession, 0), Model.Expenditures))
+                                ]
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        tooltips: { mode: 'index', intersect: false },
+                        hover: { mode: 'nearest', intersect: true }
+                    }
+                });
+            }
+
+            // Bar Chart: PTA Income vs PTA Expenditures
+            if ($("#barChart").length) {
+                var ctx2 = document.getElementById("barChart");
+                ctx2.height = 220;
+                new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: [
+                            `@(SD.GetValueAtIndex(Model._theSession, 6))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 5))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 4))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 3))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 2))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 1))`,
+                            `@(SD.GetValueAtIndex(Model._theSession, 0))`
+                        ],
+                        datasets: [
+                            {
+                                label: "PTA Income",
+                                data: [
+                                    @(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession, 6), Model.pTAFeesReports)),
+                                    @(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession, 5), Model.pTAFeesReports)),
+                                    @(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession, 4), Model.pTAFeesReports)),
+                                    @(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession, 3), Model.pTAFeesReports)),
+                                    @(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession, 2), Model.pTAFeesReports)),
+                                    @(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession, 1), Model.pTAFeesReports)),
+                                    @(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession, 0), Model.pTAFeesReports))
+                                ],
+                                borderColor: "rgba(8, 91, 45, 0.75)",
+                                borderWidth: "0",
+                                backgroundColor: "rgba(8, 91, 45, 0.75)"
+                            },
+                            {
+                                label: "PTA Expenditures",
+                                data: [
+                                    @(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession, 6), Model.pTAExpenditures)),
+                                    @(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession, 5), Model.pTAExpenditures)),
+                                    @(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession, 4), Model.pTAExpenditures)),
+                                    @(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession, 3), Model.pTAExpenditures)),
+                                    @(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession, 2), Model.pTAExpenditures)),
+                                    @(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession, 1), Model.pTAExpenditures)),
+                                    @(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession, 0), Model.pTAExpenditures))
+                                ],
+                                borderColor: "rgba(146, 4, 41, 0.75)",
+                                borderWidth: "0",
+                                backgroundColor: "rgba(146, 4, 41, 0.75)"
+                            }
+                        ]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{ ticks: { beginAtZero: true } }]
                         }
                     }
-                }
-                );
-
-
-
-            //bar chart
-    var ctx=document.getElementById( "barChart");
-    ctx.height=220;
-    var myChart=new Chart( ctx, {
-        type: 'bar', data: {
-                labels: [ `@(SD.GetValueAtIndex(Model._theSession, 6))`,`@(SD.GetValueAtIndex(Model._theSession, 5))`,
-                                `@(SD.GetValueAtIndex(Model._theSession, 4))`,`@(SD.GetValueAtIndex(Model._theSession, 3))`,`@(SD.GetValueAtIndex(Model._theSession, 2))`,
-                                `@(SD.GetValueAtIndex(Model._theSession, 1))`,`@(SD.GetValueAtIndex(Model._theSession, 0))`], datasets: [ {
-                    label: "PTA Income", data: [ @(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession,6),Model.pTAFeesReports)),@(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession,5),Model.pTAFeesReports)),
-                                                @(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession,4),Model.pTAFeesReports)),@(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession,3),Model.pTAFeesReports)),@(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession,2),Model.pTAFeesReports)),@(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession,1),Model.pTAFeesReports)),
-                                                @(Model.PTAFeesIncome(SD.GetValueAtIndex(Model._theSession,0),Model.pTAFeesReports))], borderColor: "rgba(8, 91, 45, 0.75)", borderWidth: "0", backgroundColor: "rgba(8, 91, 45, 0.75)"
+                });
             }
-            , {
-                label: "PTA Expenditures", data: [@(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession,6),Model.pTAExpenditures)),@(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession,5),Model.pTAExpenditures)),
-                                                @(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession,4),Model.pTAExpenditures)),@(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession,3),Model.pTAExpenditures)),@(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession,2),Model.pTAExpenditures)),@(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession,1),Model.pTAExpenditures)),
-                                                @(Model.PTAExpenses(SD.GetValueAtIndex(Model._theSession,0),Model.pTAExpenditures))], borderColor: "rgba(146, 4, 41, 0.75)", borderWidth: "0", backgroundColor: "rgba(146, 4, 41, 0.75)"
-            }
-            ]
-        }
-        , options: {
-            scales: {
-                yAxes: [ {
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }
-                ]
-            }
-        }
-    }
-    );
-
-
-            
-       
         });
     </script>
 }

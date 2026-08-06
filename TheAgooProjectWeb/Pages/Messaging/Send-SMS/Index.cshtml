@@ -2,38 +2,37 @@
 @model TheAgooProjectWeb.Pages.Messaging.Send_SMS.IndexModel
 @{
     ViewData["Title"] = "Send SMS History";
+    ViewData["SubTitle"] = "View and manage sent SMS records";
 }
-@section AddToHead {
+@section Sheets {
     <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-    <link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    @await Html.PartialAsync("_DataTablesSheetFiles")
 }
-<div class="page-content">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class="badge bg-dark"><h4 class="text-white">Send SMS History</h4></div>
-
-                <div class="">
-                    <a class="btn btn-info btn-sm" asp-page="SMS-Send"><i class="fas fa-sms"></i>&ensp; Send SMS</a>
-                </div>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-send me-2"></i> @ViewData["Title"]
             </div>
-            @if (TempData["success"] != null)
-            {
-                <div class="alert alert-success mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
-                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"]
-                </div>
-            }
-            @if (TempData["error"] != null)
-            {
-                <div class="alert alert-danger mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
-                    <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"]
-                </div>
-            }
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">View and manage sent SMS records</div>
         </div>
+        <a class="btn btn-light btn-sm" asp-page="SMS-Send"><i class="bi bi-send me-1"></i> Send SMS</a>
+    </div>
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success mt-2" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+            <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"]
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger mt-2" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+            <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"]
+        </div>
+    }
+    <div class="card">
         <div class="card-body">
             <table class="table-bordered table-striped table" id="subjectTable" width="100%">
                 <thead>
@@ -115,10 +114,7 @@
 
 @section Scripts {
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
-    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    @await Html.PartialAsync("_DataTablesScriptsFiles")
     <script src="~/lib/blockui/jquery.blockui.min.js"></script>
     <script src="~/js/smstableloader.js" asp-append-version="true"></script>
 }

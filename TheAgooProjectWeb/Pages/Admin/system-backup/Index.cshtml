@@ -2,32 +2,38 @@
 @model TheAgooProjectWeb.Pages.Admin.system_backup.IndexModel
 @{
     ViewData["Title"] = "System Backup restoration";
+    ViewData["SubTitle"] = "Restore the database from a backup";
 }
 <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
-<div class="page-content">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class="badge  badge-info bg-info text-uppercase"><strong class="h5">@ViewData["Title"]</strong></div>
-                <button class="btn btn-danger" data-toggle="modal" data-target="#restoreDbModal">
-                    ⚠️ Restore Database
-                </button>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-cloud-arrow-down me-2"></i> @ViewData["Title"]
             </div>
-            @if (TempData["success"] != null)
-            {
-                <div class="alert alert-success mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
-                    <strong><i class="fas fa-check-double text-success"></i></strong> &emsp; @TempData["success"].
-                </div>
-            }
-            @if (TempData["error"] != null)
-            {
-                <div class="alert alert-danger mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
-                    <strong><i class="fas fa-check-double text-danger"></i></strong> &emsp; @TempData["error"].
-                </div>
-            }
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">@ViewData["SubTitle"]</div>
         </div>
+        <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#restoreDbModal">
+                <i class="bi bi-cloud-arrow-up me-1"></i> Restore Database
+            </button>
+        </div>
+    </div>
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success mt-2" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+            <strong><i class="fas fa-check-double text-success"></i></strong> &emsp; @TempData["success"].
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger mt-2" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+            <strong><i class="fas fa-check-double text-danger"></i></strong> &emsp; @TempData["error"].
+        </div>
+    }
+    <div class="card">
         <div class="card-body">
             <div class="card border-danger shadow-sm mb-4">
                 <div class="card-header bg-danger text-white fw-bold">
@@ -56,7 +62,7 @@
                 <h5 class="modal-title" id="restoreDbModalLabel">
                     ⚠️ DANGEROUS OPERATION — Restore Database
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-dismiss="modal"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
             <form method="post">
@@ -85,14 +91,14 @@
                            oninput="checkRestoreConfirm()" />
                     <div class="mb-3 mt-3">
                         <label class="form-label">Select Backup Version</label>
-                        <select asp-for="SelectedBackup" asp-items="Model.Backups" class="custom-select" required>
+                        <select asp-for="SelectedBackup" asp-items="Model.Backups" class="form-select" required>
                             <option value="">-- Select backup --</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         Cancel
                     </button>
 

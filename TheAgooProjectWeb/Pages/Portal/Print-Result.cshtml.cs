@@ -50,7 +50,7 @@ namespace TheAgooProjectWeb.Pages.Portal
         {
             ViewSelectModel = new()
             {
-                Class = dbContext.SchoolClasses.OrderByDescending(n => n.Id).Select(k => new SelectListItem
+                Class = dbContext.SchoolClasses.OrderByDescending(n => n.CreatedDate).Select(k => new SelectListItem
                 {
                     Text = k.Name,
                     Value = k.Id.ToString()
@@ -60,7 +60,7 @@ namespace TheAgooProjectWeb.Pages.Portal
                     Text = k.Name,
                     Value = k.Id.ToString()
                 }),
-                SessionYearz = dbContext.SessionYears.OrderBy(n => n.Id).Select(k => new SelectListItem
+                SessionYearz = dbContext.SessionYears.OrderByDescending(n => n.CreatedDate).Select(k => new SelectListItem
                 {
                     Text = k.Name,
                     Value = k.Id.ToString()

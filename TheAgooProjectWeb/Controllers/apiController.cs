@@ -206,57 +206,35 @@ namespace TheAgooProjectWeb.Controllers
             return Json(new { success = true, message = "Subject Successfully Removed!" });
         }
         //ManageTermReg
-        [HttpDelete]
+        [HttpPost]
         public JsonResult ManageTermReg(int id)
         {
-            var additional = dbContext.AdditionalPayments.FirstOrDefault(k => k.TermRegId == id);
-            if (additional != null)
-            {
+            if (dbContext.AdditionalPayments.Any(k => k.TermRegId == id))
                 return Json(new { success = false, message = "This student cannot be removed due to having paid some Additional payment for this term." });
-            }
-            //CHECK IF HE OR SHE HAS PAID FOR PTA FEES
-            var studentPTA = dbContext.PTATables.FirstOrDefault(k => k.TermRegId == id);
-            if (studentPTA != null)
-            {
+
+            if (dbContext.PTATables.Any(k => k.TermRegId == id))
                 return Json(new { success = false, message = "This student cannot be removed due to having paid PTA fees for this term." });
-            }
-            //CHECK IF HE OR SHE HAS PAID TERM SCHOOL FEES
-            var studentFees = dbContext.Payments.FirstOrDefault(k => k.TermRegId == id);
-            if (studentFees != null)
-            {
+
+            if (dbContext.Payments.Any(k => k.TermRegId == id))
                 return Json(new { success = false, message = "This student cannot be removed due to having paid school fees for this term." });
-            }
-            //CHECK IF HE OR HAS EXAMS RECORD
-            var studentResult = dbContext.ResultTable.Where(k => k.TermRegId == id).ToList();
-            if (studentResult.Count() > 0)
-            {
-                int ready = 0;
-                foreach (var item in studentResult)
-                {
-                    if (item.Status)
-                    {
-                        ready++;
-                    }
-                }
-                if (ready > 0)
-                {
-                    return Json(new { success = false, message = "This student cannot be removed due to having term result record computed." });
-                }
-                dbContext.RemoveRange(studentResult);
-            }
-            var student = dbContext.TermRegistrations.Include(k=>k.ResultTable).Include(m=>m.StudentRatings).FirstOrDefault(k => k.Id == id);
+
+            if (dbContext.ResultTable.Any(k => k.TermRegId == id && k.Status))
+                return Json(new { success = false, message = "This student cannot be removed due to having term result record computed." });
+
+            var student = dbContext.TermRegistrations
+                .Include(k => k.ResultTable)
+                .Include(k => k.StudentRatings)
+                .FirstOrDefault(k => k.Id == id);
+
             if (student == null)
-            {
                 return Json(new { success = false, message = "Error while delete" });
-            }
-            if (student.StudentRatings!=null)
-            {
+
+            if (student.StudentRatings != null)
                 dbContext.Remove(student.StudentRatings);
-            }
-            if (student.ResultTable.Count() > 0)
-            {
+
+            if (student.ResultTable?.Any() == true)
                 dbContext.RemoveRange(student.ResultTable);
-            }
+
             dbContext.Remove(student);
             dbContext.SaveChanges();
 

@@ -1,0 +1,377 @@
+﻿=======================================================================
+THEME: we retheme Bootstrap's own CSS variables (light + dark) instead
+of inventing a parallel class system. Components below (card, btn,
+   table, badge, nav, dropdown, offcanvas) are plain Bootstrap classes;
+only 3 bespoke rules exist for things Bootstrap has no equivalent for:
+.sidebar / .sidebar-collapsed (app rail) and .bar/.bar-col (chart).
+======================================================================= */
+
+:root, [data-bs-theme="light"] {
+    --bs-body-bg: #F7F4EB;
+    --bs-body-color: #242424;
+    --bs-body-font-family: 'Inter', -apple-system, sans-serif;
+    --bs-border-color: #E4DECB;
+    --bs-card-bg: #FFFFFF;
+    --bs-card-border-color: #E4DECB;
+    --bs-card-cap-bg: transparent;
+    --bs-heading-color: #1A2B4C;
+    --bs-emphasis-color: #1A2B4C;
+    --bs-secondary-color: #5B6478;
+    --bs-tertiary-bg: #F1EDE0;
+    --bs-link-color: #1A2B4C;
+    --bs-link-hover-color: #B08D34;
+    --bs-primary: #1A2B4C;
+    --bs-primary-rgb: 26,43,76;
+    --bs-primary-text-emphasis: #1A2B4C;
+    --bs-primary-bg-subtle: #E4E8F0;
+    --bs-primary-border-subtle: #C4CCDD;
+    --bs-secondary: #5B6478;
+    --bs-secondary-rgb: 91,100,120;
+    --bs-warning: #B08D34;
+    --bs-warning-rgb: 176,141,52;
+    --bs-warning-text-emphasis: #8A6B23;
+    --bs-warning-bg-subtle: #F4EAD3;
+    --bs-warning-border-subtle: #E3D2A0;
+    --bs-success: #3F7D4F;
+    --bs-success-rgb: 63,125,79;
+    --bs-success-text-emphasis: #2E5D3A;
+    --bs-success-bg-subtle: #E1EDE4;
+    --bs-success-border-subtle: #BFDAC7;
+    --bs-danger: #7A2E2E;
+    --bs-danger-rgb: 122,46,46;
+    --bs-danger-text-emphasis: #5C2222;
+    --bs-danger-bg-subtle: #F0DEDE;
+    --bs-danger-border-subtle: #DBB8B8;
+    --bs-focus-ring-color: rgba(26,43,76,.25);
+}
+
+[data-bs-theme="dark"] {
+    --bs-body-bg: #1E1B16;
+    --bs-body-color: #ECE4D3;
+    --bs-border-color: rgba(216,192,137,.18);
+    --bs-card-bg: #282420;
+    --bs-card-border-color: rgba(216,192,137,.18);
+    --bs-card-cap-bg: transparent;
+    --bs-heading-color: #EFE7D8;
+    --bs-emphasis-color: #EFE7D8;
+    --bs-secondary-color: #B7AC96;
+    --bs-tertiary-bg: #2E2A24;
+    --bs-link-color: #D8C089;
+    --bs-link-hover-color: #EFE7D8;
+    --bs-primary: #7C93C4;
+    --bs-primary-rgb: 124,147,196;
+    --bs-primary-text-emphasis: #A9BBDD;
+    --bs-primary-bg-subtle: #253048;
+    --bs-primary-border-subtle: #3A4B70;
+    --bs-secondary: #B7AC96;
+    --bs-secondary-rgb: 183,172,150;
+    --bs-warning: #D8B45C;
+    --bs-warning-rgb: 216,180,92;
+    --bs-warning-text-emphasis: #E8CE8C;
+    --bs-warning-bg-subtle: #3A311E;
+    --bs-warning-border-subtle: #5B4B2C;
+    --bs-success: #6FAE7F;
+    --bs-success-rgb: 111,174,127;
+    --bs-success-text-emphasis: #9CCBA8;
+    --bs-success-bg-subtle: #24352A;
+    --bs-success-border-subtle: #3A5142;
+    --bs-danger: #B06868;
+    --bs-danger-rgb: 176,104,104;
+    --bs-danger-text-emphasis: #D69A9A;
+    --bs-danger-bg-subtle: #3A2626;
+    --bs-danger-border-subtle: #5A3A3A;
+    --bs-focus-ring-color: rgba(124,147,196,.3);
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fraunces', Georgia, serif;
+}
+
+::selection {
+    background: var(--bs-warning-bg-subtle);
+}
+
+:focus-visible {
+    outline: 2px solid var(--bs-warning);
+    outline-offset: 2px;
+}
+
+/* Override .card / .table / .btn globally rather than inventing new ones */
+.card {
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+}
+
+.card-header {
+    border-bottom-width: 2px;
+    border-bottom-color: var(--bs-warning);
+    font-weight: 600;
+}
+
+.table {
+    --bs-table-border-color: var(--bs-border-color);
+    font-size: .9rem;
+}
+
+    .table > thead > tr > th {
+        font-size: .7rem;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        font-weight: 600;
+        border-bottom-width: 1px;
+    }
+
+.btn {
+    font-weight: 600;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 .2rem var(--bs-focus-ring-color);
+}
+
+/* ---------- Sidebar (no Bootstrap equivalent) ---------- */
+.sidebar {
+    width: 264px;
+    flex-shrink: 0;
+    background: linear-gradient(180deg,#1A2B4C 0%,#0F1C33 100%);
+    color: #EDEFF4;
+    --bs-offcanvas-bg: transparent;
+    --bs-offcanvas-color: #EDEFF4;
+    --bs-offcanvas-width: 264px;
+    transition: width .2s ease;
+}
+
+@media (min-width:992px) {
+    .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+}
+
+.sidebar.sidebar-collapsed {
+    width: 76px;
+}
+
+    .sidebar.sidebar-collapsed .nav-text,
+    .sidebar.sidebar-collapsed .brand-text,
+    .sidebar.sidebar-collapsed .chevron,
+    .sidebar.sidebar-collapsed .nav-header {
+        display: none !important;
+    }
+
+    .sidebar.sidebar-collapsed .nav-link {
+        justify-content: center;
+    }
+
+    .sidebar.sidebar-collapsed .collapse {
+        display: none !important;
+    }
+
+.sidebar .offcanvas-body {
+    padding: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(216,192,137,.6) rgba(255,255,255,.05);
+}
+
+    .sidebar .offcanvas-body::-webkit-scrollbar {
+        width: 9px;
+    }
+
+    .sidebar .offcanvas-body::-webkit-scrollbar-track {
+        background: rgba(255,255,255,.05);
+    }
+
+    .sidebar .offcanvas-body::-webkit-scrollbar-thumb {
+        background: rgba(216,192,137,.6);
+        border-radius: 5px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+        .sidebar .offcanvas-body::-webkit-scrollbar-thumb:hover {
+            background: rgba(216,192,137,.85);
+            background-clip: padding-box;
+        }
+
+.sidebar .nav-link {
+    color: rgba(237,239,244,.8);
+    font-size: .9rem;
+    font-weight: 500;
+    padding: .55rem 1rem;
+    border-left: 3px solid transparent;
+    border-radius: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.sidebar .nav-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar .nav-link i {
+    color: rgba(237,239,244,.55);
+    width: 1.1rem;
+    text-align: center;
+}
+
+.sidebar .nav-link:hover {
+    background: rgba(255,255,255,.06);
+    color: #fff;
+}
+
+.sidebar .nav-link.active {
+    background: rgba(255,255,255,.08);
+    border-left-color: var(--bs-warning);
+    color: #fff;
+}
+
+    .sidebar .nav-link.active i {
+        color: var(--bs-warning);
+    }
+
+.sidebar .nav-header {
+    display: block;
+    color: rgba(237,239,244,.4);
+    letter-spacing: .12em;
+    font-size: .68rem;
+}
+
+.sidebar .chevron {
+    font-size: .65rem;
+    transition: transform .2s ease;
+    color: rgba(237,239,244,.4);
+}
+
+.sidebar [data-bs-toggle="collapse"]:not(.collapsed) .chevron {
+    transform: rotate(90deg);
+}
+
+.sidebar [data-bs-toggle="collapse"]:not(.collapsed) {
+    background: rgba(255,255,255,.07);
+    color: #fff;
+}
+
+    .sidebar [data-bs-toggle="collapse"]:not(.collapsed) i:not(.chevron) {
+        color: var(--bs-warning);
+    }
+
+/* ---------- Attendance bar chart (no Bootstrap equivalent) ---------- */
+.bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+}
+
+.bar {
+    width: 100%;
+    max-width: 46px;
+    background: linear-gradient(180deg, var(--bs-primary) 0%, #0F1C33 100%);
+    border-top: 3px solid var(--bs-warning);
+    border-radius: 3px 3px 0 0;
+    height: 0%;
+    transition: height 1s cubic-bezier(.2,.8,.2,1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bar, .sidebar {
+        transition: none;
+    }
+
+    html {
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ---------- Page header (tms-header) ---------- */
+.fade-in {
+    animation: agooFadeIn .35s ease both;
+}
+
+@keyframes agooFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fade-in {
+        animation: none;
+    }
+}
+
+.tms-header {
+    background: linear-gradient(135deg, #1A2B4C 0%, #283F6E 60%, #3949AB 100%);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.25rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .75rem;
+    box-shadow: 0 4px 18px rgba(15,28,51,.35);
+}
+
+.tms-header .tms-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: .5px;
+    font-family: 'Fraunces', Georgia, serif;
+    line-height: 1.2;
+}
+
+.tms-header .tms-title i {
+    color: #D8C089;
+}
+
+.tms-header .tms-back {
+    font-size: .85rem;
+}
+
+.tms-header .btn-light {
+    --bs-btn-bg: #fff;
+    --bs-btn-color: #1A2B4C;
+    --bs-btn-border-color: transparent;
+}
+.btn-my-primary {
+    background: #283593;
+    color: #fff;
+    font-weight: 600;
+    padding: .42rem;
+}
+
+.tms-header .btn-outline-light {
+    --bs-btn-color: #fff;
+    --bs-btn-border-color: rgba(255,255,255,.55);
+}
+
+    .tms-header .btn-outline-light:hover {
+        --bs-btn-hover-bg: rgba(255,255,255,.15);
+        --bs-btn-hover-color: #fff;
+        --bs-btn-hover-border-color: #fff;
+    }
+
+[data-bs-theme="dark"] .tms-header {
+    background: linear-gradient(135deg, #2A3A5E 0%, #1B2A4E 60%, #3949AB 100%);
+    box-shadow: 0 6px 22px rgba(0,0,0,.5);
+}

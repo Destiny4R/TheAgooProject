@@ -10,57 +10,118 @@ using TheAgooProjectModel.ViewModels;
 
 namespace TheAgooProjectWeb.Pages.Admin.ManageSubject
 {
-        [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer}")]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer}")]
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
+        private readonly ILogger<IndexModel> logger;
 
         public ViewSelectModel ViewSelectModel { get; set; }
-        public IndexModel(ApplicationDbContext dbContext)
+
+        public Subjects subject { get; set; }
+        public IndexModel(ApplicationDbContext dbContext, ILogger<IndexModel> logger)
         {
             this.dbContext = dbContext;
+            this.logger = logger;
+            getViewSelect();
         }
         public void OnGet()
         {
-            getViewSelect();
+
         }
-        public IActionResult OnPost(List<int> subjects)
+        public IActionResult OnPostManageSubject(List<int> subjects)
         {
-            getViewSelect();
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (subjects.Count > 0)
+                TempData["error"] = "Invalid request.";
+                return Page();
+            }
+
+            if (subjects == null || !subjects.Any())
+            {
+                TempData["error"] = "Please select at least one subject.";
+                return Page();
+            }
+
+            using var transaction = dbContext.Database.BeginTransaction();
+
+            try
+            {
+                // Step 1: Reset all subjects
+                dbContext.Subjects.ExecuteUpdate(s => s.SetProperty(x => x.Register_State, false));
+
+                // Step 2: Retrieve only the selected subjects
+                var selectedSubjects = dbContext.Subjects.Where(x => subjects.Contains(x.Id)).ToList();
+
+                foreach (var subject in selectedSubjects)
                 {
-                    var subject = dbContext.Subjects.ExecuteUpdate(s => s.SetProperty(k => k.Register_State, k => false));
-                    if (subject > 0)
+                    subject.Register_State = true;
+                }
+
+                dbContext.SaveChanges();
+
+                transaction.Commit();
+
+                TempData["success"] = $"{selectedSubjects.Count} subject(s) successfully set for registration.";
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                logger.LogError(ex, "ERROR IN SUBJECT REGISTRATION");
+                TempData["error"] = "Error processing your request.";
+            }
+
+            return Page();
+        }
+
+
+        public IActionResult OnPostAddAndUpdate(Subjects subject)
+        {
+            if (!string.IsNullOrEmpty(subject.Name))
+            {
+                var check = dbContext.Subjects.FirstOrDefault(m => m.Name == subject.Name);
+                if (check != null)
+                {
+                    TempData["error"] = "Subject already exist!";
+                    return RedirectToPage();
+                }
+                if (subject.Id > 0)
+                {
+                    var classNSub = dbContext.Subjects.Find(subject.Id);
+                    classNSub.Name = subject.Name;
+                    dbContext.Update(classNSub);
+                    dbContext.SaveChanges();
+                    TempData["success"] = "Subject Successfully Updated!";
+                    return RedirectToPage("Index");
+                }
+                else
+                {
+                    subject = new()
                     {
-                        var subs = new List<Subjects>();
-                        var subData = dbContext.Subjects.ToList();
-                        foreach (var item in subjects)
-                        {
-                            var subx = subData.FirstOrDefault(j => j.Id == item);
-                            if (subx != null)
-                            {
-                                subx.Register_State = true;
-                                subs.Add(subx);
-                            }
-                        }
-                        if (subs.Count > 0)
-                        {
-                            dbContext.UpdateRange(subs);
-                            int result = dbContext.SaveChanges();
-                            if (result > 0)
-                            {
-                                TempData["success"] = $"{result} Subjects successfully set for registration";
-                                return Page();
-                            }
-                        }
+                        Name = subject.Name
+                    };
+                    dbContext.Add(subject);
+                    int result = 0;
+                    try
+                    {
+                        result = dbContext.SaveChanges();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        TempData["success"] = "Subject Already Added!";
+                    }
+                    if (result > 0)
+                    {
+                        TempData["success"] = "Subject Successfully Added!";
+                        return RedirectToPage(nameof(Index));
                     }
                 }
             }
-            TempData["error"] = "Error in processing your request";
-            return Page();
+            return RedirectToPage();
         }
+
         private void getViewSelect()
         {
             ViewSelectModel = new()

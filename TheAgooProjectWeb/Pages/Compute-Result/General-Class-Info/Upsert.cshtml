@@ -2,20 +2,24 @@
 @model TheAgooProjectWeb.Pages.Compute_Result.General_Class_Info.UpsertModel
 @{
     ViewData["Title"] = Model.general?.Id > 0 ? "Update Class General Information" : "Add Class General Information";
+    ViewData["SubTitle"] = "Add or update general information for a class";
     var name = Model.general?.Id > 0 ? "Update record" : "Submit record";
 }
-@section AddToHead {
+@section Sheets {
     <link href="~/lib/flatpickr/flatpickr.min.css" rel="stylesheet" />
     <link href="/assets/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
 }
-<div class="page-content">
-    <div class="card">
-        <div class="card-header-pill">
-            <div class="d-flex justify-content-between p-2">
-                <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">@ViewData["Title"]</strong></div>
-                <div><a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-journal-plus me-2"></i> @ViewData["Title"]
             </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">Add or update general information for a class</div>
         </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="Index"><i class="bi bi-arrow-left me-1"></i>&ensp; Back</a>
+    </div>
+    <div class="card">
         <div class="card-body">               
             <form method="post" class="needs-validation" novalidate>
                 <div class="row">

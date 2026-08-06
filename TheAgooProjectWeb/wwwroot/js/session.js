@@ -29,18 +29,33 @@ $(document).ready(function () {
                 "data": null, "render": function (data, type, full) {
                     return `
                         <div class="d-flex justify-content-between">
-                            <a class="btn btn-primary btn-sm" title="Edit Session/Year Name" href="/Admin/ManageYear/Upsert?id=${data.id}" style="cursor:pointer">
-                                <i class="fa fa-edit"></i>
-                            </a>
+                            <button class="btn btn-primary btn-sm btn-edit" title="Edit Session/Year Name" data-id="${data.id}" data-name="${data.name}" style="cursor:pointer">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
                             &nbsp;
                             <a onclick=removeSession("/api/sessionmanager/${data.id}") title="Permanently Remove session" class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                <i class="fa fa-trash"></i>
+                                <i class="bi bi-trash"></i>
                             </a>
                         </div>
                     `;
                 }
             }
         ]
+    });
+
+    $(document).on("click", ".btn-edit", function () {
+
+        // Get values from data attributes
+        var sessionName = $(this).data("name");
+        var sessionId = $(this).data("id");
+
+        // Populate modal input fields
+        $("#editSessionModal input[name='sessionYear.Name']").val(sessionName);
+        $("#editSessionModal input[name='sessionYear.Id']").val(sessionId);
+
+        // Show Bootstrap modal
+        var modal = new bootstrap.Modal(document.getElementById('editSessionModal'));
+        modal.show();
     });
 });
 
@@ -49,7 +64,7 @@ function removeSession(url) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
+            cancelButton: 'btn btn-danger me-2'
         },
         buttonsStyling: false
     })
@@ -59,7 +74,7 @@ function removeSession(url) {
         text: "You won't be able to revert this!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, delete!',
         cancelButtonText: 'No, cancel!',
         reverseButtons: true
     }).then((result) => {

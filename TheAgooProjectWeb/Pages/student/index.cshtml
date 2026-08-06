@@ -1,0 +1,387 @@
+@page
+@model TheAgooProjectWeb.Pages.student.indexModel
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<div class="container-fluid px-3 px-md-4 page-content fade-in mt-3">
+
+    <div class="tms-header d-flex flex-wrap justify-content-between align-items-end gap-2">
+        <div>
+            <h2 class="tms-title mb-1">Welcome, @Model.StudentFullName</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item active" aria-current="page">Student Dashboard</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    @if (!Model.HasRecords)
+    {
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-inbox display-1 text-muted"></i>
+                <h5 class="mt-3 text-muted">No Academic Records Found</h5>
+                <p class="text-muted mb-0">You do not have any term registrations or academic records yet.<br>Please contact the school administrator for assistance.</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3 mt-1">
+
+            <div class="col-md-8 order-2 order-md-1">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-transparent border-bottom-0 pt-3 pb-0">
+                                <h6 class="card-title fw-semibold mb-0">
+                                    <i class="bi bi-bar-chart-line me-2 text-primary"></i>Performance by Session
+                                </h6>
+                                <small class="text-muted">Cumulative score across all subjects per academic session</small>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="sessionChart" height="280"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-transparent border-bottom-0 pt-3 pb-0">
+                                <h6 class="card-title fw-semibold mb-0">
+                                    <i class="bi bi-graph-up me-2 text-success"></i>Performance by Term
+                                </h6>
+                                <small class="text-muted">Cumulative scores broken down by term per session</small>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="termChart" height="280"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 order-1 order-md-2">
+                <div class="row g-3">
+                    @if (TempData["success"] != null || TempData["error"] != null)
+                    {
+                        <div class="col-12">
+                            @if (TempData["success"] != null)
+                            {
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <strong><i class="bi bi-check2-all text-success"></i></strong> &emsp; @Html.Raw(TempData["success"]).
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            }
+                            @if (TempData["error"] != null)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong><i class="bi bi-exclamation-triangle text-danger"></i></strong>&emsp; @Html.Raw(TempData["error"]).
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-primary bg-opacity-10 border-0">
+                                <h6 class="card-title fw-semibold mb-0 text-primary">
+                                    <i class="bi bi-printer me-2"></i>Print Terminal Result
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" asp-page-handler="PrintTerminal" id="terminalForm">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold small">Session/Year</label>
+                                            <select asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz" class="form-select" id="terminalSession">
+                                                <option value="" disabled selected>--Select Session--</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold small">Term</label>
+                                            <select asp-for="CTSSClass.Term" class="form-select" id="terminalTerm">
+                                                <option value="" disabled selected>--Select Term--</option>
+                                                <option value="First">First Term</option>
+                                                <option value="Second">Second Term</option>
+                                                <option value="Third">Third Term</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold small">Class</label>
+                                            <select asp-for="CTSSClass.Classes" class="form-select" asp-items="Model.ViewSelectModel.Class">
+                                                <option value="" disabled selected>--Select Class--</option>
+                                            </select>
+                                        </div>
+                                        @* <div class="col-12">
+                                            <label class="form-label fw-semibold small">Sub-Class</label>
+                                            <select asp-for="CTSSClass.Subclass" class="form-select" id="terminalSubClass">
+                                                <option value="" disabled selected>--Select Sub-Class--</option>
+                                            </select>
+                                        </div> *@
+                                    </div>
+                                    <div class="mt-3">
+                                        <button type="submit" class="btn btn-primary w-100" id="printTerminalBtn" formtarget="_blank">
+                                            <i class="bi bi-printer me-2"></i>Print Terminal Result
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-header bg-success bg-opacity-10 border-0">
+                                <h6 class="card-title fw-semibold mb-0 text-success">
+                                    <i class="bi bi-file-earmark-pdf me-2"></i>Print Annual Result
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <form method="post" asp-page-handler="PrintAnnual" id="annualForm">
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="form-label fw-semibold small">Academic Session</label>
+                                            <select asp-for="AnnualSessionName" asp-items="Model.ViewSelectModel.SessionYearz" class="form-select" id="annualSession">
+                                                <option value="" disabled selected>--Select Session--</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button type="submit" class="btn btn-success w-100" id="printAnnualBtn" formtarget="_blank">
+                                            <i class="bi bi-file-earmark-pdf me-2"></i>Print Annual Result
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.Outstanding.Any())
+                    {
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-danger bg-opacity-10 border-0">
+                                    <h6 class="card-title fw-semibold mb-0 text-danger">
+                                        <i class="bi bi-exclamation-circle me-2"></i>Outstanding School Fees
+                                    </h6>
+                                </div>
+                                <div class="card-body py-3">
+                                    <ul class="mb-0 small">
+                                        @foreach (var item in Model.Outstanding)
+                                        {
+                                            <li class="mb-2">@Html.Raw(item)</li>
+                                        }
+                                    </ul>
+                                    <a asp-page="Payment-Records" class="btn btn-sm btn-outline-danger mt-2 w-100">
+                                        <i class="bi bi-credit-card me-1"></i>View Payment History
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        (function () {
+            var sessionLabels = @Html.Raw(Model.SessionLabelsJson);
+            var sessionScores = @Html.Raw(Model.SessionScoresJson);
+            var termFirst = @Html.Raw(Model.TermFirstDataJson);
+            var termSecond = @Html.Raw(Model.TermSecondDataJson);
+            var termThird = @Html.Raw(Model.TermThirdDataJson);
+
+            var hasRecords = @Json.Serialize(Model.HasRecords);
+
+            if (!hasRecords) return;
+
+            var sessionCanvas = document.getElementById("sessionChart");
+            if (sessionCanvas) {
+                new Chart(sessionCanvas, {
+                    type: "bar",
+                    data: {
+                        labels: sessionLabels,
+                        datasets: [{
+                            label: "Cumulative Score",
+                            data: sessionScores,
+                            backgroundColor: "rgba(54, 162, 235, 0.6)",
+                            borderColor: "rgba(54, 162, 235, 1)",
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            maxBarThickness: 80
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (ctx) {
+                                        return "Score: " + ctx.parsed.y;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: "Cumulative Score" },
+                                grid: { color: "rgba(0,0,0,0.05)" }
+                            },
+                            x: {
+                                title: { display: true, text: "Academic Session" },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            var termCanvas = document.getElementById("termChart");
+            if (termCanvas) {
+                new Chart(termCanvas, {
+                    type: "bar",
+                    data: {
+                        labels: sessionLabels,
+                        datasets: [
+                            {
+                                label: "First Term",
+                                data: termFirst,
+                                backgroundColor: "rgba(255, 99, 132, 0.6)",
+                                borderColor: "rgba(255, 99, 132, 1)",
+                                borderWidth: 1,
+                                borderRadius: 4,
+                                maxBarThickness: 50
+                            },
+                            {
+                                label: "Second Term",
+                                data: termSecond,
+                                backgroundColor: "rgba(54, 162, 235, 0.6)",
+                                borderColor: "rgba(54, 162, 235, 1)",
+                                borderWidth: 1,
+                                borderRadius: 4,
+                                maxBarThickness: 50
+                            },
+                            {
+                                label: "Third Term",
+                                data: termThird,
+                                backgroundColor: "rgba(75, 192, 192, 0.6)",
+                                borderColor: "rgba(75, 192, 192, 1)",
+                                borderWidth: 1,
+                                borderRadius: 4,
+                                maxBarThickness: 50
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: "top",
+                                labels: { usePointStyle: true, pointStyle: "rectRounded", padding: 15 }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (ctx) {
+                                        return ctx.dataset.label + ": " + ctx.parsed.y;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: "Cumulative Score" },
+                                grid: { color: "rgba(0,0,0,0.05)" }
+                            },
+                            x: {
+                                title: { display: true, text: "Academic Session" },
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+        })();
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var terminalSession = document.getElementById("terminalSession");
+            var terminalTerm = document.getElementById("terminalTerm");
+            var terminalClass = document.getElementById("terminalClass");
+            var terminalSubClass = document.getElementById("terminalSubClass");
+
+            function loadClasses() {
+                var sessionId = terminalSession.value;
+                var term = terminalTerm.value;
+                if (!sessionId || !term) return;
+
+                fetch("?handler=ClassOptions&sessionId=" + encodeURIComponent(sessionId) + "&term=" + encodeURIComponent(term))
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        terminalClass.innerHTML = '<option value="" disabled selected>--Select Class--</option>';
+                        terminalSubClass.innerHTML = '<option value="" disabled selected>--Select Sub-Class--</option>';
+
+                        var uniqueClasses = {};
+                        data.forEach(function (item) {
+                            if (!uniqueClasses[item.classId]) {
+                                uniqueClasses[item.classId] = {
+                                    classId: item.classId,
+                                    className: item.className,
+                                    subClasses: []
+                                };
+                            }
+                            uniqueClasses[item.classId].subClasses.push({
+                                subClassId: item.subClassId,
+                                subClassName: item.subClassName
+                            });
+                        });
+
+                        Object.values(uniqueClasses).forEach(function (cls) {
+                            var opt = document.createElement("option");
+                            opt.value = cls.classId;
+                            opt.textContent = cls.className;
+                            terminalClass.appendChild(opt);
+                        });
+
+                        terminalClass.onchange = function () {
+                            var selectedClassId = parseInt(this.value);
+                            terminalSubClass.innerHTML = '<option value="" disabled selected>--Select Sub-Class--</option>';
+
+                            Object.values(uniqueClasses).forEach(function (cls) {
+                                if (cls.classId === selectedClassId) {
+                                    cls.subClasses.forEach(function (sc) {
+                                        var opt = document.createElement("option");
+                                        opt.value = sc.subClassId;
+                                        opt.textContent = sc.subClassName;
+                                        terminalSubClass.appendChild(opt);
+                                    });
+                                }
+                            });
+                        };
+
+                        terminalClass.dispatchEvent(new Event("change"));
+                    });
+            }
+
+            if (terminalSession) {
+                terminalSession.addEventListener("change", loadClasses);
+            }
+            if (terminalTerm) {
+                terminalTerm.addEventListener("change", loadClasses);
+            }
+        });
+    </script>
+}

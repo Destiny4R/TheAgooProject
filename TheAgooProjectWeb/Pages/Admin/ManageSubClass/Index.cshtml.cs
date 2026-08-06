@@ -2,14 +2,69 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TheAgooProjectDataAccess;
+using TheAgooProjectDataAccess.Data;
+using TheAgooProjectModel;
 
 namespace TheAgooProjectWeb.Pages.Admin.ManageSubClass
 {
-    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer}")]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer}")]
     public class IndexModel : PageModel
     {
+        private readonly ApplicationDbContext dbContext;
+
+        [BindProperty]
+        public SubClasses subClass { get; set; }
+        public IndexModel(ApplicationDbContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
         public void OnGet()
         {
+        }
+        public IActionResult OnPost()
+        {
+            if (!string.IsNullOrEmpty(subClass.Name))
+            {
+                var check = dbContext.SubClasses.FirstOrDefault(m => m.Name == subClass.Name);
+                if (check != null)
+                {
+                    TempData["error"] = "Sub-Class already exist!";
+                    return Page();
+                }
+                if (subClass.Id > 0)
+                {
+                    var classNSub = dbContext.SubClasses.Find(subClass.Id);
+                    classNSub.Name = subClass.Name;
+                    dbContext.Update(classNSub);
+                    dbContext.SaveChanges();
+                    TempData["success"] = "Sub-Class Successfully Updated!";
+                    return RedirectToPage("Index");
+                }
+                else
+                {
+                    subClass = new()
+                    {
+                        Name = subClass.Name
+                    };
+                    dbContext.Add(subClass);
+                    int result = 0;
+                    try
+                    {
+                        result = dbContext.SaveChanges();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        TempData["success"] = "Sub-Class Already Added!";
+                    }
+                    if (result > 0)
+                    {
+                        TempData["success"] = "Sub-Class Successfully Added!";
+                        return RedirectToPage(nameof(Index));
+                    }
+                }
+            }
+            return Page();
         }
     }
 }

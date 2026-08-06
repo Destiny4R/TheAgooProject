@@ -31,11 +31,11 @@ function loadtable() {
                 "data": null, "render": function (data, type, full) {
                     return `
                             <div class="d-flex justify-content-center">
-                         <a class=" btn-secondary btn-sm" href="/Admin/Fees-Manager/Fees-Setup/Upsert?id=${data.id}" style="cursor:pointer" title="Edit">
-                                <i class="fa fa-edit"></i>
+                            <a class=" btn-secondary btn-sm" href="/Admin/Fees-Manager/Fees-Setup/Upsert?id=${data.id}" style="cursor:pointer" title="Edit">
+                                <i class="bi bi-pencil-square"></i>
                             </a> &nbsp;
                             <a onclick=dropFees("/api/TermlyFeesManager?id=${data.id}") class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                   <i class="fa fa-trash"></i>
+                                   <i class="bi bi-trash"></i>
                                </a>
                         </div>`;
                 }

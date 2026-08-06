@@ -1,0 +1,237 @@
+﻿@page
+@model TheAgooProjectWeb.Pages.Admin.TermRegistration.Group_RegistrationModel
+@{
+    ViewData["Title"] = "Group Term Registration";
+    ViewData["SubTitle"] = "Register multiple students for a term by uploading an excel file or entering their registration numbers";
+    int sn = 0;
+}
+@section Sheets {
+    <link href="~/lib/jquery-multiselect/jquery.multiselect.css" rel="stylesheet" />
+}
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-people me-2"></i> @ViewData["Title"]
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">@ViewData["SubTitle"]</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-light btn-sm" asp-page="Index"><i class="bi bi-arrow-left me-1"></i> Back</a>
+        </div>
+    </div>
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong><i class="bi bi-info-circle"></i></strong> @TempData["success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong><i class="bi bi-exclamation-triangle"></i></strong> @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (Model.Errors.Count > 0)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong><i class="bi bi-exclamation-triangle"></i></strong> The following students could not be verified:
+            <ul class="mt-2 mb-0">
+                @foreach (var error in Model.Errors)
+                {
+                    <li>@error</li>
+                }
+            </ul>
+        </div>
+    }
+    <div class="card">
+        <div class="card-header">
+            <div class="mt-2">
+                <form method="post" asp-page-handler="Search" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold mb-2">How do you want to provide the registration numbers?</label>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="chkExcel" name="InputOption" value="Excel" checked="@(Model.InputOption == "Excel")" />
+                                <label class="form-check-label" for="chkExcel">Upload Excel File</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="chkText" name="InputOption" value="Text" checked="@(Model.InputOption == "Text")" />
+                                <label class="form-check-label" for="chkText">Enter Registration Numbers</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-6 @(Model.InputOption == "Excel" ? "" : "d-none")" id="excelPanel">
+                            <div class="form-group mb-2">
+                                <label class="form-label">Upload Excel File (.xls, .xlsx)</label>
+                                <input asp-for="ExcelFile" type="file" class="form-control form-control-sm" accept=".xls,.xlsx" />
+                                <small class="text-muted">
+                                    Template: A1 = "Registration Number" (header, skipped), A2 onwards = one registration number per row.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-12 @(Model.InputOption == "Text" ? "" : "d-none")" id="textPanel">
+                            <div class="form-group mb-2">
+                                <label class="form-label">Enter Registration Numbers (separate with comma)</label>
+                                <textarea asp-for="RegNumbers" class="form-control form-control-sm" rows="3" placeholder="e.g. AGOO/001, AGOO/002, AGOO/003"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="g-2 mt-3 row">
+                        <div class="col-md-3">
+                            <label class="form-label">Term</label>
+                            <select asp-for="CTSSClass.Term" class="form-select form-control-sm">
+                                <option value="" disabled selected>---Select Term---</option>
+                                <option value="First">First</option>
+                                <option value="Second">Second</option>
+                                <option value="Third">Third</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Session/Year</label>
+                            <select class="form-select form-control-sm" asp-for="CTSSClass.SessionYear" asp-items="Model.ViewSelectModel.SessionYearz">
+                                <option value="" disabled selected>---Select Session/Year---</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Class</label>
+                            <select class="form-select form-control-sm" asp-for="CTSSClass.Classes" asp-items="Model.ViewSelectModel.Class">
+                                <option value="" disabled selected>---Select Class---</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Sub-Class</label>
+                            <select asp-for="CTSSClass.Subclass" class="form-select form-control-sm" asp-items="Model.ViewSelectModel.SubClass">
+                                <option value="" disabled selected>---Select Sub-Class---</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-2">
+                            <button class="btn btn-success btn-sm" type="submit"><i class="bi bi-search me-1"></i> Verify Students</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        @if (Model.hasValue > 0)
+        {
+            <div class="card-body">
+                <form method="post" asp-page-handler="Register">
+                    <div class="alert alert-primary">
+                        <strong>@(Model.StudentList.Count()) student(s)</strong> verified for registration in:
+                        <strong>@Model.CTSSClass.Term Term, @Model.SessionName Session, @Model.ClassName @Model.SubClassName</strong>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group mb-2">
+                                <label class="form-label">Register Subjects</label>
+                                <select required class="custom-select form-control-sm 2col active" multiple name="subjects[]" asp-items="Model.ViewSelectModel.Subjects">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <table id="groupRegTable" class="table table-bordered table-responsive table-striped table-sm mt-2">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Full Name</th>
+                                <th>Student Reg No:</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.StudentList.Count(); i++)
+                            {
+                                sn++;
+                                <tr>
+                                    <td>@(sn)</td>
+                                    <td>@(Model.StudentList[i].Fullname)</td>
+                                    <td>@(Model.StudentList[i].StudentRegNo)</td>
+                                    <td>
+                                        <input type="hidden" asp-for="@Model.StudentList[i].StudentId" />
+                                        <input type="hidden" asp-for="@Model.StudentList[i].StudentRegNo" />
+                                        <input type="hidden" asp-for="@Model.StudentList[i].Fullname" />
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="Remove(this);"><i class='bi bi-trash'></i></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-sm-8 offset-sm-1">
+                            <button type="submit" class="btn btn-primary">Register Students</button>
+                        </div>
+                    </div>
+                    <input type="hidden" asp-for="CTSSClass.Term" />
+                    <input type="hidden" asp-for="CTSSClass.SessionYear" />
+                    <input type="hidden" asp-for="CTSSClass.Classes" />
+                    <input type="hidden" asp-for="CTSSClass.Subclass" />
+                    <input type="hidden" asp-for="InputOption" />
+                    <input type="hidden" asp-for="RegNumbers" />
+                </form>
+            </div>
+        }
+    </div>
+</div>
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/lib/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="~/lib/jquery-multiselect/jquery.multiselect.js"></script>
+    <script>
+        $(function () {
+            $('#chkExcel').on('change', function () {
+                if ($(this).is(':checked')) {
+                    $('#chkText').prop('checked', false);
+                    $('#excelPanel').removeClass('d-none');
+                    $('#textPanel').addClass('d-none');
+                } else {
+                    $('#excelPanel').addClass('d-none');
+                }
+            });
+            $('#chkText').on('change', function () {
+                if ($(this).is(':checked')) {
+                    $('#chkExcel').prop('checked', false);
+                    $('#textPanel').removeClass('d-none');
+                    $('#excelPanel').addClass('d-none');
+                } else {
+                    $('#textPanel').addClass('d-none');
+                }
+            });
+            $('select[multiple].active.2col').multiselect({
+                columns: 2,
+                placeholder: 'Select Subjects',
+                search: true,
+                searchOptions: {
+                    'default': 'Search Subject'
+                },
+                selectAll: true
+            });
+        });
+        function Remove(button) {
+            var row = $(button).closest("TR");
+            var name = $("TD", row).eq(1).html();
+            Swal.fire({
+                title: "Are you sure you don't want to register " + name + "?",
+                showDenyButton: true,
+                confirmButtonText: "Yes, Remove!",
+                denyButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    var table = $("#groupRegTable")[0];
+                    table.deleteRow(row[0].rowIndex);
+                    Swal.fire("Deleted!", name + " successfully removed", "success");
+                } else if (result.isDenied) {
+                    Swal.fire(name + " not deleted", "", "info");
+                }
+            });
+        }
+    </script>
+}

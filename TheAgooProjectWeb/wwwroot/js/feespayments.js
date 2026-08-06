@@ -32,7 +32,7 @@ function loadtable() {
             { "data": "balance", "autoWidth": true },
             {
                 "data": null, "render": function (data, type, full) {
-                    if (data.status =="Completed") {
+                    if (data.status == "Completed") {
                         return `<span class="badge h4 bg-success" title="Fees completed">
                         <i class="fas fa-check-double"></i> Completed
                         </span>`;
@@ -59,18 +59,30 @@ function loadtable() {
             {
                 "data": null, "render": function (data, type, full) {
                     return `
-                        <div class="d-flex justify-content-center">
-                         <button type="button" onclick="viewpaymentifo(this)" data-id="${data.id}" title="View payment details" class="btn btn-primary btn-sm waves-effect waves-light">
-                         <i class="fa fa-eye"></i>
-                         </button>
-                            &nbsp;
-                            <a target="_blank" class="btn btn-success btn-sm waves-effect waves-light" href="/ultilities/Fees-Payment-Invoice?id=${data.id}" style="cursor:pointer" title="Print receipt">
-                                <i class="fas fa-print"></i>
-                            </a> &nbsp;
-                            <a onclick=FeesPaymentD("/api/FeesPaymentManager?id=${data.id}") class="btn btn-danger btn-sm waves-effect waves-light" href="#" style="cursor:pointer">
-                                   <i class="fas fa-trash-alt"></i>
-                               </a>
+
+                        <div class="dropdown">
+                            <button class="btn btn-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <button type="button" onclick="viewpaymentifo(this)" data-id="${data.id}" title="View payment details" class="dropdown-item">
+                                     <i class="bi bi-eye me-2"></i> View
+                                     </button>
+                                </li>
+                                <li>
+                                    <a target="_blank" class="dropdown-item" href="/ultilities/Fees-Payment-Invoice?id=${data.id}" style="cursor:pointer" title="Print receipt">
+                                        <i class="bi bi-printer me-2"></i> Printer
+                                    </a>
+                                </li>
+                                <li>
+                                    <a onclick=FeesPaymentD("/api/FeesPaymentManager?id=${data.id}") class="dropdown-item" href="#" style="cursor:pointer">
+                                       <i class="bi bi-trash3 me-2"></i> Delete
+                                   </a>
+                                </li>
+                            </ul>
                         </div>
+
                     `;
                 }
             }
@@ -153,7 +165,7 @@ function viewpaymentifo(dat) {
     }
     $.ajax({
         type: "GET",
-        url: "/webapi/Veiwreceipt?id="+id,
+        url: "/webapi/Veiwreceipt?id=" + id,
         success: function (data) {
             $.unblockUI();
             if (data) {
@@ -169,17 +181,17 @@ function viewpaymentifo(dat) {
                     $("#balance").val(data.balance);
                     $("#status").val(data.status);
                     $("#description").val(data.description);
-                    $("#cash").val(data.cashier); 
+                    $("#cash").val(data.cashier);
                     $("#create").val(data.createdate);
                     $(".bs-example-modal-center").show();
-                }else {
-                swal.fire(
-                    'Ooop!',
-                    'Unknow fees payment',
-                    'error'
-                );
+                } else {
+                    swal.fire(
+                        'Ooop!',
+                        'Unknow fees payment',
+                        'error'
+                    );
+                }
             }
-            } 
         },
         beforeSend: function () {
             blockcallback();

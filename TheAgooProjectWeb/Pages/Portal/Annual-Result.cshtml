@@ -1,331 +1,387 @@
-﻿@page
-@model TheAgooProjectWeb.Pages.Portal.Annual_ResultModel
+@page
+@inject IOptions<AppConfigurations> SchoolConfig
+@model TheAgooProjectWeb.Pages.student.Annual_ResultModel
 @{
     Layout = null;
-    int sn = 0, termAver = 0;
-    double cummulative = 0;
-    ViewData["Student"] = Model.Studentsdata.SurName + " " + Model.Studentsdata.OtherName + " " + Model.Studentsdata.FirstName;
-    var getage = DateTime.Now.Year - Model.Studentsdata.DateOfBirth.Year;
-    var path = "";
-    if (!string.IsNullOrEmpty(Model.Studentsdata.Passport))
-    {
-        path = Model.Studentsdata.Passport;
-    }
-    else
-    {
-        if (Model.Studentsdata.Gender == "Male")
-        {
-            path = "/image/avatar2.png";
-        }
-        else { path = "/image/avata.jpg"; }
+    int sn = 0;
+    string studentFullName = Model.Studentsdata != null
+        ? $"{Model.Studentsdata.SurName} {Model.Studentsdata.OtherName} {Model.Studentsdata.FirstName}".Trim()
+        : "Student";
+    ViewData["Student"] = studentFullName;
 
+    int age = Model.Studentsdata != null && Model.Studentsdata.DateOfBirth != default
+        ? DateTime.Now.Year - Model.Studentsdata.DateOfBirth.Year
+        : 0;
+
+    string passportPath = "/image/avatar2.png";
+    if (Model.Studentsdata != null)
+    {
+        if (!string.IsNullOrEmpty(Model.Studentsdata.Passport))
+        {
+            passportPath = Model.Studentsdata.Passport;
+        }
+        else
+        {
+            passportPath = string.Equals(Model.Studentsdata.Gender, "Female", StringComparison.OrdinalIgnoreCase)
+                ? "/image/avata.jpg"
+                : "/image/avatar2.png";
+        }
     }
+
+    string schoolName = $"{SchoolConfig.Value.SchoolName} {SchoolConfig.Value.Layout1}".Trim();
 }
 <!doctype html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
-    <title>
-        @ViewData["Student"] || Aggo College Makurdi Annual Result
-    </title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Student"] || @(schoolName) Annual Result</title>
     <link rel="shortcut icon" href="/appicons/favicon.ico">
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #212529;
+        }
+
+        .action-bar {
+            background: #ffffff;
+            border-bottom: 1px solid #e3e6f0;
+            padding: 12px 24px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+
+        .result-card {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            margin: 20px auto;
+            max-width: 1050px;
+            padding: 25px;
+        }
+
+        .school-header-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0d6efd;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .school-header-subtitle {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 2px;
+        }
+
+        .student-info-table th {
+            background-color: #f8f9fa;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #495057;
+            width: 15%;
+        }
+
+        .student-info-table td {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .assessment-table th {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .assessment-table td {
+            font-size: 0.88rem;
+            vertical-align: middle;
+        }
+
+        .badge-status {
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .grade-key-table th, .grade-key-table td {
+            padding: 4px 8px;
+            font-size: 0.85rem;
+        }
+
+        .signature-img {
+            max-height: 55px;
+            object-fit: contain;
+        }
+
+        @@media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .result-card {
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+            @@page {
+                size: A4 portrait;
+                margin: 8mm;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="watermark-container">
-        <div class="watermark">AGGO COLLEGE MAKURDI</div>
-        <table width="100%">
-            <tr>
-                <td><img class="rounded-circle" src="~/appicons/ms-icon-310x310.png" width="120" height="120" /></td>
-                <td>
-                    <div class="getfont">
-                        <div class="text-center">
-                            <p class="h3"><strong>AGGO COLLEGE MAKURDI</strong></p>
-                            <p class="h4">ABU KING SHULUWA ROAD LOGO II AKPEHE, MAKURDI,</p>
-                            <p class="h4">BENUE STATE OF NIGERIA</p>
-                            <p class="h6"><strong>MOTO:</strong> EDUCATION FOR PROGRESS</p>
-                            <p class=""><strong>EMAIL:</strong> info@aggocollegemkd.com.ng &emsp; <strong>Tel:</strong> 08066720317</p>
-                        </div>
-                    </div>
-                </td>
-                <td><img class="float-end rounded-circle" src="@(path)" width="120" height="120" /></td>
-            </tr>
-            <tr>
-                <td></td>
-            </tr>
-        </table>
-        <table class="mt-2 mb-2 table-bordered border-primary" width="100%">
-            <tr>
-                <td>
-                    <table>
-                        <tr>
-                            <th>Full Name: &nbsp;</th>
-                            <td class="getfontname"> @(ViewData["Student"])</td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table>
-                        <tr>
-                            <th>Sex: &nbsp;</th>
-                            <td class="getfontname"> @(Model.Studentsdata.Gender)</td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table>
-                        <tr>
-                            <th>Age: &nbsp; </th>
-                            <td class="getfontname"> @(getage)</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr >
-                <td>
-                    <table>
-                        <tr>
-                            <th>Admmision No.: &nbsp;</th>
-                            <td class="getfontname"> @(Model.Studentsdata.StudentRegNo)</td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table>
-                        <tr>
-                            <th>Session/Year: &nbsp;</th>
-                            <td class="getfontname"> @(Model._generalClass.SessionYear.Name)</td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table>
-                        <tr>
-                            <th>Class: &nbsp;</th>
-                            <td class="getfontname"> @(Model._generalClass.Classcchool.Name+" - "+Model._generalClass.SubClasses.Name)</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
-        <table width="100%" class="table-bordered text-dark border-primary">
-            <thead>
-                <tr>
-                    <th colspan="12" class="table-bordered bg-warning h5 text-center">SUMMARY OF CONTINUOUS ASSESSMENT SCORES</th>
-                </tr>
-                <tr class="desieze">
-                    <th colspan="2" rowspan="2"><label class="p-5 mt-lg-5">Subjects</label></th>
-                    <th class="rotate-upward text-center">1st Term</th>
-                    <th class="rotate-upward text-center">2nd Term </th>
-                    <th class="rotate-upward text-center">3rd Term</th>
-                    <th class="rotate-upward text-center">Yearly Total</th>
-                    <th rowspan="2" class="rotate-upward text-center">Yearly Average</th>
-                    <th rowspan="2" class="rotate-upward text-center">Highest in Class</th>
-                    <th rowspan="2" class="rotate-upward text-center">Lowest in Class</th>
-                    <th rowspan="2" class="rotate-upward text-center">Position in Class</th>
-                    <th rowspan="2" class="rotate-upward text-center">Grade</th>
-                    <th rowspan="2"><label class="p-3">Remark</label></th>
-                </tr>
-                <tr class="text-center bg-danger">
-                    <th>100</th>
-                    <th>100</th>
-                    <th>100</th>
-                    <th>300</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.CollectDatas)
-                {
-                    sn++;
-                    cummulative += item.TotalScores;
-                    <tr class="@(SD.colorful(sn)) text-center">
-                        <td>@(sn)</td>
-                        <td>@(item.SujectName)</td>
-                        <td>@(item.First)</td>
-                        <td>@(item.Second)</td>
-                        <td>@(item.Third)</td>
-                        <td>@(item.TotalScores)</td>
-                        <td>@(item.YearlyAv)</td>
-                        <td>@(item.Highest)</td>
-                        <td>@(item.Lowest)</td>
-                        <td>@(item.Position)<sup>@SD.specialNumber((int)item.Position)</sup></td>
-                        <td>@(item.Grade)</td>
-                        <td>@(item.Remark)</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
 
-        <table width="100%" class="table-bordered mt-1 border-primary">
-            <tr>
-                <td width="70%" class="p-0">
-                    <table class="table-bordered border-primary" width="100%">
-                        <tr>
-                            <td>
-                                <table>
-                                    <tr>
-                                        <th>Annual Total Marks Obtainable:</th>
-                                        <td>@((Model.activeTerms * sn)*100)</td>
-                                    </tr>
-                                </table>
-                            </td>
-                            <td>
-                                <table>
-                                    <tr>
-                                        <th>Annual Total Marks Obtainable:</th>
-                                        <td>@(cummulative)</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Annual Position In Class:</th>
-                            <td>
-                                @(Model.PositionInClass)<sup>@(SD.specialNumber(Model.PositionInClass))</sup><strong>&emsp; Out  of &emsp; </strong>@(Model.NoinClass)
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Promotional Message:</th>
-                            <td class="getfontname">
-                                @{
-                                    int getttl = Model.CollectDatas.Count();
-                                    double all = 0;
-                                    string msg = "";
-                                    foreach(var d in Model.CollectDatas)
-                                    {
-                                        all += d.First + d.Second + d.Third;
-                                    }
-                                    double all2 = all / getttl;
-                                    double f = Math.Round(all2 / Model.termly, 2);
-
-                                }
-                                @if (f >= 40)
-                                {
-                                    msg="<label class='badge bg-success h4'>Congratulation!</label>";
-                                }
-                                else
-                                {
-                                    msg ="<label class='badge bg-danger text-dark h4'>Not Qualified!</label>";
-                                }
-                                @(Html.Raw(msg))
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-                <td width="30%">
-                    <table class="table-bordered border-primary" width="100%">
-                        <tr>
-                            <th>1 <sup>st</sup> Term Average:</th>
-                            <td>@{
-                                    var getFirst = Model.CollectDatas.Select(k => k.First);
-                                    double totalFirst = 0, finale = 0;
-                                    foreach (var item in getFirst)
-                                    {
-                                        totalFirst += item;
-                                    }
-                                    if(totalFirst>0){ termAver++; }
-                                    finale = totalFirst / getFirst.Count();
-                                }
-                                @(Math.Round(finale,2))
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>2 <sup>nd</sup> Term Average:</th>
-                            <td>
-                                @{
-                                    var getsecond = Model.CollectDatas.Select(k => k.Second);
-                                    double totalsecond = 0, finale2 = 0;
-                                    foreach (var item in getsecond)
-                                    {
-                                        totalsecond += item;
-                                    }
-                                    if (totalsecond > 0) { termAver++; }
-                                    finale2 = totalsecond / getsecond.Count();
-                                }
-                                @(Math.Round(finale2, 2))
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>3 <sup>rd</sup> Term Average:</th>
-                            <td>
-                                @{
-                                    var getthird = Model.CollectDatas.Select(k => k.Third);
-                                    double totalthird = 0, finale3 = 0;
-                                    foreach (var item in getthird)
-                                    {
-                                        totalthird += item;
-                                    }
-                                    if (totalthird > 0) { termAver++; }
-                                    finale3 = totalthird / getthird.Count();
-                                }
-                                @(Math.Round(finale3, 2))
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Cummulative Average Score:</th>
-                            <td>
-                                @(Math.Round(finale+finale2+finale3,2))
-                            </td>
-                        </tr>
-                        <tr>
-                            @{
-                                double finalAverage = Math.Round((finale + finale2 + finale3) / Model.termly, 2);
-                            }
-                        <th>Annual Average</th>
-                        <td>@(finalAverage)</td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td width="70%">
-                <table class="table-bordered border-primary" width="100%">
-                    <tr>
-                        <th>Class Teacher's Remark:</th>
-                            <td class="getfontname">@(SD.GetPerformanceComment(finalAverage))</td>
-                    </tr>
-                    <tr>
-                        <th>Class Teacher's Name:</th>
-                        <td class="getfontname">
-                            @(Model._generalClass.ClassTeacher)
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Principal's Remarks:</th>
-                        <td class="getfontname">@(SD.GetComment(finalAverage))</td>
-                    </tr>
-                    <tr>
-                        <th>Principal's Name:</th>
-                        <td class="getfontname">
-                            @(Model._generalClass.PrincipalName)
-                        </td>
-                    </tr>
-                    <tr>
-                        <th colspan="2">Principal's Signature:</th>
-                        <th><img class="float-center" src="@(Model.signature)" width="100" height="70" /></th>
-                    </tr>
-                </table>
-            </td>
-            <td width="70%">
-                    <table class="table-bordered border-primary text-center" width="100%">
-                    <tr><th colspan="2" class="bg-dark text-white text-center"> KEY TO GRADING</th></tr>
-                    <tr><th>A:</th><td>75 above</td></tr>
-                    <tr><th>B:</th><td>65 - 74</td></tr>
-                    <tr><th>C:</th><td>55 - 64</td></tr>
-                    <tr><th>D:</th><td>40 - 54</td></tr>
-                    <tr><th>E:</th><td>39 and below</td></tr>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" class="bg-light">
-                <strong>Designed By: THE RETURN TECH&copy; &nbsp;</strong><a class="float-end text-dark text-decoration-none" title="Call us today: 08039410863" href="tel:08039410863">08039410863</a>
-            </td>
-        </tr>
-    </table>
+    <!-- Screen Navigation Action Bar (Hidden during Print) -->
+    <div class="action-bar no-print d-flex justify-content-between align-items-center">
+        <div>
+            <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="window.history.back()">
+                <i class="bi bi-arrow-left me-1"></i> Back
+            </button>
+            <span class="fw-bold text-dark fs-6">Annual Performance Report</span>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary btn-sm px-3 shadow-sm" onclick="window.print()">
+                <i class="bi bi-printer me-1"></i> Print / Save PDF
+            </button>
+        </div>
     </div>
+
+    <!-- Main Report Card Document -->
+    <div class="container-fluid">
+        <div class="result-card watermark-container">
+            <input type="hidden" id="schoolname" value="@(schoolName)" />
+            <div class="watermark">@(schoolName)</div>
+
+            <!-- School Header Section -->
+            <table width="100%" class="mb-3">
+                <tr>
+                    <partial name="_ResultHeader" />
+                    <td width="15%" class="text-end">
+                        <img class="rounded shadow-sm border" src="@(passportPath)" width="110" height="110" style="object-fit: cover;" alt="Student Photo" />
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Student Metadata Grid -->
+            <table class="table table-bordered border-primary student-info-table mb-3">
+                <tr>
+                    <th>Full Name:</th>
+                    <td class="getfontname">@(ViewData["Student"])</td>
+                    <th>Sex:</th>
+                    <td class="getfontname">@(Model.Studentsdata?.Gender ?? "N/A")</td>
+                    <th>Age:</th>
+                    <td class="getfontname">@(age > 0 ? age.ToString() : "N/A")</td>
+                </tr>
+                <tr>
+                    <th>Admission No.:</th>
+                    <td class="getfontname">@(Model.Studentsdata?.StudentRegNo ?? "N/A")</td>
+                    <th>Session/Year:</th>
+                    <td class="getfontname">@(Model._generalClass?.SessionYear?.Name ?? "N/A")</td>
+                    <th>Class:</th>
+                    <td class="getfontname">@($"{Model._generalClass?.Classcchool?.Name} - {Model._generalClass?.SubClasses?.Name}")</td>
+                </tr>
+            </table>
+
+            <!-- Continuous Assessment Summary Table -->
+            <table class="table table-bordered table-sm border-primary text-dark assessment-table mb-3">
+                <thead>
+                    <tr>
+                        <th colspan="12" class="bg-warning text-center h6 py-2 mb-0 font-weight-bold">SUMMARY OF CONTINUOUS ASSESSMENT SCORES</th>
+                    </tr>
+                    <tr class="text-center align-middle bg-light">
+                        <th colspan="2" rowspan="2" class="py-3">Subjects</th>
+                        <th class="rotate-upward">1st Term</th>
+                        <th class="rotate-upward">2nd Term</th>
+                        <th class="rotate-upward">3rd Term</th>
+                        <th class="rotate-upward">Yearly Total</th>
+                        <th rowspan="2" class="rotate-upward">Yearly Average</th>
+                        <th rowspan="2" class="rotate-upward">Highest in Class</th>
+                        <th rowspan="2" class="rotate-upward">Lowest in Class</th>
+                        <th rowspan="2" class="rotate-upward">Position in Class</th>
+                        <th rowspan="2" class="rotate-upward">Grade</th>
+                        <th rowspan="2" class="py-3">Remark</th>
+                    </tr>
+                    <tr class="text-center bg-danger text-white">
+                        <th>100</th>
+                        <th>100</th>
+                        <th>100</th>
+                        <th>@(Model.termly * 100)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.CollectDatas != null && Model.CollectDatas.Any())
+                    {
+                        foreach (var item in Model.CollectDatas)
+                        {
+                            sn++;
+                            <tr class="@(SD.colorful(sn)) text-center align-middle">
+                                <td>@(sn)</td>
+                                <td class="text-start font-weight-bold px-2">@(item.SujectName)</td>
+                                <td>@(item.First)</td>
+                                <td>@(item.Second)</td>
+                                <td>@(item.Third)</td>
+                                <td><strong>@(item.TotalScores)</strong></td>
+                                <td>@(item.YearlyAv)</td>
+                                <td>@(item.Highest)</td>
+                                <td>@(item.Lowest)</td>
+                                <td>@(item.Position)<sup>@SD.specialNumber(item.Position)</sup></td>
+                                <td><strong>@(item.Grade)</strong></td>
+                                <td>@(item.Remark)</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="12" class="text-center text-muted py-3">No subject scores available.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Summary & Remarks Section -->
+            <table width="100%" class="table-bordered border-primary mb-3">
+                <tr>
+                    <td width="68%" class="p-0 align-top">
+                        <table class="table table-bordered border-primary table-sm mb-0" width="100%">
+                            <tr>
+                                <th width="35%">Annual Total Marks Obtainable:</th>
+                                <td width="15%"><strong>@(Model.ObtainableMarks)</strong></td>
+                                <th width="35%">Annual Total Marks Obtained:</th>
+                                <td width="15%"><strong>@(Model.ObtainedMarks)</strong></td>
+                            </tr>
+                            <tr>
+                                <th>Annual Position In Class:</th>
+                                <td colspan="3">
+                                    <strong>@(Model.PositionInClass)<sup>@(SD.specialNumber(Model.PositionInClass))</sup></strong>
+                                    &emsp; Out of &emsp;
+                                    <strong>@(Model.NoinClass)</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Promotional Status:</th>
+                                <td colspan="3" class="getfontname">
+                                    @if (Model.IsQualified)
+                                    {
+                                        <span class="badge bg-success badge-status">Congratulations! Promoted</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger badge-status">Not Qualified</span>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td width="32%" class="p-0 align-top">
+                        <table class="table table-bordered border-primary table-sm mb-0" width="100%">
+                            <tr>
+                                <th>1<sup>st</sup> Term Average:</th>
+                                <td>@(Model.FirstTermAverage)</td>
+                            </tr>
+                            <tr>
+                                <th>2<sup>nd</sup> Term Average:</th>
+                                <td>@(Model.SecondTermAverage)</td>
+                            </tr>
+                            <tr>
+                                <th>3<sup>rd</sup> Term Average:</th>
+                                <td>@(Model.ThirdTermAverage)</td>
+                            </tr>
+                            <tr>
+                                <th>Cumulative Average:</th>
+                                <td><strong>@(Model.CumulativeAverage)</strong></td>
+                            </tr>
+                            <tr class="bg-light">
+                                <th>Annual Average:</th>
+                                <td><strong class="text-primary fs-6">@(Model.AnnualAverage)</strong></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="68%" class="p-0 align-top">
+                        <table class="table table-bordered border-primary table-sm mb-0" width="100%">
+                            <tr>
+                                <th width="30%">Class Teacher's Remark:</th>
+                                <td class="getfontname">@(Model.TeacherRemark)</td>
+                            </tr>
+                            <tr>
+                                <th>Class Teacher's Name:</th>
+                                <td class="getfontname">@(Model._generalClass?.ClassTeacher ?? "N/A")</td>
+                            </tr>
+                            <tr>
+                                <th>Principal's Remarks:</th>
+                                <td class="getfontname">@(Model.PrincipalRemark)</td>
+                            </tr>
+                            <tr>
+                                <th>Principal's Name:</th>
+                                <td class="getfontname">@(Model._generalClass?.PrincipalName ?? "N/A")</td>
+                            </tr>
+                            <tr>
+                                <th>Principal's Signature:</th>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.signature))
+                                    {
+                                        <img class="signature-img" src="@(Model.signature)" alt="Principal Signature" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fst-italic">Signed</span>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td width="32%" class="p-0 align-top">
+                        <table class="table table-bordered border-primary text-center table-sm grade-key-table mb-0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th colspan="2" class="bg-dark text-white text-center py-1">KEY TO GRADING</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><th>A</th><td>75% & Above</td></tr>
+                                <tr><th>B</th><td>65% - 74%</td></tr>
+                                <tr><th>C</th><td>55% - 64%</td></tr>
+                                <tr><th>D</th><td>40% - 54%</td></tr>
+                                <tr><th>E</th><td>39% & Below</td></tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Page Footer -->
+            <div class="pt-2 text-center text-muted border-top d-flex justify-content-between align-items-center" style="font-size: 0.8rem;">
+                <div>
+                    <strong>Designed By: D-Best RETURN TECH&copy;</strong>
+                </div>
+                <div>
+                    <a class="text-dark text-decoration-none" title="Contact Technical Support" href="tel:08039410863">
+                        <i class="bi bi-telephone-fill me-1"></i>08039410863
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/watermark.js"></script>
-    </body>
+</body>
 </html>

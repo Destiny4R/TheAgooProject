@@ -28,16 +28,16 @@ function loadtable() {
             },
             { "data": "termregistration.studentsData.studentRegNo", "autoWidth": true },
             { "data": "specialPay.amount", "autoWidth": true },
-            { "data": "specialPay.otherPayTables.name", "autoWidth": true},
+            { "data": "specialPay.otherPayTables.name", "autoWidth": true },
             { "data": "amount", "autoWidth": true },
             {
                 "data": null, "render": function (data, type, full) {
                     if (data.amount == data.specialPay.amount) {
                         return `<span class="badge h4 bg-success" title="Fees completed">
-                        <i class="fas fa-check-double"></i> Completed
+                        <i class="bi bi-check2-all me-2"></i> Completed
                         </span>`;
                     } else {
-                        return `<label title="Part Payment" class="badge h3 bg-warning"><i class="fas fa-times-circle"></i> Part Payment</label>`;
+                        return `<label title="Part Payment" class="badge h3 bg-warning"><i class="bi bi-star-half me-2"></i> Part Payment</label>`;
                     }
                 }
             },
@@ -59,13 +59,22 @@ function loadtable() {
             {
                 "data": null, "render": function (data, type, full) {
                     return `
-                        <div class="d-flex justify-content-center">
-                            <a target="_blank" class="btn btn-primary btn-sm waves-effect waves-light" disabled href="#" style="cursor:pointer" title="Edit Payment">
-                                <i class="fas fa-edit"></i>
-                            </a> &nbsp;
-                            <a onclick=FeesPaymentSpecial("/api/AdditionaPayMnanager?id=${data.id}") class="btn btn-danger btn-sm waves-effect waves-light" href="#" style="cursor:pointer">
-                                   <i class="fa fa-trash"></i>
-                               </a>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a target="_blank" class="dropdown-item" disabled href="#" style="cursor:pointer" title="Edit Payment">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                                </li>
+                                <li>
+                                    <a onclick=FeesPaymentSpecial("/api/AdditionaPayMnanager?id=${data.id}") class="dropdown-item" href="#" style="cursor:pointer">
+                                       <i class="bi bi-trash3"></i>
+                                   </a>
+                                </li>
+                            </ul>
                         </div>
                     `;
                 }

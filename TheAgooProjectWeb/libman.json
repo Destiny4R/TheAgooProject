@@ -17,6 +17,14 @@
     {
       "library": "pdf-lib@1.17.1",
       "destination": "wwwroot/lib/pdf-lib/"
+    },
+    {
+      "library": "bootstrap-icons@1.13.1",
+      "destination": "wwwroot/lib/bootstrap-icons/"
+    },
+    {
+      "library": "twitter-bootstrap@5.3.8",
+      "destination": "wwwroot/lib/twitter-bootstrap/"
     }
   ]
 }

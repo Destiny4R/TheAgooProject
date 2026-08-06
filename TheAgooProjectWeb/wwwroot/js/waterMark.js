@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
 	const watermarkContainer = document.querySelector('.watermark-container');
-	const watermarkText = 'AGGO COLLEGE MAKURDI';
+	const watermarkText = $("#schoolname").val();
 	const watermarkFontSize = 30; // Adjust font size as needed
 	const watermarkMargin = 50;
 

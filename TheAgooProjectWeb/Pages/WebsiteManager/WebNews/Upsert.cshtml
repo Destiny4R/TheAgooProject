@@ -1,25 +1,27 @@
 ﻿@page
 @model TheAgooProjectWeb.Pages.WebsiteManager.WebNews.UpsertModel
+@inject IOptions<AppConfigurations> SchoolConfig
 @{
     ViewData["Title"] = Model.newsdata?.Id > 0 ? "Edit News Information" : "Add School News";
+    ViewData["SubTitle"] = "Add or update school news information";
     var btnname = Model.newsdata?.Id > 0 ? "Update" : "Add News";
     string manage = Model.newsdata?.Id > 0 ? "" : "required";
 }
-@section AddToHead
+@section Sheets
 {
     <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
 }
-<div class="page-content">
-    <div class="card">
-        <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class="badge bg-warning"><h4 class="text-white">@ViewData["Title"]</h4></div>
-
-                <div class="">
-                    <a class="btn btn-dark btn-sm" asp-page="Index"><i class="fas fa-arrow-left"></i>&ensp; Back</a>
-                </div>
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-newspaper me-2"></i> @ViewData["Title"]
             </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">Add or update school news information</div>
         </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="Index"><i class="bi bi-arrow-left me-1"></i> Back</a>
+    </div>
+    <div class="card">
         <div class="card-body">
             <form class="row g-3" id="formnewsdata">
                 <div class="col-md-6 mt-3">
@@ -29,7 +31,7 @@
                 </div>
                 <div class="col-md-6 mt-3">
                     <label asp-for="newsdata.Category" class="form-label">Select Category</label>
-                    <select class="custom-select" asp-for="newsdata.Category">
+                    <select class="form-select" asp-for="newsdata.Category">
                         <option disabled selected>Select category</option>
                         <option value="Politics">Politics</option>
                         <option value="Education">Education</option>
@@ -66,7 +68,7 @@
                     <div class="col-sm-4">
                         <div class="card">
                             <div class="card-body">
-                                <img src="https://localhost:44327/@(Model.newsdata.ImagePath)" width="100%" />
+                                <img src="@(SchoolConfig.Value.BaseUrl)/@(Model.newsdata.ImagePath)" width="100%" />
                             </div>
                         </div>
                     </div>
@@ -75,11 +77,11 @@
         </div>
     </div>
 </div>
-
+<input type="hidden" id="baseUrl" value="@SchoolConfig.Value.BaseUrl" />
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
     <script src="~/assets/libs/tinymce/tinymce.min.js"></script>
     <script src="~/lib/blockui/jquery.blockui.min.js"></script>
-    <script src="~/js/newsupsertfile.js"></script>
+    <script src="~/js/newsupsertfile.js" asp-append-version="true"></script>
 }

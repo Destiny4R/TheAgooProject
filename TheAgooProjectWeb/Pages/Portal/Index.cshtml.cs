@@ -9,7 +9,7 @@ using TheAgooProjectModel.ViewModels;
 
 namespace TheAgooProjectWeb.Pages.Portal
 {
-    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer}")]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer}, {SD.IsStudent}")]
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
@@ -24,34 +24,43 @@ namespace TheAgooProjectWeb.Pages.Portal
         public IndexModel(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
-        }
-        public void OnGet()
-        {
             getViewSelect();
+        }
+        public IActionResult OnGet()
+        {
+            if (User.IsInRole(SD.IsStudent))
+            {
+                return RedirectToPage("/student/index");
+            }
+            return Page();
         }
         public IActionResult OnPost()
         {
-            getViewSelect();
-			if (ModelState.IsValid)
+            if (User.IsInRole(SD.IsStudent))
+            {
+                return RedirectToPage("/student/index");
+            }
+
+            if (ModelState.IsValid)
             {
                 var checkClass = dbContext.SchoolClasses.FirstOrDefault(k => k.Id == CTSSClass.Classes);
-                if(checkClass != null)
+                if (checkClass != null)
                 {
-                    var getstudent = dbContext.StudentTable.FirstOrDefault(k=>k.StudentRegNo== StudentRegNo);
-                    if(getstudent == null)
+                    var getstudent = dbContext.StudentTable.FirstOrDefault(k => k.StudentRegNo == StudentRegNo);
+                    if (getstudent == null)
                     {
-						TempData["error"] = "No student found with the provided Student Reg. Number, Check and try again!";
-						return Page();
-					}
+                        TempData["error"] = "No student found with the provided Student Reg. Number, Check and try again!";
+                        return Page();
+                    }
                     if (checkClass.Elective)
                     {
                         return RedirectToPage("/Portal/Senior-Result-Sheet", new { session = CTSSClass.SessionYear, classes = CTSSClass.Classes, term = CTSSClass.Term, subclass = CTSSClass.Subclass, studentid = getstudent.Id });
-					}
-					//int session, int classes, int subclass, int studentid, string term
-					return RedirectToPage("/Portal/Junior-Result-Sheet", new {session = CTSSClass.SessionYear, classes = CTSSClass.Classes, term = CTSSClass.Term, subclass= CTSSClass.Subclass, studentid = getstudent.Id});
-				}
+                    }
+                    //int session, int classes, int subclass, int studentid, string term
+                    return RedirectToPage("/Portal/Junior-Result-Sheet", new { session = CTSSClass.SessionYear, classes = CTSSClass.Classes, term = CTSSClass.Term, subclass = CTSSClass.Subclass, studentid = getstudent.Id });
+                }
             }
-            return  Page();
+            return Page();
         }
         private void getViewSelect()
         {
@@ -67,7 +76,7 @@ namespace TheAgooProjectWeb.Pages.Portal
                     Text = k.Name,
                     Value = k.Id.ToString()
                 }),
-                SessionYearz = dbContext.SessionYears.OrderByDescending (k => k.Name).Select(k => new SelectListItem
+                SessionYearz = dbContext.SessionYears.OrderByDescending(k => k.Name).Select(k => new SelectListItem
                 {
                     Text = k.Name,
                     Value = k.Id.ToString()

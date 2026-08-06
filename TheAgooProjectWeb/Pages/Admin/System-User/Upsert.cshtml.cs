@@ -51,7 +51,9 @@ namespace TheAgooProjectWeb.Pages.Admin.System_User
                             await userManager.AddToRoleAsync(userx, user.Position);
                         }
                         userx.Fullname = user.Fullname;
-                        userx.Position = user.Position;
+                        if(!User.IsInRole(SD.Role_Admin))
+                            userx.Position = user.Position;
+
                         var result = await userManager.UpdateAsync(userx);
                         if (result.Succeeded)
                         {

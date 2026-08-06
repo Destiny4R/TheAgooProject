@@ -2,19 +2,39 @@
 @model TheAgooProjectWeb.Pages.Admin.Fees_Manager.Fees_Payment.Add_FeesModel
 @{
     ViewData["Title"] = "Make Fees Payment";
+    ViewData["SubTitle"] = "Record fees payment for a student";
 }
-@section AddToHead {
+@section Sheets {
     <link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
 }
-<div class="page-content">
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-cash-coin me-2"></i> @ViewData["Title"]
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">Record fees payment for a student</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-light btn-sm" asp-page="Index"><i class="bi bi-arrow-left me-1"></i>&ensp; Back</a>
+        </div>
+    </div>
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success mt-2" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+            <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["success"]
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger mt-2" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
+            <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"]
+        </div>
+    }
     <div class="card">
         <div class="card-header">
-            <div class="d-flex justify-content-between">
-                <div class="badge bg-dark"><h4 class="text-white">@(ViewData["Title"])</h4></div>
-                <div>
-                    <a class="btn btn-info btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a>
-                </div>
-            </div>
             <div class="mt-3">
                 <form method="post" asp-page-handler="Search">
                     <div class="row mt-2">
@@ -47,25 +67,11 @@
                             <input class="form-control form-control-sm" type="search" name="studentReg" required placeholder="Student Reg No" />
                         </div>
                         <div class="col-sm-1">
-                            <button class="btn btn-success btn-sm" type="submit"><i class="fa fa-search"></i></button>
+                            <button class="btn btn-success btn-sm" type="submit"><i class="bi bi-search"></i></button>
                         </div>
                     </div>
                 </form>
             </div>
-            @if (TempData["success"] != null)
-            {
-                <div class="alert alert-success mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
-                    <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["success"]
-                </div>
-            }
-            @if (TempData["error"] != null)
-            {
-                <div class="alert alert-danger mt-2" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">&times;</button>
-                    <strong><i class="fas fa-exclamation-triangle"></i></strong> @TempData["error"]
-                </div>
-            }
         </div>
         @if (Model.payx > 0 )
         {

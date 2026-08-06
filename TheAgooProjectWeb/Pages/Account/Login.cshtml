@@ -1,100 +1,246 @@
 ﻿@page
-@model TheAgooProjectWeb.Pages.Account.LoginModel
+@inject IOptions<AppConfigurations> SchoolConfig
+@model TheAgooProjectWeb.Pages.Account.loginModel
 @{
     Layout = null;
 }
-<!doctype html>
-<html lang="en">
-
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="utf-8" />
-    <title>Login | Aggo College Makurdi</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="THE RETURN TECH" name="description" />
-    <meta content="Themesdesign" name="author" />
-    <meta name="msapplication-TileImage" content="">
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="~/appicons/favicon.ico">
-
-    <!-- Bootstrap Css -->
-    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <!-- Icons Css -->
-    <link href="/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <!-- App Css-->
-    <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" />
-
+    <title>Login Page | @(SchoolConfig.Value.SchoolName) @(SchoolConfig.Value.Layout1)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="~/css/login.css" rel="stylesheet" />
 </head>
+<body>
 
-<body class="bg-primary bg-pattern">
-    <div class="account-pages">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="text-center">
-                        <a href="#" class="logo"><img src="~/appicons/apple-touch-icon.png" class="rounded-circle" height="124" alt="logo"></a>
-                        <h5 class="font-size-16 text-white-50 text-uppercase mb-4">WELCOME TO Aggo College Makurdi </h5>
-                    </div>
+    <div class="auth-wrapper">
+
+        <!-- ===== BRAND PANEL ===== -->
+        <aside class="brand-panel">
+            <div class="brand-header">
+                <div class="brand-crest">AC</div>
+                <div class="brand-name">
+                    <h1>@(SchoolConfig.Value.SchoolName) @(SchoolConfig.Value.Layout1)</h1>
+                    <small>Est. more than 10 years · Portal</small>
                 </div>
             </div>
-            <!-- end row -->
 
-            <div class="row justify-content-center">
-                <div class="col-lg-5">
-                    <div class="card">
-                        <div class="card-body p-4">
-                            <div class="p-2">
-                                <h5 class="mb-5 text-center">Sign in to continue to Aggo College Makurdi.</h5>
-                                <form class="form-horizontal" method="post">
+            <div class="brand-hero">
+                <span class="eyebrow">Welcome Back</span>
+                <h2 class="brand-headline">
+                    Where minds <em>bloom</em> and character takes root.
+                </h2>
+                <p class="brand-subtitle">
+                    Sign in to access your personalized portal — manage classes, track academic progress, and stay connected with Aggo College community.
+                </p>
 
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group mb-4">
-                                                <label for="username">Username</label>
-                                                <input type="text" class="form-control" asp-for="Input.Username" placeholder="Enter username">
-                                            </div>
-                                            <div class="form-group mb-4">
-                                                <label for="userpassword">Password</label>
-                                                <input class="form-control" asp-for="Input.Password" placeholder="Enter password">
-                                            </div>
+                <ul class="feature-list">
+                    <li>
+                        <span class="feature-icon"><i class="bi bi-mortarboard-fill"></i></span>
+                        Comprehensive academic management tools
+                    </li>
+                    <li>
+                        <span class="feature-icon"><i class="bi bi-shield-check"></i></span>
+                        Bank-grade security for student records
+                    </li>
+                </ul>
+            </div>
 
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="custom-control custom-checkbox">
-                                                        <input type="checkbox" class="custom-control-input" asp-for="Input.RememberMe">
-                                                        <label class="custom-control-label" asp-for="Input.RememberMe">Remember me</label>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="text-md-right mt-3 mt-md-0">
-                                                        <a href="#" class="text-muted"><i class="mdi mdi-lock"></i> Forgot your password?</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="mt-4">
-                                                <button class="btn btn-success btn-block waves-effect waves-light" type="submit">Log In</button>
-                                            </div>
-                                            <div class="mt-4 text-center text-danger" asp-validation-summary="All">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+            <div class="brand-footer">
+                <div class="stats">
+                    <div class="stat"><strong>Over 30,000</strong> Students over the years</div>
+                    <div class="stat"><strong>Over 10</strong> Years</div>
+                </div>
+                <div>© @DateTime.UtcNow.Year @(SchoolConfig.Value.SchoolName) @(SchoolConfig.Value.Layout1)</div>
+            </div>
+        </aside>
+
+        <!-- ===== FORM PANEL ===== -->
+        <main class="form-panel">
+            <div class="form-topbar">
+                <div class="mobile-brand">
+                    <div class="brand-crest">AC</div>
+                    <h1>@(SchoolConfig.Value.SchoolName) @(SchoolConfig.Value.Layout1)</h1>
+                </div>
+
+                <div class="topbar-actions">
+                    <a href="#" class="topbar-link d-none d-sm-inline">Need help?</a>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+                        <i class="bi bi-sun-fill sun-icon"></i>
+                        <i class="bi bi-moon-stars-fill moon-icon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="_form-container">
+
+                <div class="form-heading animate-in">
+                    <h2>Sign in to your account</h2>
+                    <p>Enter your credentials to continue. New to Aggo College Makurdi? <a href="https://aggocollegemkd.com.ng" target="_blank">Visit our website</a>.</p>
+                </div>
+
+                <form novalidate method="post">
+                    <div class="form-group animate-in" id="emailGroup">
+                        <label class="form-label" asp-for="Input.Username">
+                            <span>Student Reg Number/Username</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="text" class="form-control-classic" asp-for="Input.Username"
+                                   placeholder="AGG/001" autocomplete="on" required>
+                            <i class="bi bi-envelope input-icon"></i>
                         </div>
+                        <span asp-validation-for="Input.Username" class="text-danger"></span>
                     </div>
+                    <div class="form-group animate-in" id="passwordGroup">
+                        <label class="form-label" asp-for="Input.Password">
+                            <span>Password</span>
+                            <a href="#" class="label-link" id="forgotLink">Forgot password?</a>
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="password" class="form-control-classic" asp-for="Input.Password"
+                                   placeholder="Enter your password" autocomplete="current-password" required>
+                            <i class="bi bi-lock input-icon"></i>
+                            <button type="button" class="input-action" id="togglePassword" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-options animate-in">
+                        <label class="checkbox-classic" asp-for="Input.RememberMe">
+                            <input type="checkbox" asp-for="Input.RememberMe">
+                            <span class="check-box"></span>
+                            <span>Keep me signed in</span>
+                        </label>
+                    </div>
+
+        
+                    <button type="submit" class="btn-signin animate-in" id="signinBtn">
+                        <span class="spinner"></span>
+                        <span class="btn-text">Sign In Securely</span>
+                        <i class="bi bi-arrow-right btn-arrow"></i>
+                    </button>
+
+                </form>
+            </div>
+
+            <div class="form-footer">
+                <div><i class="bi bi-shield-lock"></i> Managed by - D-Best Return Tech</div>
+                <div>
+                    <a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="#">Support</a>
                 </div>
             </div>
-            <!-- end row -->
-        </div>
+        </main>
     </div>
-    <!-- end Account pages -->
-    <!-- JAVASCRIPT -->
-    <script src="/assets/libs/jquery/jquery.min.js"></script>
-    <script src="/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/libs/metismenu/metisMenu.min.js"></script>
-    <script src="/assets/libs/simplebar/simplebar.min.js"></script>
-    <script src="/assets/libs/node-waves/waves.min.js"></script>
 
-    <script src="/assets/js/app.js"></script>
+    <div class="toast-container" id="toastContainer"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+            $(function() {
+                'use strict';
+
+                // ===== THEME MANAGEMENT =====
+                const THEME_KEY = 'westfield-theme';
+
+                function applyTheme(theme) {
+                    document.documentElement.setAttribute('data-theme', theme);
+                    localStorage.setItem(THEME_KEY, theme);
+                }
+
+                const savedTheme = localStorage.getItem(THEME_KEY);
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+                applyTheme(initialTheme);
+
+                $('#themeToggle').on('click', function() {
+                    const current = document.documentElement.getAttribute('data-theme');
+                    const next = current === 'light' ? 'dark' : 'light';
+                    applyTheme(next);
+                    showToast(
+                        next === 'dark' ? 'Dark mode enabled' : 'Light mode enabled',
+                        next === 'dark' ? 'moon-stars' : 'sun',
+                        'Theme Preference'
+                    );
+                });
+
+                // ===== PASSWORD VISIBILITY TOGGLE =====
+                $('#togglePassword').on('click', function() {
+                    const $input = $('#Input_Password');
+                    const $icon = $(this).find('i');
+                    const type = $input.attr('type') === 'password' ? 'text' : 'password';
+                    $input.attr('type', type);
+                    $icon.removeClass('bi-eye bi-eye-slash').addClass(type === 'password' ? 'bi-eye' : 'bi-eye-slash');
+                });
+
+
+
+                $('.topbar-link').on('click', function(e) {
+                    e.preventDefault();
+                    showToast('Contact support@aggocollegemkd.com.ng for assistance', 'life-preserver', 'Help & Support');
+                });
+
+                // ===== TOAST =====
+                function showToast(message, icon, title, type) {
+                    const icons = {
+                        'sun': 'bi-sun-fill',
+                        'moon-stars': 'bi-moon-stars-fill',
+                        'check-circle': 'bi-check-circle-fill',
+                        'exclamation-triangle': 'bi-exclamation-triangle-fill',
+                        'info-circle': 'bi-info-circle-fill',
+                        'envelope-check': 'bi-envelope-check-fill',
+                        'mortarboard': 'bi-mortarboard-fill',
+                        'cloud-arrow-up': 'bi-cloud-arrow-up-fill',
+                        'life-preserver': 'bi-life-preserver',
+                        'arrow-right': 'bi-arrow-right-circle-fill'
+                    };
+                    const iconClass = icons[icon] || icons['info-circle'];
+                    const toastType = type || '';
+
+                    const $toast = $(
+                        '<div class="toast-classic ' + toastType + '">' +
+                        '<div class="toast-icon"><i class="bi ' + iconClass + '"></i></div>' +
+                        '<div class="toast-content">' +
+                        (title ? '<strong>' + title + '</strong>' : '') +
+                        '<small>' + message + '</small>' +
+                        '</div>' +
+                        '</div>'
+                    );
+
+                    $('#toastContainer').append($toast);
+
+                    setTimeout(function() {
+                        $toast.css('animation', 'slideOutRight 0.35s ease forwards');
+                        setTimeout(function() { $toast.remove(); }, 350);
+                    }, 3200);
+                }
+
+                // ===== KEYBOARD SHORTCUTS =====
+                $(document).on('keydown', function(e) {
+                    // Enter key submits form when focused in inputs
+                    if (e.key === 'Enter' && $(e.target).is('input')) {
+                        e.preventDefault();
+                        $('#loginForm').submit();
+                    }
+                });
+
+                // Auto-focus email on load
+                setTimeout(function() { $('#email').focus(); }, 600);
+
+                // ===== PREFILL DEMO (optional) =====
+                // Comment out to start with empty form
+                // $('#email').val('dr.hart@westfield.edu');
+                // $('#password').val('westfield2024');
+            });
+    </script>
 </body>
 </html>

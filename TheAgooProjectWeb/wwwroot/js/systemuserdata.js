@@ -5,7 +5,8 @@ $(document).ready(function () {
 });
 function loadtable() {
     $("#tablesystemusers").DataTable({
-        "processing": true, "serverSide": true,
+        "processing": true,
+        "serverSide": true,
         "filter": true,
         responsive: true,
         destroy: true,
@@ -25,12 +26,12 @@ function loadtable() {
                 "data": "active",
                 render: function (data, type, row) {
                     if (data == true) {
-                        classfa = "fa-unlock";
-                        classbtn = "btn-success";
+                        classfa = "bi-unlock";
+                        classbtn = "Deactivate";
                         return data;
                     } else {
-                        classfa = "fa-lock";
-                        classbtn = "btn-warning";
+                        classfa = "bi-lock";
+                        classbtn = "Activate";
                         return data;
                     }
                 }
@@ -40,20 +41,17 @@ function loadtable() {
                 "data": null,
                 "render": function (data, type, full) {
                     return `
-                    <div class="d-flex justify-content-center">
-                         <a class=" btn-secondary btn-sm" href="/Admin/System-User/Upsert?id=${data.id}" style="cursor:pointer" title="Edit System User Account">
-                                <i class="fa fa-edit"></i>
-                            </a> &nbsp;
-                            <a class=" btn-dark btn-sm" href="/Account/ChangeUserPassword?id=${data.id}&url=/Admin/System-User/Index" style="cursor:pointer" title="Change System User Account Password">
-                                <i class="fa fa-redo"></i>
-                            </a> &nbsp;
-                            <a onclick=Systemusermanger("/api/LockUnlockAccount?id=${data.id}") class="btn ${classbtn} btn-sm" href="#" style="cursor:pointer" title="Lock/Unlock branch Account">
-                                <i class="fa ${classfa}"></i>
-                            </a> &nbsp;
-                            <a onclick=DeleteSystemUser("/api/ManageSystemUser?id=${data.id}") class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                   <i class="fa fa-trash"></i>
-                               </a>
-                        </div>
+                    <div class="dropdown">
+                      <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/Admin/System-User/Upsert?id=${data.id}"><i class="bi bi-pencil-square me-2"></i> Edit</a></li>
+                        <li><a class="dropdown-item" href="/Account/ChangeUserPassword?id=${data.id}&url=/Admin/System-User/Index"><i class="bi bi-arrow-clockwise me-2"></i> Change Password</a></li>
+                        <li><a class="dropdown-item" onclick=Systemusermanger("/api/LockUnlockAccount?id=${data.id}") href="#"><i class="bi ${classfa} me-2"></i> ${classbtn}</a></li>
+                        <li><a class="dropdown-item" onclick=DeleteSystemUser("/api/ManageSystemUser?id=${data.id}") href="#"><i class="bi bi-trash3 me-2"></i> Delete</a></li>
+                      </ul>
+                    </div>
                     `;
                 }
             }
@@ -64,7 +62,7 @@ function DeleteSystemUser(url) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
+            cancelButton: 'btn btn-danger me-2'
         },
         buttonsStyling: false
     })
@@ -128,7 +126,7 @@ function Systemusermanger(url) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
+            cancelButton: 'btn btn-danger me-2'
         },
         buttonsStyling: false
     })

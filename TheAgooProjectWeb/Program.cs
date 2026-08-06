@@ -14,7 +14,8 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 builder.Services.AddRazorPages();
 
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(j => {
+builder.Services.AddDbContext<ApplicationDbContext>(j =>
+{
     j.UseMySql(connection, ServerVersion.AutoDetect(connection));
 });
 
@@ -48,6 +49,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
 builder.Services.AddScoped<ISmsSender, SmsSender>();
 builder.Services.AddScoped<IMailSender, EmailSender>();
 //builder.Services.AddHostedService<MySqlBackupBackgroundService>();
+
+builder.Services.Configure<AppConfigurations>(builder.Configuration.GetSection("AppConfigurations"));
 
 builder.Services.ConfigureApplicationCookie(a =>
 {

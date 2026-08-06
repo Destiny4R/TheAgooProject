@@ -41,11 +41,11 @@ $(document).ready(function () {
                     return `
                         <div class="d-flex justify-content-between">
                             <a class="btn btn-primary btn-sm" title="Edit expenditure" href="/Admin/Fees-Manager/Expenditures/Upsert?id=${data.id}" style="cursor:pointer">
-                                <i class="fa fa-edit"></i>
+                                <i class="bi bi-pencil-square"></i>
                             </a>
                             &nbsp;
                             <a onclick=removeSession("/api/ExpenditureManager/${data.id}") title="Permanently Remove this Expenditure" class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                <i class="fa fa-trash"></i>
+                                <i class="bi bi-trash3"></i>
                             </a>
                         </div>
                     `;

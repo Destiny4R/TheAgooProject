@@ -38,14 +38,22 @@ $(document).ready(function () {
             {
                 "data": null, "render": function (data, type, full) {
                     return `
-                        <div class="d-flex justify-content-between">
-                            <a class="btn btn-primary btn-sm" title="Edit Parent data" href="/Admin/Parents-Guardian/Upsert?id=${data.parentTable.id}" style="cursor:pointer">
-                                <i class="fas fa-user-edit"></i>
-                            </a>
-                            &nbsp;
-                            <a onclick=removeParent("/api/ParentManager/${data.id}") title="Permanently Remove Parent" class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                <i class="fa fa-trash"></i>
-                            </a>
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class='bi bi-three-dots-vertical'></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" title="Edit Parent data" href="/Admin/Parents-Guardian/Upsert?id=${data.parentTable.id}" style="cursor:pointer">
+                                        <i class="bi bi-pencil-square me-2"></i>Edit
+                                    </a>
+                                </li>
+                                <li>
+                                    <a onclick=removeParent("/api/ParentManager/${data.id}") title="Permanently Remove Parent" class="dropdown-item" href="#" style="cursor:pointer">
+                                        <i class="bi bi-trash3 me-2"></i> Delete
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     `;
                 }
@@ -59,7 +67,7 @@ function removeParent(url) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
+            cancelButton: 'btn btn-danger me-2'
         },
         buttonsStyling: false
     })
@@ -69,7 +77,7 @@ function removeParent(url) {
         text: "You won't be able to revert this!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, delete!',
         cancelButtonText: 'No, cancel!',
         reverseButtons: true
     }).then((result) => {

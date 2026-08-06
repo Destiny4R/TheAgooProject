@@ -2,15 +2,21 @@
 @model TheAgooProjectWeb.Pages.Compute_Result.Subjects_PositionModel
 @{
     ViewData["Title"] = "Compute Position in Subjects";
+    ViewData["SubTitle"] = "Compute student positions by subject";
     int sn = 0;
 }
-<div class="page-content">
+<div class="page-content fade-in">
+    <div class="tms-header mb-3">
+        <div>
+            <div class="tms-title">
+                <i class="bi bi-trophy me-2"></i> Position in Subject
+            </div>
+            <div style="font-size:.82rem; opacity:.8; margin-top:2px;">Compute student positions by subject</div>
+        </div>
+        <a class="btn btn-light btn-sm tms-back" asp-page="Index"><i class="bi bi-arrow-left me-1"></i>&ensp; Back</a>
+    </div>
     <div class="card">
         <div class="card-header-pill">
-            <div class="d-flex justify-content-between p-2">
-                <div class=" badge text-white bg-blue text-uppercase"><strong class="h5">Position in Subject</strong></div>
-                <div><a class="btn btn-dark btn-sm" asp-page="Index"><i class="fa fa-arrow-left"></i>&ensp; Back</a></div>
-            </div>
             <div class="row p-2">
                 <form method="post">
                     <div class="input-group col-12">
@@ -35,9 +41,7 @@
                             <select class="form-control form-control-sm" name="subjectId" required asp-items="Model.Subjects">
                                 <option selected disabled>select subject</option>
                             </select>
-                            <span class="input-group-prepend">
-                                <button class="btn btn-success btn-sm"><i class="fas fa-search"></i></button>
-                            </span>
+                            <button class="btn btn-success btn-sm"><i class="bi bi-search"></i></button>
                         </div>
                     </form>
                 </div>
@@ -45,60 +49,58 @@
 
             @if (TempData["success"] != null)
             {
-                <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <strong><i class="fas fa-info-circle"></i> </strong> @TempData["success"].
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong><i class="bi bi-info-circle"></i></strong> @TempData["success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
             @if (TempData["error"] != null)
             {
-                <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <strong><i class="fas fa-exclamation-triangle"></i> </strong> @TempData["error"].
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong><i class="bi bi-exclamation-triangle"></i></strong> @TempData["error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
 
         </div>
         @if(Model.DataTrue>0)
         {
-            <table class="table table-sm table-responsive table-bordered table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Full Name</th>
-                        <th>Student Reg. No.</th>
-                        <th>Term</th>
-                        <th>Session/Year</th>
-                        <th>Class</th>
-                        <th>Sub-Class</th>
-                        <th>Subject</th>
-                        <th>Total</th>
-                        <th>Position</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.ResultTables.OrderByDescending(m=>m.Total))
-                    {
-                        sn++;
+            <div class="table-responsive">
+                <table class="table table-sm table-responsive table-bordered table-striped table-hover">
+                    <thead>
                         <tr>
-                            <td>@sn</td>
-                            <td>@item.Termregistration.StudentsData.SurName @item.Termregistration.StudentsData.OtherName @item.Termregistration.StudentsData.FirstName</td>
-                            <td>@item.Termregistration.StudentsData.StudentRegNo</td>
-                            <td>@item.Termregistration.Term</td>
-                            <td>@item.Termregistration.SessionYear.Name</td>
-                            <td>@item.Termregistration.Schoolclasses.Name</td>
-                            <td>@item.Termregistration.SubClasses.Name</td>
-                            <td>@item.Subjects.Name</td>
-                            <td>@item.Total</td>
-                            <td>@item.Position</td>
+                            <th>#</th>
+                            <th>Full Name</th>
+                            <th>Student Reg. No.</th>
+                            <th>Term</th>
+                            <th>Session/Year</th>
+                            <th>Class</th>
+                            <th>Sub-Class</th>
+                            <th>Subject</th>
+                            <th>Total</th>
+                            <th>Position</th>
                         </tr>
-                    }
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ResultTables.OrderByDescending(m=>m.Total))
+                        {
+                            sn++;
+                            <tr>
+                                <td>@sn</td>
+                                <td>@item.Termregistration.StudentsData.SurName @item.Termregistration.StudentsData.OtherName @item.Termregistration.StudentsData.FirstName</td>
+                                <td>@item.Termregistration.StudentsData.StudentRegNo</td>
+                                <td>@item.Termregistration.Term</td>
+                                <td>@item.Termregistration.SessionYear.Name</td>
+                                <td>@item.Termregistration.Schoolclasses.Name</td>
+                                <td>@item.Termregistration.SubClasses.Name</td>
+                                <td>@item.Subjects.Name</td>
+                                <td>@item.Total</td>
+                                <td>@item.Position</td>
+                            </tr>
+                        }
                 </tbody>
-            </table>
+                </table>
+            </div>
         }
     </div>
 </div>

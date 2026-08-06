@@ -1,48 +1,178 @@
 ﻿
+var font, clazz;
+var datatablez;
 $(document).ready(function () {
-    $(document).ready(function () {
-        $("#senddata").on("click", function (event) {
-            event.preventDefault();
 
-            var formData = new FormData($("#formgallery")[0]);
+    if ($("#galleryPhotos").length) {
+
+        datatablez = $("#galleryPhotos").DataTable({
+            "processing": true,
+            "serverSide": true,
+            "filter": true,
+            "paging": true,
+            responsive: true,
+            "ajax": {
+                "url": "/Home/WebGalleryPictures",
+                "type": "POST",
+                "datatype": "json"
+            },
+            "columnDefs": [{
+                "targets": [0],
+                "visible": true,
+                "searchable": true,
+            }],
+            "columns": [
+                {
+                    "data": "id",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                { "data": "message", "autoWidth": true },
+                { "data": "postedBy", "autoWidth": true },
+                {
+                    "data": "imagestable", "autoWidth": true,
+                    render: function (data, type, row) {
+                        return data.length;
+                    }
+                },
+                {
+                    "data": "createdDate", "autoWidth": true,
+                    render: function (data, type, row) {
+                        var hours = new Date(data).getHours()
+                        let ap = hours >= 12 ? 'pm' : 'am';
+                        return data = data.toLocaleString('YYYY-MM-dd').slice(0, 19).replace('T', ' ') + ' ' + ap;
+                    }
+                },
+                {
+                    "data": null, "render": function (data, type, full) {
+                        return `
+                        <div class="d-flex justify-content-between">
+                            <a class="btn btn-primary btn-sm" title="Edit Photo Galleries" href="/WebsiteManager/WebGallery/Upsert?id=${data.id}" style="cursor:pointer">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            &nbsp;
+                            <a onclick=removeGallery("/api/PhotoGalleryManager/${data.id}") title="Permanently Remove Gallery" class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
+                                <i class="bi bi-trash3"></i>
+                            </a>
+                        </div>
+                    `;
+                    }
+                }
+            ]
+        });
+
+    }
+
+    $("#senddata").on("click", function (event) {
+        event.preventDefault();
+
+        var formData = new FormData($("#formgallery")[0]);
+        let baseurl = $("#baseUrl").val();
+        $.ajax({
+            type: "POST",
+            url: `${baseurl}/api/GalleryPhotos`,
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $.unblockUI();
+                if (data.success) {
+                    swal.fire('Information!', data.message, 'success');
+                    $("#formgallery")[0].reset();
+                } else {
+                    swal.fire('Information!', data.message, 'error');
+                }
+            },
+            beforeSend: function () {
+                blockcallback();
+            },
+            error: function (error) {
+
+                function handleError() {
+                    $.unblockUI();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                        footer: 'Check internet connectivity'
+                    });
+                }
+                handleError();
+            },
+            complete: function () {
+                $.unblockUI();
+            }
+        });
+    });
+});
+
+
+function removeGallery(url) {
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    })
+    let baseurl = $("#baseUrl").val();
+    swalWithBootstrapButtons.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
             $.ajax({
-                type: "POST",
-                url: "https://localhost:44327/api/GalleryPhotos",
-                data: formData,
-                contentType: false,
-                processData: false,
+                type: "DELETE",
+                url: baseurl + url,
                 success: function (data) {
                     $.unblockUI();
                     if (data.success) {
-                        swal.fire('Information!', data.message, 'success');
-                        $("#formgallery")[0].reset();
+                        swal.fire(
+                            'Deleted!',
+                            data.message,
+                            'success'
+                        );
+                        datatablez.ajax.reload();
                     } else {
-                        swal.fire('Information!', data.message, 'error');
+                        swal.fire(
+                            'Deleted!',
+                            data.message,
+                            'error'
+                        );
                     }
                 },
                 beforeSend: function () {
                     blockcallback();
                 },
-                error: function (error) {
-
-                    function handleError() {
-                        $.unblockUI();
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Something went wrong!',
-                            footer: 'Check internet connectivity'
-                        });
-                    }
-                    handleError();
+                error: function () {
+                    $.unblockUI();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                        footer: 'Check internet connectivity'
+                    });
                 },
                 complete: function () {
                     $.unblockUI();
                 }
             });
-        });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            swalWithBootstrapButtons.fire(
+                'Cancelled',
+                'Photo Gallery Record NOT Deleted',
+                'error'
+            );
+        }
     });
-});
+
+}
 
 function photoGalleryRemover(button) {
     const swalWithBootstrapButtons = Swal.mixin({
@@ -66,7 +196,7 @@ function photoGalleryRemover(button) {
         if (result.isConfirmed) {
             $.ajax({
                 type: "DELETE",
-                url: "https://localhost:44348/api/SinglePhotoManager/" + dataId,
+                url: `${baseurl}/api/SinglePhotoManager/${dataId}`,
                 success: function (data) {
                     $.unblockUI();
                     if (data.success) {

@@ -49,11 +49,11 @@ $(document).ready(function () {
                 "data": null, "render": function (data, type, full) {
                     return `
                         <div class="d-flex justify-content-center">
-                         <a class=" btn-secondary btn-sm" href="/Compute-Result/General-Class-Info/Upsert?id=${data.id}" style="cursor:pointer" title="Edit general class information">
-                                <i class="fa fa-edit"></i>
+                         <a class="btn btn-secondary btn-sm" href="/Compute-Result/General-Class-Info/Upsert?id=${data.id}" style="cursor:pointer" title="Edit general class information">
+                                <i class="bi bi-pencil-square"></i>
                             </a> &nbsp;
                             <a onclick=DeleteGeneral("/api/ManageGeneralInfo?id=${data.id}") class="btn btn-danger btn-sm" href="#" style="cursor:pointer">
-                                   <i class="fa fa-trash"></i>
+                                   <i class="bi bi-trash"></i>
                                </a>
                         </div>
                     `;
@@ -68,7 +68,7 @@ function DeleteGeneral(url) {
     const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
             confirmButton: 'btn btn-success',
-            cancelButton: 'btn btn-danger'
+            cancelButton: 'btn btn-danger me-2'
         },
         buttonsStyling: false
     })
@@ -78,7 +78,7 @@ function DeleteGeneral(url) {
         text: "You won't be able to recover this!",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Yes, delete it!',
+        confirmButtonText: 'Yes, delete!',
         cancelButtonText: 'No, cancel!',
         reverseButtons: true
     }).then((result) => {
