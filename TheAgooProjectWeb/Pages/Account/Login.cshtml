@@ -24,7 +24,7 @@
         <!-- ===== BRAND PANEL ===== -->
         <aside class="brand-panel">
             <div class="brand-header">
-                <div class="brand-crest">AC</div>
+                <div class="brand-crest">@SchoolConfig.Value.Abreviation</div>
                 <div class="brand-name">
                     <h1>@(SchoolConfig.Value.SchoolName) @(SchoolConfig.Value.Layout1)</h1>
                     <small>Est. more than 10 years · Portal</small>
@@ -37,7 +37,7 @@
                     Where minds <em>bloom</em> and character takes root.
                 </h2>
                 <p class="brand-subtitle">
-                    Sign in to access your personalized portal — manage classes, track academic progress, and stay connected with Aggo College community.
+                    Sign in to access your personalized portal — manage classes, track academic progress, and stay connected with @SchoolConfig.Value.SchoolName community.
                 </p>
 
                 <ul class="feature-list">
@@ -54,7 +54,7 @@
 
             <div class="brand-footer">
                 <div class="stats">
-                    <div class="stat"><strong>Over 30,000</strong> Students over the years</div>
+                    <div class="stat"><strong>Over 5,000</strong> Students over the years</div>
                     <div class="stat"><strong>Over 10</strong> Years</div>
                 </div>
                 <div>© @DateTime.UtcNow.Year @(SchoolConfig.Value.SchoolName) @(SchoolConfig.Value.Layout1)</div>
@@ -82,7 +82,7 @@
 
                 <div class="form-heading animate-in">
                     <h2>Sign in to your account</h2>
-                    <p>Enter your credentials to continue. New to Aggo College Makurdi? <a href="https://aggocollegemkd.com.ng" target="_blank">Visit our website</a>.</p>
+                    <p>Enter your credentials to continue. New to @(SchoolConfig.Value.SchoolName) @(SchoolConfig.Value.Layout1)? <a href="@(SchoolConfig.Value.BaseUrl)" target="_blank">Visit our website</a>.</p>
                 </div>
 
                 <form novalidate method="post">

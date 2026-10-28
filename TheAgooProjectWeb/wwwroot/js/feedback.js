@@ -54,9 +54,9 @@
                 "data": "isRead", "autoWidth": true, className: 'text-center',
                 render: function (data, type, row) {
                     if (data == true) {
-                        return `<label class="bg-warning badge"><i class="fa fa-envelope-open" aria-hidden="true"></i></label>`;
+                        return `<label class="bg-warning badge"><i class="bi bi-envelope-open" aria-hidden="true"></i></label>`;
                     } else {
-                        return `<label class="bg-success badge"><i class="fa fa-envelope" aria-hidden="true"></i></label>`;
+                        return `<label class="bg-success badge"><i class="bi bi-envelope-fill" aria-hidden="true"></i></label>`;
                     }
                 }
             },

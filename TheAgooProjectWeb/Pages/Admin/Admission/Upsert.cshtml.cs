@@ -14,6 +14,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
 
 namespace TheAgooProjectWeb.Pages.Admin.Admission
 {
@@ -24,6 +25,7 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IOptions<AppConfigurations> appConfigurations;
 
         [BindProperty]
         public StudentDataVM UserVM { get; set; }
@@ -31,12 +33,14 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
         public UpsertModel(ApplicationDbContext dbContext,
             IWebHostEnvironment webHostEnvironment,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IOptions<AppConfigurations> appConfigurations)
         {
             this.dbContext = dbContext;
             this.webHostEnvironment = webHostEnvironment;
             this.userManager = userManager;
             this.roleManager = roleManager;
+            this.appConfigurations = appConfigurations;
         }
         public void OnGet(int id)
         {
@@ -116,22 +120,14 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
                 else
                 {
                     var stu_list = dbContext.StudentTable.Count();
-                    string username = "";
                     int sub = DateTime.Now.Year;
-                    if (stu_list > 0)
-                    {
-                        username = $"ACM/SM/{sub}/"+(100+stu_list);
-                    }
-                    else
-                    {
-                        username = $"ACM/SM/{sub}/100";
-                    }
+                    string username = $"{appConfigurations.Value.AdmissionPrefix}/{sub}/{100 + stu_list}";
                     var getnewuser = await userManager.FindByNameAsync(username);
                     if (getnewuser != null)
                     {
                         var count = dbContext.ApplicationUsers.Count();
-						username = $"ACM/SM/{sub}/" + (100 + count+1);
-					}
+                        username = $"{appConfigurations.Value.AdmissionPrefix}/{sub}/{100 + count + 1}";
+                    }
                     var user = new ApplicationUser
                     {
                         UserName = username,

@@ -63,7 +63,7 @@ $(document).ready(function () {
             },
             {
                 "data": null, "render": function (data, type, full) {
-                    var name = data.surName + ' ' + (data?.otherName||'')+  ' ' + (data.firstName);
+                    var name = data.surName + ' ' + (data?.otherName || '') + ' ' + (data.firstName);
                     return name;
                 }
             },
@@ -201,7 +201,7 @@ function removeStudent(url) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                type: "DELETE",
+                type: "POST",
                 url: url,
                 success: function (data) {
                     $.unblockUI();

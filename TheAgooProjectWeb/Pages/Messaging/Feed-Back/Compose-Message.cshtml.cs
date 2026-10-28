@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 using TheAgooProjectDataAccess;
 using TheAgooProjectDataAccess.Data;
@@ -8,26 +9,27 @@ using TheAgooProjectModel;
 
 namespace TheAgooProjectWeb.Pages.Messaging.Feed_Back
 {
-    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer},{SD.Role_Accountant}")]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer},{SD.Role_Accountant}")]
     public class Compose_MessageModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IConfiguration configuration;
         private readonly IMailSender mailSender;
+        private readonly IOptions<EmailCredentials> emailCredentials;
 
         [BindProperty]
         public MessageInput Message { get; set; }
-        public Compose_MessageModel(ApplicationDbContext dbContext, IConfiguration configuration, IMailSender mailSender)
+        public Compose_MessageModel(ApplicationDbContext dbContext, IConfiguration configuration, IMailSender mailSender, IOptions<EmailCredentials> emailCredentials)
         {
             this.dbContext = dbContext;
             this.configuration = configuration;
             this.mailSender = mailSender;
+            this.emailCredentials = emailCredentials;
         }
         public void OnGet(int id)
         {
-            var intervals = configuration.GetSection("EmailCredentials").Get<List<EmailCredentials>>().FirstOrDefault();
             Message = new MessageInput();
-            Message.Sender = intervals.UserName;
+            Message.Sender = emailCredentials.Value.UserName;
             if (id > 0)
             {
                 var feed = dbContext.FeedBacks.FirstOrDefault(j => j.Id == id);
@@ -44,8 +46,7 @@ namespace TheAgooProjectWeb.Pages.Messaging.Feed_Back
         {
             if (ModelState.IsValid)
             {
-                var intervals = configuration.GetSection("EmailCredentials").Get<List<SmsCredentials>>().FirstOrDefault();
-                var result = await mailSender.SendEmailAsync(Message.SendTo, Message.CarbonCopy, Message.Subject, Message.Message, intervals.UserName, intervals.Password);
+                var result = await mailSender.SendEmailAsync(Message.SendTo, Message.CarbonCopy, Message.Subject, Message.Message, emailCredentials.Value.UserName, emailCredentials.Value.Password);
                 if (result)
                 {
                     TempData["success"] = "Email successfully sent";

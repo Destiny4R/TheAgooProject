@@ -296,6 +296,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ---------- Page header (tms-header) ---------- */
+/* NOTE: the settled ("to") state must keep transform: none — a lingering
+   translateY(0) with animation-fill-mode: both makes .fade-in a containing
+   block/stacking context, trapping fixed-position .modal descendants behind
+   the document-level .modal-backdrop (modal renders but nothing is clickable). */
 .fade-in {
     animation: agooFadeIn .35s ease both;
 }
@@ -308,7 +312,7 @@ h1, h2, h3, h4, h5, h6 {
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: none;
     }
 }
 

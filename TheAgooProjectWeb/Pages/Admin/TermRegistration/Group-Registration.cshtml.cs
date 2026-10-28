@@ -126,13 +126,18 @@ namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
             TempData["error"] = "No student could be verified for registration, review the errors below and try again";
             return Page();
         }
-        public async Task<IActionResult> OnPostRegister(List<int> subjects)
+        public async Task<IActionResult> OnPostRegister(List<int> subjects, List<int>? selectedStudentIds)
         {
             getViewSelect();
             hasValue = StudentList != null && StudentList.Count > 0 ? 1 : 0;
             if (subjects == null || subjects.Count == 0)
             {
                 TempData["error"] = "Select at least one subject to register";
+                return Page();
+            }
+            if (selectedStudentIds == null || selectedStudentIds.Count == 0)
+            {
+                TempData["error"] = "Please select at least one student to register";
                 return Page();
             }
             if (hasValue == 0)
@@ -143,7 +148,8 @@ namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
             SetSelectionNames();
             int registered = 0, skipped = 0;
             var termregisters = new List<TheAgooProjectModel.TermRegistration>();
-            foreach (var item in StudentList)
+            var studentsToProcess = StudentList.Where(s => selectedStudentIds.Contains(s.StudentId)).ToList();
+            foreach (var item in studentsToProcess)
             {
                 var student = dbContext.StudentTable.FirstOrDefault(k => k.Id == item.StudentId);
                 if (student == null)

@@ -230,13 +230,14 @@ namespace TheAgooProjectWeb.Controllers
                 .Include(k => k.StudentsData)
                 .Include(k => k.ResultTable);
 
-            if (ModelState.IsValid)
-            {
-                query = query.Where(d => d.Term == response.term
-                    && d.ClassesInSchoolId == response.classes
-                    && d.SubClassId == response.subclass
-                    && d.SessionYearId == response.sessionYear);
-            }
+            if (!string.IsNullOrEmpty(response.term))
+                query = query.Where(d => d.Term == response.term);
+            if (response.sessionYear > 0)
+                query = query.Where(d => d.SessionYearId == response.sessionYear);
+            if (response.classes > 0)
+                query = query.Where(d => d.ClassesInSchoolId == response.classes);
+            if (response.subclass > 0)
+                query = query.Where(d => d.SubClassId == response.subclass);
 
             int recordsTotal = query.Count();
 

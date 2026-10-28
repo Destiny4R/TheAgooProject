@@ -138,13 +138,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span id="groupCountBadge" class="badge bg-primary fs-6">
+                            @Model.StudentList.Count() of @Model.StudentList.Count() student(s) selected
+                        </span>
+                    </div>
                     <table id="groupRegTable" class="table table-bordered table-responsive table-striped table-sm mt-2">
                         <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Full Name</th>
                                 <th>Student Reg No:</th>
-                                <th>Action</th>
+                                <th class="text-center" style="width: 50px;">
+                                    <input type="checkbox" id="selectAllGroup" class="form-check-input" checked title="Select/Deselect All" />
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -155,11 +162,11 @@
                                     <td>@(sn)</td>
                                     <td>@(Model.StudentList[i].Fullname)</td>
                                     <td>@(Model.StudentList[i].StudentRegNo)</td>
-                                    <td>
+                                    <td class="text-center">
+                                        <input type="checkbox" name="selectedStudentIds" value="@Model.StudentList[i].StudentId" checked class="form-check-input group-chk" />
                                         <input type="hidden" asp-for="@Model.StudentList[i].StudentId" />
                                         <input type="hidden" asp-for="@Model.StudentList[i].StudentRegNo" />
                                         <input type="hidden" asp-for="@Model.StudentList[i].Fullname" />
-                                        <button type="button" class="btn btn-sm btn-danger" onclick="Remove(this);"><i class='bi bi-trash'></i></button>
                                     </td>
                                 </tr>
                             }
@@ -215,23 +222,26 @@
                 selectAll: true
             });
         });
-        function Remove(button) {
-            var row = $(button).closest("TR");
-            var name = $("TD", row).eq(1).html();
-            Swal.fire({
-                title: "Are you sure you don't want to register " + name + "?",
-                showDenyButton: true,
-                confirmButtonText: "Yes, Remove!",
-                denyButtonText: "Cancel"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    var table = $("#groupRegTable")[0];
-                    table.deleteRow(row[0].rowIndex);
-                    Swal.fire("Deleted!", name + " successfully removed", "success");
-                } else if (result.isDenied) {
-                    Swal.fire(name + " not deleted", "", "info");
-                }
-            });
+        function updateGroupCount() {
+            var total = $('.group-chk').length;
+            var checked = $('.group-chk:checked').length;
+            $('#groupCountBadge').text(checked + ' of ' + total + ' student(s) selected');
+            $('#selectAllGroup').prop('checked', total > 0 && total === checked);
         }
+
+        $('#selectAllGroup').on('change', function () {
+            var isChecked = $(this).is(':checked');
+            $('.group-chk').prop('checked', isChecked).trigger('change');
+        });
+
+        $(document).on('change', '.group-chk', function () {
+            var row = $(this).closest('tr');
+            if ($(this).is(':checked')) {
+                row.removeClass('table-secondary opacity-50');
+            } else {
+                row.addClass('table-secondary opacity-50');
+            }
+            updateGroupCount();
+        });
     </script>
 }

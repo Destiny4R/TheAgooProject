@@ -50,6 +50,7 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
                 {
                     results = new Collection<ResultTable>();
                     TempData["error"] = "We couldn't find any record that matches your choice of selection";
+                    return Page();
                 }
                 var b = results.FirstOrDefault();
                 namesheet = b.Termregistration.Term + "_" + b.Termregistration.SessionYear.Name.Replace('/','_') + "_" + b.Termregistration.Schoolclasses.Name.Replace(" ","") + "_" + b.Termregistration.SubClasses.Name;

@@ -58,15 +58,23 @@ namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
             TempData["error"] = "No result found the selection made";
             return Page();
         }
-        public async Task<IActionResult> OnPostPostAll()
+        public async Task<IActionResult> OnPostPostAll(List<int>? selectedTermRegIds)
         {
             getViewSelect();
-            if (TermReg.Count() > 0)
+
+            if (selectedTermRegIds == null || selectedTermRegIds.Count == 0)
+            {
+                TempData["error"] = "Please select at least one student to register.";
+                return Page();
+            }
+
+            if (TermReg != null && TermReg.Count() > 0)
             {
                 int register = 0, notregister = 0;
                 var termdata = dbContext.TermRegistrations.Include(x => x.SessionYear).Include(x => x.SubClasses).Include(x => x.Schoolclasses).Include(x => x.StudentsData).Include(x => x.ResultTable).Where(m => m.ClassesInSchoolId == ctsscl.Classes && m.SessionYearId == ctsscl.SessionYear && m.Term == ctsscl.Term && m.SubClassId == ctsscl.Subclass).ToList();
                 var termregisters = new List<TheAgooProjectModel.TermRegistration>();
-                foreach (var item in TermReg)
+                var studentsToProcess = TermReg.Where(k => selectedTermRegIds.Contains(k.Id)).ToList();
+                foreach (var item in studentsToProcess)
                 {
                     var checkifregister = dbContext.TermRegistrations.Include(k=>k.StudentsData).FirstOrDefault(k => k.StudentsData.StudentRegNo == item.StudentsData.StudentRegNo && k.SessionYearId == RegCtssClass.SessionYear && k.ClassesInSchoolId == RegCtssClass.Classes && k.SubClassId == RegCtssClass.Subclass && k.Term == RegCtssClass.Term);
                     if (checkifregister != null)
@@ -95,7 +103,8 @@ namespace TheAgooProjectWeb.Pages.Admin.TermRegistration
                                 TermRegId = termreg.Id
                             };
                             termreg.ResultTable = new List<ResultTable>();
-                            var getOldSubjects = termdata.Where(b => b.Id == item.Id).FirstOrDefault().ResultTable.ToList();
+                            var oldRecord = termdata.FirstOrDefault(b => b.Id == item.Id);
+                            var getOldSubjects = oldRecord?.ResultTable?.ToList() ?? new List<ResultTable>();
                             foreach (var item2 in getOldSubjects)
                             {
                                 var singledata = new ResultTable()

@@ -12,7 +12,7 @@ namespace TheAgooProjectModel
         public string UserName { get; set; }
         public string Password { get; set; }
     }
-    public class EmailCredentials
+    public class EmailCredential
     {
         public string UserName { get; set; }
         public string Password { get; set; }

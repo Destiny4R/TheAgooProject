@@ -102,6 +102,11 @@
                             <span asp-validation-for="RegCtssClass.Subclass" class="text-white field-validation-valid badge badge-danger"></span>
                         </div>
                     </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span id="batchCountBadge" class="badge bg-primary fs-6">
+                            @Model.TermReg.Count() of @Model.TermReg.Count() student(s) selected
+                        </span>
+                    </div>
                     <table id="termregTable" class="table table-boredered table-responsive table-striped table-sm mt-2">
                         <thead>
                             <tr>
@@ -112,7 +117,9 @@
                                 <th>Session/Year</th>
                                 <th>Class</th>
                                 <th>Sub Class</th>
-                                <th>Action</th>
+                                <th class="text-center" style="width: 50px;">
+                                    <input type="checkbox" id="selectAllBatch" class="form-check-input" checked title="Select/Deselect All" />
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -127,9 +134,9 @@
                                     <td>@(Model.TermReg[i].SessionYear.Name)</td>
                                     <td>@(Model.TermReg[i].Schoolclasses.Name)</td>
                                     <td>@(Model.TermReg[i].SubClasses.Name)</td>
-                                    <td>
+                                    <td class="text-center">
+                                        <input type="checkbox" name="selectedTermRegIds" value="@Model.TermReg[i].Id" checked class="form-check-input batch-chk" />
                                         <input type="hidden" asp-for="@Model.TermReg[i].Id"/>
-                                        <button type="button" class="btn btn-sm btn-danger" onclick="Remove(this);"><i class='bi bi-trash'></i></button>
                                     </td>
                                 </tr>
                             }
@@ -153,25 +160,28 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="~/lib/sweetalert2/sweetalert2.all.min.js"></script>
     <script>
-        function Remove(button) {
-            //Determine the reference of the Row using the Button.
-            var row = $(button).closest("TR");
-            var name = $("TD", row).eq(1).html();
+        $(function () {
+            function updateBatchCount() {
+                var total = $('.batch-chk').length;
+                var checked = $('.batch-chk:checked').length;
+                $('#batchCountBadge').text(checked + ' of ' + total + ' student(s) selected');
+                $('#selectAllBatch').prop('checked', total > 0 && total === checked);
+            }
 
-            Swal.fire({
-                title: "Are you sure you don't want to register " + name + "?",
-                showDenyButton: true,
-                confirmButtonText: "Yes, Remove!",
-                denyButtonText: `Cancel`
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    var table = $("#termregTable")[0];
-                    table.deleteRow(row[0].rowIndex);
-                    Swal.fire("Deleted!", name + " successfully removed, if it was a mistake, kindly research", "success");
-                } else if (result.isDenied) {
-                    Swal.fire(name + " not deleted", "", "info");
-                }
+            $('#selectAllBatch').on('change', function () {
+                var isChecked = $(this).is(':checked');
+                $('.batch-chk').prop('checked', isChecked).trigger('change');
             });
-        };
+
+            $(document).on('change', '.batch-chk', function () {
+                var row = $(this).closest('tr');
+                if ($(this).is(':checked')) {
+                    row.removeClass('table-secondary opacity-50');
+                } else {
+                    row.addClass('table-secondary opacity-50');
+                }
+                updateBatchCount();
+            });
+        });
     </script>
 }

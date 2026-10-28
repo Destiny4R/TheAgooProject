@@ -70,16 +70,16 @@ namespace TheAgooProjectWeb.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { success = false, message = "An error occurred while processing your request "+ex.Message });
+                    return Json(new { success = false, message = "An error occurred while processing your request " + ex.Message });
                 }
             }
             return Json(new { success = false, message = "Data not found" });
         }
         [Authorize(Roles = SD.Role_Admin)]
-        [HttpDelete]
+        [HttpPost]
         public async Task<JsonResult> StudentDelete(string id)
         {
-            var termreg = dbContext.TermRegistrations.Include(k=>k.StudentsData.ApplicationUser).Where(k => k.StudentsData.ApplicationUserId == id).Count();
+            var termreg = dbContext.TermRegistrations.Include(k => k.StudentsData.ApplicationUser).Where(k => k.StudentsData.ApplicationUserId == id).Count();
             if (termreg > 0)
             {
                 return Json(new { success = false, message = "This is student is registered for various terms, remove such records before proceeding" });
@@ -94,7 +94,7 @@ namespace TheAgooProjectWeb.Controllers
             {
                 return Json(new { success = false, message = "Unidentify student" });
             }
-            
+
             string deleteOldImage = webHostEnvironment.WebRootPath + student.Passport;
             if (System.IO.File.Exists(deleteOldImage))
             {
@@ -177,7 +177,7 @@ namespace TheAgooProjectWeb.Controllers
             {
                 return Json(new { success = false, message = "Students are registered in the term under this Sub-Class, remove all students before proceeding" });
             }
-            
+
             var _class = dbContext.SubClasses.FirstOrDefault(k => k.Id == id);
             if (_class == null)
             {
@@ -311,34 +311,34 @@ namespace TheAgooProjectWeb.Controllers
                     }
 
 
-                            //PROCESSING SMS SENDER
-                            //string number1 = getnumber.PhoneNumber, finalmessage = "";
-                            //string anotherPhone = number1.Remove(0, 1);
-                            //string recipient = 234 + anotherPhone;
-                            //string message = $"Dear parent, we're pleased to announce ${item.StudentsData.FirstName}'s ${term(item.Term)} term result (${item.SessionYear.Name} session) is ready. Visit www.aggocollegemkd.com.ng 4 details. Thanks!";
+                    //PROCESSING SMS SENDER
+                    //string number1 = getnumber.PhoneNumber, finalmessage = "";
+                    //string anotherPhone = number1.Remove(0, 1);
+                    //string recipient = 234 + anotherPhone;
+                    //string message = $"Dear parent, we're pleased to announce ${item.StudentsData.FirstName}'s ${term(item.Term)} term result (${item.SessionYear.Name} session) is ready. Visit www.aggocollegemkd.com.ng 4 details. Thanks!";
 
 
-                            ///MESSAGE LENGTH SHOULD NOT NOT BE MORE THAN 160 CHARATERS
-                            //finalmessage = message.Length < 160 ? message : message.Substring(0, 160);
-                            ///
-                            //string sender_name = "AggoCollege";
-                            //string username = "";
-                            //string password = "";
-                            //var intervals = Configuration.GetSection("Credentials").Get<List<SmsCredentials>>();
+                    ///MESSAGE LENGTH SHOULD NOT NOT BE MORE THAN 160 CHARATERS
+                    //finalmessage = message.Length < 160 ? message : message.Substring(0, 160);
+                    ///
+                    //string sender_name = "AggoCollege";
+                    //string username = "";
+                    //string password = "";
+                    //var intervals = Configuration.GetSection("Credentials").Get<List<SmsCredentials>>();
 
-                            //username = intervals.FirstOrDefault().userName;
-                            //password = intervals.FirstOrDefault().password;
-                            //SEND SMS AT THIS POINT
-                            //var data = await sender.SendMessage(username, password, finalmessage, sender_name, recipient);
-                            //if (data.Contains("status") || data.Contains("Ok"))
-                            //{
-                            //    _NoOfSentSms++;
-                            //}
-                        //}
-                        else
-                        {
-                            _resultNotAdded++;
-                        }
+                    //username = intervals.FirstOrDefault().userName;
+                    //password = intervals.FirstOrDefault().password;
+                    //SEND SMS AT THIS POINT
+                    //var data = await sender.SendMessage(username, password, finalmessage, sender_name, recipient);
+                    //if (data.Contains("status") || data.Contains("Ok"))
+                    //{
+                    //    _NoOfSentSms++;
+                    //}
+                    //}
+                    else
+                    {
+                        _resultNotAdded++;
+                    }
                     //}
                     //else
                     //{
@@ -385,7 +385,7 @@ namespace TheAgooProjectWeb.Controllers
                 if (update > 0)
                 {
                     dbContext.SaveChanges();
-                    return Json(new { success = true, message = update+$" results successfully updated!{msg}" });
+                    return Json(new { success = true, message = update + $" results successfully updated!{msg}" });
                 }
             }
             return Json(new { success = false, message = "No result send to the server for processing!" });
@@ -400,7 +400,7 @@ namespace TheAgooProjectWeb.Controllers
                 dbContext.Remove(general);
                 dbContext.SaveChanges();
 
-                return Json(new { success = true, message = "Class general information has been successfully deleted"});
+                return Json(new { success = true, message = "Class general information has been successfully deleted" });
             }
             return Json(new { success = false, message = "We could not identify this record!" });
         }
@@ -431,7 +431,7 @@ namespace TheAgooProjectWeb.Controllers
                 {
                     return Json(new { success = true, message = $"{status}Account Successfully Deleted" });
                 }
-                return Json(new { success = false, message = "Something went wrong "});
+                return Json(new { success = false, message = "Something went wrong " });
             }
             catch (Exception ex)
             {
@@ -484,7 +484,7 @@ namespace TheAgooProjectWeb.Controllers
 
             string extension = Path.GetExtension(dataFileName);
 
-            string[] allowedExtensions = new string[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".tiff"};
+            string[] allowedExtensions = new string[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".tiff" };
 
             if (!allowedExtensions.Contains(extension.ToLower()))
             {
@@ -583,7 +583,7 @@ namespace TheAgooProjectWeb.Controllers
                     return Json(new { success = true, message = "Class Termly Fees successfully removed!" });
                 }
             }
-                return Json(new { success = false, message = "We could not identify this record!" });
+            return Json(new { success = false, message = "We could not identify this record!" });
         }
         //Delete TEMLY FEES
         [HttpDelete]

@@ -152,15 +152,9 @@ $(document).ready(function () {
         };
     }
 
-    // Handle changes and send AJAX request
+    // Reload as soon as any filter option is selected
     $('select[name^="CTSSClass"]').on('change', function () {
-        var formData = collectFormData();
-
-        // Example: Only proceed if all fields are selected
-        if (formData.term && formData.sessionYear && formData.classes && formData.subclass) {
-            //console.log('All fields selected:', formData);
-            datatable.ajax.reload();
-        }
+        datatable.ajax.reload();
     });
 });
 

@@ -51,6 +51,7 @@ builder.Services.AddScoped<IMailSender, EmailSender>();
 //builder.Services.AddHostedService<MySqlBackupBackgroundService>();
 
 builder.Services.Configure<AppConfigurations>(builder.Configuration.GetSection("AppConfigurations"));
+builder.Services.Configure<EmailCredentials>(builder.Configuration.GetSection("EmailCredentials"));
 
 builder.Services.ConfigureApplicationCookie(a =>
 {

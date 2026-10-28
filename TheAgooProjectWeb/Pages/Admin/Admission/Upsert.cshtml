@@ -1,5 +1,6 @@
 ﻿@page
 @model TheAgooProjectWeb.Pages.Admin.Admission.UpsertModel
+@inject IOptions<AppConfigurations> SchoolConfig
 @{
     ViewData["Title"] = Model.UserVM?.Id > 0 ? "Update Student Bio-Data" : "Add New Student";
     ViewData["SubTitle"] = "Add or update student bio-data";
@@ -151,7 +152,7 @@
                                     {
                                         <div class="col-md-4 mb-3">
                                             <label asp-for="UserVM.Password"></label>
-                                            <input asp-for="UserVM.Password" class="form-control form-control-sm" value="Aggo@2024" />
+                                            <input asp-for="UserVM.Password" class="form-control form-control-sm" value="@SchoolConfig.Value.DefaultPassword" />
                                             <span asp-validation-for="UserVM.Password" class="text-white bg-danger badge"></span>
                                         </div>
                                     }

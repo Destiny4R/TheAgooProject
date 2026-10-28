@@ -19,5 +19,7 @@ namespace TheAgooProjectDataAccess
         public string StateAddress { get; set; }
         public string Abreviation { get; set; }
         public string BaseUrl { get; set; }
+        public string AdmissionPrefix { get; set; }
+        public string DefaultPassword { get; set; }
     }
 }
