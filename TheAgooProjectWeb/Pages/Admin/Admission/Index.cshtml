@@ -20,12 +20,18 @@
             <a asp-page="Upsert" class="btn btn-light btn-sm"><i class="bi bi-person-plus me-1"></i> Add Student</a>
         </div>
     </div>
-    @if(TempData["success"] != null){
+    @if (TempData["success"] != null)
+    {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <strong><i class="fas fa-check-double text-success"></i>&emsp; </strong> @TempData["success"].
+            <strong><i class="bi bi-info-circle"></i></strong> @TempData["success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong><i class="bi bi-exclamation-triangle"></i></strong> @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
     <div class="card">
@@ -35,7 +41,7 @@
                     <tr>
                         <th>S/N</th>
                         <th>Full Name</th>
-                        <th>Student Reg. No.</th>
+                        <th>Admission/Registration No.</th>
                         <th>Gender</th>
                         <th>Date of Birth</th>
                         <th>State</th>
