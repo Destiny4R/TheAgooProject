@@ -916,4 +916,13 @@
       // Add this option element to LGA select element
       lgaSelect.appendChild(opt);
     });
+
+    // Get the stored LGA value from the data attribute if available
+    const stateSelect = target.id === 'state' ? target : target.closest('select[id="state"]') || form.querySelector('#state');
+    const storedLga = stateSelect ? stateSelect.getAttribute('data-lga') : null;
+
+    // Select the stored LGA value if it exists
+    if (storedLga) {
+      lgaSelect.value = storedLga;
+    }
   };

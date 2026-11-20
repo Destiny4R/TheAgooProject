@@ -18,7 +18,7 @@ using Microsoft.Extensions.Options;
 
 namespace TheAgooProjectWeb.Pages.Admin.Admission
 {
-    [Authorize(Roles = $"{SD.Role_Admin},{ SD.Role_ExamOfficer},{SD.Role_Accountant}")]
+    [Authorize(Roles = $"{SD.Role_Admin},{SD.Role_ExamOfficer},{SD.Role_Accountant}")]
     public class UpsertModel : PageModel
     {
         private readonly ApplicationDbContext dbContext;
@@ -41,10 +41,10 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.appConfigurations = appConfigurations;
+            sessionyear();
         }
         public void OnGet(int id)
         {
-            sessionyear();
             if (id > 0)
             {
                 UserVM = dbContext.StudentTable.Where(k => k.Id == id).Select(k => new StudentDataVM
@@ -69,25 +69,24 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
         }
         public async Task<IActionResult> OnPost(IFormFile? passport)
         {
-            sessionyear();
             if (ModelState.IsValid)
             {
-                    if (passport != null)
+                if (passport != null)
+                {
+                    string dataFileName = System.IO.Path.GetFileName(passport.FileName);
+
+                    string extension = System.IO.Path.GetExtension(dataFileName.ToLower());
+
+                    string[] allowedExtsnions = new string[] { ".png", ".bitmap", ".jpg", ".jpeg" };
+
+                    if (!allowedExtsnions.Contains(extension))
+
                     {
-                        string dataFileName = System.IO.Path.GetFileName(passport.FileName);
-
-                        string extension = System.IO.Path.GetExtension(dataFileName.ToLower());
-
-                        string[] allowedExtsnions = new string[] { ".png", ".bitmap", ".jpg", ".jpeg" };
-
-                        if (!allowedExtsnions.Contains(extension))
-
-                        {
-                            TempData["error"] = "Sorry! the uploaded picture file is not in a picture or image format, only extension with png, jpg, jpeg, bmp, gif are allowed. Check and try again";
-                            return Page();
-                        }
+                        TempData["error"] = "Sorry! the uploaded picture file is not in a picture or image format, only extension with png, jpg, jpeg, bmp, gif are allowed. Check and try again";
+                        return Page();
                     }
-                    string outputPath = @"\image\Passports\";
+                }
+                string outputPath = @"\image\Passports\";
                 var ClaimsId = (ClaimsIdentity)User.Identity;
                 var claim = ClaimsId.FindFirst(ClaimTypes.NameIdentifier);
                 if (UserVM.Id > 0)
@@ -153,7 +152,7 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
                         student.ApplicationUserId = user.Id;
                         if (passport != null)
                         {
-                            student.Passport = await CompressAndSaveImageAsync(passport, outputPath,180, ""); //GetFilePathAndCopy(passport, string.Empty);
+                            student.Passport = await CompressAndSaveImageAsync(passport, outputPath, 180, ""); //GetFilePathAndCopy(passport, string.Empty);
                         }
                         student.UserID = claim.Value;
                         dbContext.Add(student);
@@ -165,15 +164,14 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
                         }
                     }
                 }
-                TempData["error"] = "An error occured while registering student check and try again";
-                return Page();
+                TempData["error"] = "An error occured while creating the user account";
             }
-            TempData["error"] = "An error occured while registering student check and try again";
+            TempData["error"] = "Some key information is missing from the form, please check and try again";
             return Page();
         }
         void sessionyear()
         {
-            SessionYearz = dbContext.SessionYears.OrderByDescending (k => k.Name).Select(k => new SelectListItem
+            SessionYearz = dbContext.SessionYears.OrderByDescending(k => k.Name).Select(k => new SelectListItem
             {
                 Text = k.Name,
                 Value = k.Id.ToString()
@@ -188,7 +186,7 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
                 var extention = System.IO.Path.GetExtension(file.FileName);
                 if (imagePath != null)
                 {
-                    string deleteOldImage = webHostEnvironment.WebRootPath+"/"+imagePath;
+                    string deleteOldImage = webHostEnvironment.WebRootPath + "/" + imagePath;
                     if (System.IO.File.Exists(deleteOldImage))
                     {
                         System.IO.File.Delete(deleteOldImage);
@@ -202,7 +200,7 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
             }
             return string.Empty;
         }
-        private async Task<string> CompressAndSaveImageAsync(IFormFile imageFile, string outputPath, int targetSizeKB = 120, string? oldImagePath=null)
+        private async Task<string> CompressAndSaveImageAsync(IFormFile imageFile, string outputPath, int targetSizeKB = 120, string? oldImagePath = null)
         {
 
             if (!string.IsNullOrEmpty(oldImagePath))
@@ -219,7 +217,7 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
             using var image = await Image.LoadAsync(imageStream);
             string fileName = Guid.NewGuid().ToString();
             var exten = System.IO.Path.GetExtension(imageFile.FileName);
-            var upload = webHostEnvironment.WebRootPath+"/"+outputPath;
+            var upload = webHostEnvironment.WebRootPath + "/" + outputPath;
             // Check the initial file size
             if (imageFile.Length / 1024 <= targetSizeKB)
             {
@@ -254,7 +252,7 @@ namespace TheAgooProjectWeb.Pages.Admin.Admission
             var compressedFilePath = System.IO.Path.Combine(outputPath, fileName + exten);
             await image.SaveAsJpegAsync(filePath1, new JpegEncoder { Quality = quality });
 
-            return outputPath+fileName+exten;
+            return outputPath + fileName + exten;
         }
     }
 }

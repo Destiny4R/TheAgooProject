@@ -122,4 +122,26 @@
     @await Html.PartialAsync("_DataTablesScriptsFiles")
     <script src="~/lib/blockui/jquery.blockui.min.js"></script>
     <script src="~/js/termregtable.js" asp-append-version="true"></script>
+    <script>
+        // Auto-submit form when any filter select changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('thecheckhouse');
+            if (!form) return;
+
+            // Get all select elements in the filter row
+            const selects = form.querySelectorAll('select[asp-for*="CTSSClass"]');
+
+            selects.forEach(select => {
+                select.addEventListener('change', function() {
+                    // Check if at least one select has a value (not the default/disabled option)
+                    const hasSelection = Array.from(selects).some(s => s.value && s.value !== '');
+
+                    if (hasSelection) {
+                        // Submit the form
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
 }
