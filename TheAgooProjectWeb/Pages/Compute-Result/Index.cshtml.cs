@@ -21,7 +21,6 @@ namespace TheAgooProjectWeb.Pages.Compute_Result
         private readonly ApplicationDbContext dbContext;
         private readonly IWebHostEnvironment hostEnvironment;
         public SettingNames settingNames;
-        IExcelDataReader reader;
         [BindProperty]
         public CTSSClass CTSSClass { get; set; }
         public ViewSelectModel ViewSelectModel { get; set; }

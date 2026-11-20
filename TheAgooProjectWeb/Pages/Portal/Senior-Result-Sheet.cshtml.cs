@@ -146,7 +146,7 @@ namespace TheAgooProjectWeb.Pages.Portal
 		public IList<HighLowScore> HighPosition { get; set; }
 		public class CollectData
 		{
-			public string SujectName { get; set; }
+			public string? SujectName { get; set; }
 			public int SubjectId { get; set; }
 			public double? Assgmnt { get; set; }
 			public double? Test { get; set; }
@@ -158,8 +158,8 @@ namespace TheAgooProjectWeb.Pages.Portal
 			public double Highest { get; set; }
 			public double Lowest { get; set; }
 			public int Position { get; set; }
-			public string Grade { get; set; }
-			public string Remark { get; set; }
+			public string? Grade { get; set; }
+			public string? Remark { get; set; }
 		}
 		public class HighLowScore
 		{

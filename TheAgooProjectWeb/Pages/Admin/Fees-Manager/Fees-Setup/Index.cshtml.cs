@@ -5,9 +5,9 @@ using TheAgooProjectDataAccess;
 
 namespace TheAgooProjectWeb.Pages.Admin.Fees_Manager.Fees_Setup
 {
+    [Authorize(Roles = SD.Role_Admin)]
     public class IndexModel : PageModel
     {
-        [Authorize(Roles = SD.Role_Admin)]
         public void OnGet()
         {
         }

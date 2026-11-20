@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model TheAgooProjectWeb.Pages.Admin.Admission.IndexModel
 @{
     ViewData["Title"] = "Student Admission List";
@@ -18,6 +18,15 @@
         </div>
         <div class="d-flex flex-wrap gap-2">
             <a asp-page="Upsert" class="btn btn-light btn-sm"><i class="bi bi-person-plus me-1"></i> Add Student</a>
+            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#bulkImportModal">
+                <i class="bi bi-file-earmark-excel me-1"></i> Bulk Import
+            </button>
+            <a href="~/assets/student_import_template.xlsx"
+               download="Student_Import_Template.xlsx"
+               class="btn btn-outline-success btn-sm"
+               title="Download the Excel template with a sample row as guide">
+                <i class="bi bi-file-earmark-arrow-down me-1"></i> Download Template
+            </a>
         </div>
     </div>
     @if (TempData["success"] != null)
@@ -54,9 +63,85 @@
         </div>
     </div>
 </div>
+
+<!-- Bulk Student Import Modal -->
+<div class="modal fade" id="bulkImportModal" tabindex="-1" aria-labelledby="bulkImportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bulkImportModalLabel">
+                    <i class="bi bi-file-earmark-excel me-2"></i> Bulk Student Import
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small text-muted mb-3">
+                    Download the Excel template first, fill in the student rows, then upload it here.
+                    Every row is admitted into the session selected below &mdash; the <strong>SESSION</strong> column in the file is ignored.
+                </p>
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label class="form-label" for="bulkSessionYear">Session/Year <span class="text-danger">*</span></label>
+                        <select id="bulkSessionYear" class="form-select form-select-sm">
+                            <option value="">---Select Session/Year---</option>
+                            @foreach (var item in Model.SessionYearz)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                        <div class="form-text">All students in this batch will be imported into this session.</div>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="form-label" for="bulkExcelFile">Excel File (.xlsx) <span class="text-danger">*</span></label>
+                        <input type="file"
+                               id="bulkExcelFile"
+                               class="form-control form-control-sm"
+                               accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                        <div class="form-text">Only .xlsx files are accepted. Maximum file size: 5MB.</div>
+                    </div>
+                </div>
+
+                <div id="bulkImportAlert" class="alert d-none mt-3" role="alert"></div>
+                <div id="bulkImportSummary" class="d-none mt-3"></div>
+
+                <div id="bulkImportPreviewWrap" class="table-responsive mt-3 d-none" style="max-height: 380px;">
+                    <table class="table table-sm table-striped table-hover align-middle mb-0">
+                        <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                            <tr>
+                                <th>Row</th>
+                                <th>Surname</th>
+                                <th>First Name</th>
+                                <th>Other Name</th>
+                                <th>Gender</th>
+                                <th>DOB</th>
+                                <th>State</th>
+                                <th>LGA</th>
+                                <th>Address</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bulkImportPreviewBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <span id="bulkImportFooterNote" class="me-auto small text-muted"></span>
+                <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="bulkImportPreviewBtn">
+                    <i class="bi bi-search me-1"></i> Upload &amp; Preview
+                </button>
+                <button type="button" class="btn btn-success btn-sm" id="bulkImportCommitBtn" disabled>
+                    <i class="bi bi-check2-circle me-1"></i> Confirm Import
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
     @await Html.PartialAsync("_DataTablesScriptsFiles")
     <script src="~/lib/blockui/jquery.blockui.min.js"></script>
     <script src="~/js/studentregdata.js" asp-append-version="true"></script>
+    <script src="~/js/bulkStudentImport.js" asp-append-version="true"></script>
 }
